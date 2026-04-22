@@ -1,0 +1,2723 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Observatory — The Hardware & Frontier Model Race</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root {
+  --bg: #07090f;
+  --surface: #0e1220;
+  --surface2: #131929;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --amber: #f0a500;
+  --amber-dim: rgba(240,165,0,0.15);
+  --cyan: #00c8d4;
+  --cyan-dim: rgba(0,200,212,0.15);
+  --text: #e8eaf0;
+  --muted: #8892a4;
+  --muted2: #4e5668;
+  --danger: #ff5f5f;
+  --grid: rgba(255,255,255,0.05);
+  --nav-h: 56px;
+  --radius: 6px;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'Sora', sans-serif;
+}
+[data-theme="light"] {
+  --bg: #f0f2f8;
+  --surface: #ffffff;
+  --surface2: #f8f9fc;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #111827;
+  --muted: #4b5563;
+  --muted2: #9ca3af;
+  --grid: rgba(0,0,0,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── LOADING ─────────────────────────────────────────── */
+#loading{
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;
+  gap:20px;
+  transition:opacity 0.5s ease;
+}
+#loading.hidden{opacity:0;pointer-events:none}
+.spinner{
+  width:40px;height:40px;
+  border:2px solid var(--border2);
+  border-top-color:var(--amber);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading p{font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);letter-spacing:.08em}
+
+/* ── NAVBAR ──────────────────────────────────────────── */
+#navbar{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  background:rgba(7,9,15,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 20px;
+  gap:16px;
+  z-index:100;
+}
+[data-theme="light"] #navbar{background:rgba(240,242,248,0.92)}
+.nav-logo{
+  font-family:var(--font-mono);
+  font-size:0.85rem;
+  font-weight:500;
+  color:var(--amber);
+  letter-spacing:.04em;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.nav-logo span{color:var(--muted);font-weight:300}
+.nav-tabs{
+  display:flex;
+  gap:2px;
+  flex:1;
+  justify-content:center;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab-btn{
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  font-weight:400;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  background:none;
+  border:none;
+  padding:6px 14px;
+  cursor:pointer;
+  border-radius:4px;
+  transition:color 0.2s,background 0.2s;
+  white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);background:var(--border)}
+.tab-btn.active{color:var(--amber);background:var(--amber-dim)}
+#theme-btn{
+  flex-shrink:0;
+  width:34px;height:34px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:0.9rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:color 0.2s,border-color 0.2s;
+}
+#theme-btn:hover{color:var(--text);border-color:var(--border2)}
+
+/* ── MAIN / TABS ─────────────────────────────────────── */
+main{
+  margin-top:var(--nav-h);
+  padding:24px 20px;
+  max-width:1400px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.tab-panel{
+  display:none;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.25s ease,transform 0.25s ease;
+}
+.tab-panel.active{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ── SECTION TITLE ───────────────────────────────────── */
+.section-title{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:16px;
+  margin-top:28px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-title::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.section-title:first-child{margin-top:0}
+
+/* ── KPI CARDS ───────────────────────────────────────── */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+}
+.kpi-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--amber),transparent);
+}
+.kpi-card.cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.kpi-label{
+  font-family:var(--font-mono);
+  font-size:0.65rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  display:block;
+  margin-bottom:8px;
+}
+.kpi-value{
+  font-family:var(--font-mono);
+  font-size:2rem;
+  font-weight:500;
+  color:var(--amber);
+  display:block;
+  line-height:1;
+}
+.kpi-card.cyan .kpi-value{color:var(--cyan)}
+.kpi-sub{
+  font-family:var(--font-body);
+  font-size:0.7rem;
+  color:var(--muted);
+  margin-top:6px;
+  display:block;
+}
+
+/* ── DATE SCRUBBER ───────────────────────────────────── */
+.scrubber-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 24px;
+  margin-bottom:24px;
+}
+.scrubber-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;
+}
+.scrubber-label{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.scrubber-range{
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  color:var(--amber);
+}
+.range-track{
+  position:relative;height:4px;
+  background:var(--surface2);
+  border-radius:2px;
+  margin:8px 0;
+}
+.range-fill{
+  position:absolute;
+  height:100%;
+  background:linear-gradient(90deg,var(--amber),var(--cyan));
+  border-radius:2px;
+  pointer-events:none;
+}
+.range-dual{
+  position:relative;
+  height:4px;
+}
+input[type=range].scrubber{
+  position:absolute;
+  width:100%;
+  height:4px;
+  -webkit-appearance:none;
+  background:transparent;
+  pointer-events:none;
+  top:0;left:0;
+}
+input[type=range].scrubber::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--amber);
+  border:2px solid var(--bg);
+  cursor:pointer;
+  pointer-events:all;
+  transition:transform 0.15s;
+}
+input[type=range].scrubber::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range].scrubber::-moz-range-thumb{
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--amber);
+  border:2px solid var(--bg);
+  cursor:pointer;
+  pointer-events:all;
+}
+.scrubber-ticks{
+  display:flex;justify-content:space-between;
+  margin-top:8px;
+}
+.scrubber-tick{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  color:var(--muted2);
+}
+
+/* ── OVERVIEW TEXT ───────────────────────────────────── */
+.overview-desc{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 22px;
+  font-size:0.82rem;
+  line-height:1.75;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.overview-desc strong{color:var(--text);font-weight:600}
+
+/* ── TABLE ───────────────────────────────────────────── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.card-header{
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:0.68rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.card-header .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--amber);flex-shrink:0;
+}
+.card-header .dot.cyan{background:var(--cyan)}
+table{width:100%;border-collapse:collapse}
+th{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted2);
+  text-align:left;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  font-weight:400;
+}
+td{
+  font-family:var(--font-body);
+  font-size:0.75rem;
+  color:var(--text);
+  padding:9px 16px;
+  border-bottom:1px solid var(--grid);
+}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.badge{
+  display:inline-flex;align-items:center;
+  padding:2px 8px;
+  border-radius:3px;
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-weight:400;
+}
+.badge.frontier{background:var(--amber-dim);color:var(--amber)}
+.badge.open{background:var(--cyan-dim);color:var(--cyan)}
+.badge.closed{background:rgba(255,95,95,0.1);color:var(--danger)}
+.badge.org{background:var(--surface2);color:var(--muted)}
+
+/* ── CHART CONTAINERS ────────────────────────────────── */
+.chart-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+.chart-grid.full{grid-template-columns:1fr}
+.chart-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.chart-title{
+  padding:12px 16px 0;
+  font-family:var(--font-mono);
+  font-size:0.65rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.chart-insight{
+  padding:4px 16px 10px;
+  font-size:0.72rem;
+  color:var(--text);
+  font-weight:500;
+}
+.chart-area{
+  width:100%;
+  height:320px;
+  padding:0 8px 8px;
+  position:relative;
+}
+.chart-area.tall{height:400px}
+.chart-area.short{height:240px}
+
+/* ── CONTROLS ────────────────────────────────────────── */
+.controls-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  padding:10px 14px;
+  border-top:1px solid var(--border);
+  background:var(--surface2);
+}
+.ctrl-label{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted2);
+}
+.ctrl-toggle{
+  font-family:var(--font-mono);
+  font-size:0.65rem;
+  padding:4px 10px;
+  border-radius:3px;
+  border:1px solid var(--border2);
+  background:none;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.ctrl-toggle:hover{border-color:var(--amber);color:var(--amber)}
+.ctrl-toggle.active{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.ctrl-toggle.cyan-toggle.active{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.domain-filters{display:flex;flex-wrap:wrap;gap:4px}
+.domain-chip{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  padding:3px 8px;
+  border-radius:3px;
+  border:1px solid var(--border2);
+  background:none;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.domain-chip.active{opacity:1}
+.domain-chip:not(.active){opacity:0.4}
+
+/* ── LEGEND ──────────────────────────────────────────── */
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  padding:8px 16px;
+  border-top:1px solid var(--border);
+}
+.legend-item{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  color:var(--muted);
+  cursor:pointer;
+  transition:opacity 0.15s;
+}
+.legend-item.dim{opacity:0.3}
+.legend-swatch{
+  width:10px;height:10px;
+  border-radius:2px;
+  flex-shrink:0;
+}
+
+/* ── TOOLTIP ─────────────────────────────────────────── */
+#tooltip{
+  position:fixed;
+  pointer-events:none;
+  z-index:1000;
+  background:rgba(14,18,32,0.97);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  padding:10px 14px;
+  font-family:var(--font-mono);
+  font-size:0.68rem;
+  line-height:1.7;
+  color:var(--text);
+  max-width:260px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  opacity:0;
+  transition:opacity 0.1s;
+}
+#tooltip.visible{opacity:1}
+[data-theme="light"] #tooltip{background:rgba(255,255,255,0.98)}
+.tt-title{font-weight:700;font-size:0.82rem;color:var(--text);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.tt-row{display:flex;justify-content:space-between;gap:16px}
+.tt-key{color:var(--muted)}
+.tt-val{color:var(--text)}
+
+/* ── TREEMAP ─────────────────────────────────────────── */
+#treemap-container{
+  position:relative;
+  width:100%;
+  height:340px;
+  overflow:hidden;
+}
+.tm-cell{
+  position:absolute;
+  border:1px solid var(--bg);
+  overflow:hidden;
+  cursor:pointer;
+  transition:filter 0.15s;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:4px;
+}
+.tm-cell:hover{filter:brightness(1.3)}
+.tm-cell.dimmed{filter:brightness(0.4)}
+.tm-name{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  font-weight:500;
+  color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,0.8);
+  line-height:1.3;
+  word-break:break-word;
+}
+.tm-count{
+  font-family:var(--font-mono);
+  font-size:0.55rem;
+  color:rgba(255,255,255,0.7);
+  margin-top:2px;
+}
+
+/* ── DONUT ───────────────────────────────────────────── */
+.donut-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:20px;
+}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-item{display:flex;align-items:center;gap:8px}
+.donut-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.donut-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--muted)}
+.donut-pct{font-family:var(--font-mono);font-size:0.72rem;color:var(--text);font-weight:500;margin-left:auto}
+
+/* ── ANNOTATIONS ─────────────────────────────────────── */
+.anno-flag{
+  position:absolute;
+  font-family:var(--font-mono);
+  font-size:0.58rem;
+  color:var(--amber);
+  background:var(--surface);
+  border:1px solid var(--amber-dim);
+  padding:2px 6px;
+  border-radius:3px;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+/* ── KEY INSIGHT CALLOUT ─────────────────────────────── */
+.insight-callout{
+  border-left:4px solid var(--amber);
+  background:rgba(240,165,0,0.04);
+  border-radius:0 var(--radius) var(--radius) 0;
+  border-top:1px solid var(--border);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:16px 20px;
+  margin-bottom:20px;
+}
+.insight-callout .callout-label{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--amber);
+  display:block;
+  margin-bottom:8px;
+}
+.insight-callout p{
+  font-family:var(--font-body);
+  font-size:0.82rem;
+  line-height:1.8;
+  color:var(--muted);
+}
+.insight-callout p strong{color:var(--text);font-weight:600}
+
+/* ── INTRO BANNER ────────────────────────────────────── */
+.tab5-banner{
+  background:linear-gradient(135deg,rgba(240,165,0,0.06),rgba(0,200,212,0.06));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 22px;
+  margin-bottom:20px;
+  font-size:0.8rem;
+  line-height:1.7;
+  color:var(--muted);
+}
+.tab5-banner strong{color:var(--text)}
+.tab5-banner .accent{color:var(--amber)}
+
+/* ── AXES SVG text ───────────────────────────────────── */
+.axis-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  fill:var(--muted2);
+}
+.axis-tick{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  fill:var(--muted2);
+}
+
+/* ── ANIMATIONS ──────────────────────────────────────── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fade-up{animation:fadeUp 0.4s ease-out forwards}
+
+@media(max-width:900px){
+  main{padding:16px 12px}
+  .chart-area{height:260px}
+  #navbar .nav-logo .subtitle{display:none}
+}
+
+/* ── TAB SUBTITLES ───────────────────────────────── */
+.tab-btn{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab-sub{font-size:8px;color:#8892a4;text-transform:none;letter-spacing:0;font-weight:300;font-family:var(--font-body);line-height:1;opacity:0.75;white-space:nowrap}
+.tab-btn:hover .tab-sub,.tab-btn.active .tab-sub{opacity:1}
+
+/* ── ⓘ INFO ICONS ────────────────────────────────── */
+.info-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(136,146,164,0.15);
+  color:var(--muted2);
+  font-size:9px;cursor:help;
+  font-family:var(--font-body);
+  margin-left:5px;vertical-align:middle;
+  font-weight:400;font-style:normal;
+  text-transform:none;letter-spacing:0;flex-shrink:0;
+}
+.info-icon:hover{color:var(--amber);background:rgba(240,165,0,0.1)}
+
+/* ── HW FILTER BUTTONS ───────────────────────────── */
+.hw-filter-btn{
+  font-family:var(--font-mono);font-size:0.65rem;
+  padding:4px 12px;border-radius:3px;
+  border:1px solid var(--border2);background:none;
+  color:var(--muted);cursor:pointer;transition:all 0.15s;
+}
+.hw-filter-btn:hover{border-color:var(--amber);color:var(--amber)}
+.hw-filter-btn.active{background:#f0a500;border-color:#f0a500;color:#07090f;font-weight:500}
+
+/* ── CAPEX HERO ──────────────────────────────────── */
+.capex-hero{
+  background:#1a1408;
+  border-top:4px solid #f0a500;
+  border-left:1px solid rgba(240,165,0,0.2);
+  border-right:1px solid rgba(240,165,0,0.2);
+  border-bottom:1px solid rgba(240,165,0,0.2);
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:32px;margin-bottom:16px;
+}
+.capex-hero-label{
+  font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:#f0a500;display:block;margin-bottom:14px;
+}
+.capex-hero-headline{
+  font-family:var(--font-body);font-size:22px;
+  font-weight:600;color:#fff;line-height:1.5;margin-bottom:10px;
+}
+.capex-hero-headline .av{color:#f0a500;font-weight:700}
+.capex-hero-sub{
+  font-family:var(--font-body);font-size:15px;
+  color:rgba(255,255,255,0.72);line-height:1.75;
+}
+.capex-hero-sub .av{color:#f0a500;font-weight:700}
+
+/* ── COST CHART ──────────────────────────────────── */
+.chart-area.xtall{height:340px}
+/* Arms race gets extra height for dual-axis breathing room */
+#arms-race{height:420px}
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Initializing Observatory</p>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <div class="nav-logo">AI<span> / </span>Observatory</div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" data-tab="overview">Overview<span class="tab-sub">The scale of the race</span></button>
+    <button class="tab-btn" data-tab="compute">Compute Race<span class="tab-sub">Compute is the new capital</span></button>
+    <button class="tab-btn" data-tab="hardware">Hardware<span class="tab-sub">The machines behind the models</span></button>
+    <button class="tab-btn" data-tab="orgs">Org Landscape<span class="tab-sub">Who can afford to play</span></button>
+    <button class="tab-btn" data-tab="cross">Cross-Dataset<span class="tab-sub">Demand is outpacing supply</span></button>
+  </div>
+  <button id="theme-btn" title="Toggle theme">◑</button>
+</nav>
+
+<main>
+  <!-- TAB 1: OVERVIEW -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="capex-hero" id="capex-hero">
+      <span class="capex-hero-label">THE CAPEX WALL OF AI</span>
+      <div class="capex-hero-headline" id="capex-headline">Training a frontier AI model today costs over <span class="av">$1 BILLION</span>.</div>
+      <div class="capex-hero-sub" id="capex-sub">In 2020, it cost <span class="av">$5 million</span>. That is a <span class="av">200×</span> increase in 4 years.<br>Only a handful of organizations on Earth can still afford to compete.</div>
+    </div>
+    <div class="scrubber-wrap">
+      <div class="scrubber-header">
+        <span class="scrubber-label">Global Date Filter</span>
+        <span class="scrubber-range" id="scrubber-display">2012 – 2025</span>
+      </div>
+      <div style="position:relative;height:20px;margin:4px 0">
+        <div class="range-track" style="position:absolute;top:8px;left:0;right:0"></div>
+        <div class="range-fill" id="range-fill" style="left:0;right:0"></div>
+        <input type="range" class="scrubber" id="range-min" min="2012" max="2026" step="1" value="2012">
+        <input type="range" class="scrubber" id="range-max" min="2012" max="2026" step="1" value="2026">
+      </div>
+      <div class="scrubber-ticks" id="scrubber-ticks"></div>
+    </div>
+    <div class="section-title">Recently Published Models</div>
+    <div class="card">
+      <div class="card-header"><div class="dot"></div>Top 5 Most Recent by Publication Date</div>
+      <table id="recent-table">
+        <thead><tr>
+          <th>Model</th><th>Organization</th><th>Date</th>
+          <th>Domain</th><th>Compute (FLOP)</th><th>Frontier</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: COMPUTE RACE -->
+  <div id="tab-compute" class="tab-panel">
+    <div class="section-title">Training Compute Over Time</div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-title">Compute Race <span class="info-icon" data-tip="Each dot is one AI model. Higher up = more compute used to train it = more expensive and generally more capable.">ⓘ</span></div>
+      <div class="chart-insight">Training compute grows ~4× per year — doubling time shorter than Moore's Law</div>
+      <div class="chart-area tall" id="compute-scatter"></div>
+      <div class="legend" id="compute-legend"></div>
+      <div class="controls-bar">
+        <span class="ctrl-label">Trend Line</span>
+        <button class="ctrl-toggle active" id="trend-toggle">Hide</button>
+        <span class="ctrl-label" style="margin-left:8px">Domain</span>
+        <div class="domain-filters" id="domain-filters"></div>
+      </div>
+    </div>
+    <div class="section-title">Models Published by Year & Domain</div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-title">Annual Output <span class="info-icon" data-tip="How many new frontier AI models were published each year, broken down by type.">ⓘ</span></div>
+      <div class="chart-insight">AI research output accelerates dramatically post-2019</div>
+      <div class="chart-area" id="domain-bar"></div>
+      <div class="legend" id="domain-legend"></div>
+    </div>
+    <div class="section-title">The Rising Cost of Frontier AI</div>
+    <div class="chart-card">
+      <div class="chart-title">The Rising Cost of Staying Competitive <span class="info-icon" data-tip="The price tag of the most expensive model trained each year. Shows how quickly costs are escalating.">ⓘ</span></div>
+      <div class="chart-insight">Each new generation of frontier AI costs 10× more than the last</div>
+      <div class="chart-area xtall" id="cost-chart"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: HARDWARE EVOLUTION -->
+  <div id="tab-hardware" class="tab-panel">
+    <div class="controls-bar" style="margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+      <span class="ctrl-label">Filter by chip type</span>
+      <button class="hw-filter-btn active" data-hw="all">All Chips</button>
+      <button class="hw-filter-btn" data-hw="GPU">GPU</button>
+      <button class="hw-filter-btn" data-hw="TPU">TPU</button>
+      <button class="hw-filter-btn" data-hw="Other">Other</button>
+    </div>
+    <div class="section-title">Who Builds The Fastest Chips</div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-title">Who Builds the Fastest Chips? <span class="info-icon" data-tip="Peak speed of the fastest chip each manufacturer had available, tracked over time.">ⓘ</span></div>
+      <div class="chart-insight">NVIDIA leads raw speed; Google competes on efficiency — everyone else is years behind</div>
+      <div class="chart-area tall" id="hw-line"></div>
+    </div>
+    <div class="chart-grid full" style="margin-top:16px">
+      <div class="chart-card">
+        <div class="chart-title">Hardware Investment Arms Race <span class="info-icon" data-tip="Launch price of new AI accelerators by manufacturer, grouped by year. Shows how rapidly chip prices have escalated as demand for AI compute exploded.">ⓘ</span></div>
+        <div class="chart-insight">Flagship chip prices have risen 10× in a decade — only the wealthiest labs can afford at scale</div>
+        <div class="chart-area" id="hw-price-bar"></div>
+        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">These are single-chip launch prices. Training a frontier model requires thousands of chips.</div>
+        <div class="legend" id="hw-price-legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ORG LANDSCAPE -->
+  <div id="tab-orgs" class="tab-panel">
+    <div class="section-title">Research Output by Organization</div>
+    <div class="chart-grid">
+      <div class="chart-card" style="grid-column:1/-1">
+        <div class="card-header"><div class="dot"></div>Model Count by Organization (colored by country)</div>
+        <div id="treemap-container"></div>
+        <div class="controls-bar">
+          <span class="ctrl-label">Click org to filter</span>
+          <button class="ctrl-toggle" id="treemap-reset">Reset Filter</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">Top 15 Orgs by Max Training Compute</div>
+        <div class="chart-insight">US labs dominate compute frontier; Chinese labs scaling fast</div>
+        <div class="chart-area tall" id="org-bar"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Open vs Closed Model Weights</div>
+        <div class="chart-insight">Open weights democratize access but closed models lead capabilities</div>
+        <div style="height:320px;display:flex;align-items:center;justify-content:center">
+          <div class="donut-wrap" id="donut-wrap">
+            <svg id="donut-svg" width="180" height="180" viewBox="0 0 180 180"></svg>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:16px">The Narrowing Field</div>
+    <div class="chart-grid full">
+      <div class="chart-card">
+        <div class="chart-title">Who Can Still Afford to Play? <span class="info-icon" data-tip="Number of unique organizations that published at least one frontier AI model each year. Fewer orgs = more consolidation.">ⓘ</span></div>
+        <div class="chart-insight">Since costs crossed $100M in 2020, the number of competing organizations has fallen from 10 to 4</div>
+        <div class="chart-area" id="narrowing-field"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: CROSS-DATASET -->
+  <div id="tab-cross" class="tab-panel">
+    <div class="tab5-banner">
+      <strong>The Arms Race:</strong> Each point plots a frontier model's training compute against the
+      <span class="accent">best available hardware</span> at the time of its release.
+      The gap between model demand and hardware supply defines the frontier of possibility.
+    </div>
+    <div class="insight-callout">
+      <span class="callout-label">KEY INSIGHT</span>
+      <p>Frontier models consistently require <strong>more compute than any single chip can deliver</strong> — meaning every major AI breakthrough has depended on massive multi-chip clusters. The gap between model demand and hardware supply is <strong>widening, not closing</strong>.</p>
+    </div>
+    <div class="section-title">Model Compute vs Best Available Hardware at Time of Release</div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-title">The Widening Gap — Model Demand vs Best Available Chip <span class="info-icon" data-tip="Each bar shows how many times more compute frontier models required versus the best available single chip that year. The bars grow taller every year.">ⓘ</span></div>
+      <div class="chart-insight">The gap between what models need and what chips provide grows every year</div>
+      <div class="chart-area tall" id="cross-scatter" style="position:relative"></div>
+      <div class="legend" id="cross-legend"></div>
+    </div>
+    <div class="section-title">The Compute Arms Race — Rolling Maximums Over Time</div>
+    <div class="chart-card">
+      <div class="chart-title">The Compute Arms Race <span class="info-icon" data-tip="Two exponential curves: how fast models are demanding compute (amber) vs how fast chips supply it (cyan). The gap between them is growing.">ⓘ</span></div>
+      <div class="chart-insight">Both curves follow exponential growth; hardware improvements are necessary but not sufficient</div>
+      <div class="chart-area tall" id="arms-race"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div>Rolling Max Training FLOP (models)</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--cyan)"></div>Rolling Max FP16 FLOP/s (hardware)</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="tooltip"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════
+//  CONSTANTS & PALETTE
+// ═══════════════════════════════════════════════
+const NS = 'http://www.w3.org/2000/svg';
+
+const DOMAIN_COLORS = {
+  'Language':              '#00c8d4',
+  'Multimodal':            '#f0a500',
+  'Vision':                '#a78bfa',
+  'Audio':                 '#34d399',
+  'Reinforcement Learning':'#fb923c',
+  'Code':                  '#38bdf8',
+  'Biology':               '#f472b6',
+  'Robotics':              '#fbbf24',
+  'Other':                 '#4b5568',
+};
+
+const HW_COLORS = {
+  'NVIDIA':      '#76b900',
+  'Google':      '#f0a500',
+  'AMD':         '#ef4444',
+  'Meta':        '#4895ef',
+  'Amazon AWS':  '#fb923c',
+  'Apple':       '#94a3b8',
+  'Intel':       '#14b8a6',
+  'Huawei':      '#ffd60a',
+  'Microsoft':   '#38bdf8',
+  'Other':       '#4b5568',
+};
+
+const COUNTRY_COLORS = {
+  'United States of America': '#00c8d4',
+  'China':                    '#f0a500',
+  'United Kingdom':           '#a78bfa',
+  'France':                   '#818cf8',
+  'Canada':                   '#34d399',
+  'Germany':                  '#e879f9',
+  'Israel':                   '#38bdf8',
+  'UAE':                      '#fbbf24',
+  'Other':                    '#4b5568',
+};
+
+const ORG_PALETTE = [
+  '#00c8d4','#f0a500','#a78bfa','#34d399','#fb923c',
+  '#f472b6','#38bdf8','#fbbf24','#e879f9','#818cf8','#4b5568'
+];
+
+const YEAR_BUCKET_COLORS = {
+  '2012–2017': '#818cf8',
+  '2018–2020': '#38bdf8',
+  '2021–2022': '#34d399',
+  '2023':      '#f0a500',
+  '2024':      '#fb923c',
+  '2025+':     '#ff5f5f',
+};
+
+const LANDMARKS = [
+  { name:'GPT-3',        label:'GPT-3\n2020' },
+  { name:'AlphaFold 2',  label:'AlphaFold 2\n2020' },
+  { name:'PaLM',         label:'PaLM\n2022' },
+  { name:'GPT-4',        label:'GPT-4\n2023' },
+  { name:'Gemini Ultra', label:'Gemini Ultra\n2023' },
+  { name:'Claude 3 Opus',label:'Claude 3\n2024' },
+];
+
+// ═══════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════
+const AppState = {
+  dateRange: [new Date('2012-01-01'), new Date('2026-12-31')],
+  activeTab: 'overview',
+  filters: {
+    domain: [],
+    frontierOnly: false,
+    hwTypes: new Set(['GPU','TPU','Other']),
+    selectedOrg: null,
+    showTrend: true,
+  },
+  data: { models: [], hardware: [] },
+  orgColors: {},
+};
+
+// ═══════════════════════════════════════════════
+//  DATA UTILITIES
+// ═══════════════════════════════════════════════
+function parseDate(s) {
+  if (!s || s.trim() === '') return null;
+  s = s.trim();
+  if (/^\d{4}$/.test(s)) return new Date(parseInt(s), 0, 1);
+  if (/^\d{4}-\d{2}$/.test(s)) { const [y,m]=s.split('-'); return new Date(+y,+m-1,1); }
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+function parseNum(v) {
+  if (v === null || v === undefined || v === '') return null;
+  const n = parseFloat(String(v).replace(/,/g,''));
+  return isFinite(n) ? n : null;
+}
+
+function formatFLOP(v) {
+  if (!v || v <= 0) return '—';
+  const e = Math.floor(Math.log10(v));
+  const m = v / Math.pow(10, e);
+  return `${m.toFixed(1)}×10^${e}`;
+}
+
+function formatShort(v) {
+  if (!v) return '—';
+  if (v >= 1e15) return (v/1e15).toFixed(1)+'P';
+  if (v >= 1e12) return (v/1e12).toFixed(1)+'T';
+  if (v >= 1e9)  return (v/1e9).toFixed(1)+'G';
+  if (v >= 1e6)  return (v/1e6).toFixed(1)+'M';
+  return v.toFixed(0);
+}
+
+function formatCost(v) {
+  if (!v) return '—';
+  if (v >= 1e9) return '$'+(v/1e9).toFixed(1)+'B';
+  if (v >= 1e6) return '$'+(v/1e6).toFixed(1)+'M';
+  if (v >= 1e3) return '$'+(v/1e3).toFixed(0)+'K';
+  return '$'+v.toFixed(0);
+}
+
+function getPrimaryDomain(domainStr) {
+  if (!domainStr) return 'Other';
+  const first = domainStr.split(',')[0].trim();
+  return DOMAIN_COLORS[first] ? first : 'Other';
+}
+
+function isFrontier(row) {
+  const v = String(row['Frontier model'] || '').trim().toUpperCase();
+  return v === 'TRUE';
+}
+
+function isOpenWeights(row) {
+  const v = String(row['Open model weights?'] || '').trim().toLowerCase();
+  return v === 'yes';
+}
+
+function applyDateFilter(arr, dateKey) {
+  const [lo, hi] = AppState.dateRange;
+  return arr.filter(d => d[dateKey] && d[dateKey] >= lo && d[dateKey] <= hi);
+}
+
+function buildOrgColors(models) {
+  const counts = {};
+  models.forEach(m => { const o = m.org; counts[o] = (counts[o]||0)+1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  const map = {};
+  sorted.forEach((org, i) => {
+    map[org] = i < ORG_PALETTE.length-1 ? ORG_PALETTE[i] : ORG_PALETTE[ORG_PALETTE.length-1];
+  });
+  return map;
+}
+
+function getYearBucket(date) {
+  if (!date) return '2025+';
+  const y = date.getFullYear();
+  if (y <= 2017) return '2012–2017';
+  if (y <= 2020) return '2018–2020';
+  if (y <= 2022) return '2021–2022';
+  if (y === 2023) return '2023';
+  if (y === 2024) return '2024';
+  return '2025+';
+}
+
+// ═══════════════════════════════════════════════
+//  SVG UTILITIES
+// ═══════════════════════════════════════════════
+function el(tag, attrs={}, ns=NS) {
+  const e = document.createElementNS(ns, tag);
+  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+
+function makeSVG(container, pad={}) {
+  const ml = pad.l||50, mr = pad.r||20, mt = pad.t||20, mb = pad.b||40;
+  const W = container.clientWidth || container.offsetWidth || 600;
+  const H = container.clientHeight || container.offsetHeight || 300;
+  container.innerHTML = '';
+  const svg = el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`});
+  const g = el('g',{transform:`translate(${ml},${mt})`});
+  svg.appendChild(g);
+  container.appendChild(svg);
+  return { svg, g, W, H, iW: W-ml-mr, iH: H-mt-mb, ml, mt, mr, mb };
+}
+
+function linScale(d0,d1,r0,r1) {
+  if (d0===d1) return ()=>r0;
+  return v => r0 + (v-d0)/(d1-d0)*(r1-r0);
+}
+
+function logScale(d0,d1,r0,r1) {
+  if (d0<=0||d1<=0) return ()=>r0;
+  const l0=Math.log10(d0), l1=Math.log10(d1);
+  return v => { if(!v||v<=0) return r1; return r0+(Math.log10(v)-l0)/(l1-l0)*(r1-r0); };
+}
+
+function timeScale(d0,d1,r0,r1) {
+  const t0=d0.getTime(), t1=d1.getTime();
+  if(t0===t1) return ()=>r0;
+  return d => r0+(d.getTime()-t0)/(t1-t0)*(r1-r0);
+}
+
+function drawGrid(g, xTicks, yTicks, xFn, yFn, iH, iW) {
+  xTicks.forEach(t => {
+    const x = xFn(t);
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)',
+      'stroke-width':'0.5','shape-rendering':'crispEdges'}));
+  });
+  yTicks.forEach(t => {
+    const y = yFn(t);
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)',
+      'stroke-width':'0.5','shape-rendering':'crispEdges'}));
+  });
+}
+
+function drawXAxisDates(g, ticks, xFn, iH, fmt) {
+  if (!ticks.length) return;
+  g.appendChild(el('line',{x1:0,y1:iH,x2:xFn(ticks[ticks.length-1])+20,y2:iH,
+    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  ticks.forEach(t => {
+    const x = xFn(t);
+    const tx = el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent = fmt ? fmt(t) : t.getFullYear();
+    g.appendChild(tx);
+  });
+}
+
+// ── PLAIN-ENGLISH AXIS FORMATTERS ─────────────────
+function flopLabel(e) {
+  const m={
+    6:'1 MegaFLOP',7:'10 MegaFLOP',8:'100 MegaFLOP',
+    9:'1 GigaFLOP',10:'10 GigaFLOP',11:'100 GigaFLOP',
+    12:'1 TeraFLOP',13:'10 TeraFLOP',14:'100 TeraFLOP',
+    15:'1 PetaFLOP',16:'10 PetaFLOP',17:'100 PetaFLOP',
+    18:'1 ExaFLOP',19:'10 ExaFLOP',20:'100 ExaFLOP',
+    21:'1 ZettaFLOP',22:'10 ZettaFLOP',23:'100 ZettaFLOP',
+    24:'1 YottaFLOP',25:'10 YottaFLOP',26:'100 YottaFLOP'
+  };
+  return m[e]||'';
+}
+function fp16Label(e) {
+  const m={
+    12:'1 TFLOP/s',13:'10 TFLOP/s',14:'100 TFLOP/s',
+    15:'1 PFLOP/s',16:'10 PFLOP/s',17:'100 PFLOP/s',
+    18:'1 EFLOP/s',19:'10 EFLOP/s',20:'100 EFLOP/s'
+  };
+  return m[e]||'';
+}
+function costLabel(e) {
+  const m={3:'$1K',4:'$10K',5:'$100K',6:'$1M',7:'$10M',8:'$100M',9:'$1B',10:'$10B',11:'$100B'};
+  if(m[e]) return m[e];
+  if(e>=9) return '$'+Math.pow(10,e-9).toFixed(0)+'B';
+  if(e>=6) return '$'+Math.pow(10,e-6).toFixed(0)+'M';
+  if(e>=3) return '$'+Math.pow(10,e-3).toFixed(0)+'K';
+  return '$'+Math.pow(10,e).toFixed(0);
+}
+function fmtDate(d) {
+  if(!d) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
+}
+function fmtFLOPTooltip(v) {
+  if(!v||v<=0) return '—';
+  if(v>=1e24) return (v/1e24).toFixed(1)+' YottaFLOP';
+  if(v>=1e21) return (v/1e21).toFixed(1)+' ZettaFLOP';
+  if(v>=1e18) return (v/1e18).toFixed(1)+' ExaFLOP';
+  if(v>=1e15) return (v/1e15).toFixed(1)+' PetaFLOP';
+  if(v>=1e12) return (v/1e12).toFixed(1)+' TeraFLOP';
+  if(v>=1e9)  return (v/1e9).toFixed(1)+' GigaFLOP';
+  return formatFLOP(v);
+}
+function fmtFP16Tooltip(v) {
+  if(!v||v<=0) return '—';
+  if(v>=1e18) return (v/1e18).toFixed(1)+' EFLOP/s';
+  if(v>=1e15) return (v/1e15).toFixed(0)+' PFLOP/s';
+  if(v>=1e12) return (v/1e12).toFixed(0)+' TFLOP/s';
+  return formatShort(v)+' FLOP/s';
+}
+function formatDollars(v) {
+  if(!v) return null;
+  if(v>=1e9) return '$'+(v/1e9).toFixed(0)+' billion';
+  if(v>=1e6) return '$'+Math.round(v/1e6)+' million';
+  if(v>=1e3) return '$'+Math.round(v/1000)+'K';
+  return '$'+Math.round(v);
+}
+
+function drawYAxisLog(g, domain, yFn, label, tickFmt, step) {
+  const st = step || 2;
+  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:yFn(domain[0]),
+    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  const lo = Math.ceil(Math.log10(domain[0]));
+  const hi = Math.floor(Math.log10(domain[1]));
+  for(let e=lo; e<=hi; e+=st) {
+    const v = Math.pow(10,e);
+    const y = yFn(v);
+    const lbl = tickFmt ? tickFmt(e) : `10^${e}`;
+    if(!lbl) continue;
+    const tx = el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
+    tx.textContent = lbl;
+    g.appendChild(tx);
+    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  }
+  if(label) {
+    const lb = el('text',{x:-42,y:yFn(domain[1]),'text-anchor':'start',
+      class:'axis-label',transform:`rotate(-90,-42,${yFn(domain[1])})`});
+    lb.textContent = label;
+    g.appendChild(lb);
+  }
+}
+
+function drawYAxisLin(g, ticks, yFn, fmt) {
+  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:yFn(ticks[0]),
+    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  ticks.forEach(t => {
+    const y = yFn(t);
+    const tx = el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
+    tx.textContent = fmt ? fmt(t) : t;
+    g.appendChild(tx);
+    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  });
+}
+
+function animateLine(path) {
+  try {
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+    path.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)';
+    requestAnimationFrame(() => { path.style.strokeDashoffset = '0'; });
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+//  TOOLTIP
+// ═══════════════════════════════════════════════
+const TT = document.getElementById('tooltip');
+
+function showTT(ev, html) {
+  TT.innerHTML = html;
+  TT.classList.add('visible');
+  moveTT(ev);
+}
+
+function moveTT(ev) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = ev.clientX+14, y = ev.clientY-10;
+  const tw = TT.offsetWidth||240, th = TT.offsetHeight||120;
+  if (x+tw>vw-10) x = ev.clientX-tw-14;
+  if (y+th>vh-10) y = vh-th-10;
+  TT.style.left = x+'px';
+  TT.style.top  = y+'px';
+}
+
+function hideTT() { TT.classList.remove('visible'); }
+
+function ttRow(k,v) { return `<div class="tt-row"><span class="tt-key">${k}</span><span class="tt-val">${v}</span></div>`; }
+
+// ═══════════════════════════════════════════════
+//  TAB 1 — OVERVIEW
+// ═══════════════════════════════════════════════
+function renderOverview() {
+  const { models, hardware } = AppState.data;
+
+  // CapEx Hero — compute dynamically, fall back to hard-coded strings
+  const models2024 = models.filter(m=>m.date&&m.date.getFullYear()>=2024&&m.cost>0);
+  const models2020 = models.filter(m=>m.date&&m.date.getFullYear()===2020&&m.cost>0);
+  const maxCost24 = models2024.length ? Math.max(...models2024.map(m=>m.cost)) : null;
+  const maxCost20 = models2020.length ? Math.max(...models2020.map(m=>m.cost)) : null;
+  const costNow = maxCost24 ? formatDollars(maxCost24) : '$1 billion';
+  const cost20  = maxCost20 ? formatDollars(maxCost20) : '$5 million';
+  const mult    = (maxCost24&&maxCost20) ? Math.round(maxCost24/maxCost20)+'×' : '200×';
+  document.getElementById('capex-headline').innerHTML =
+    `Training a frontier AI model today costs over <span class="av">${costNow}</span>.`;
+  document.getElementById('capex-sub').innerHTML =
+    `In 2020, it cost <span class="av">${cost20}</span>. That is a <span class="av">${mult}</span> increase in 4 years.<br>Only a handful of organizations on Earth can still afford to compete.`;
+
+  const fm = applyDateFilter(models, 'date');
+  const fh = applyDateFilter(hardware, 'releaseDate');
+
+  // KPI cards
+  const allDates = [...fm.map(m=>m.date), ...fh.map(h=>h.releaseDate)].filter(Boolean);
+  const minY = allDates.length ? Math.min(...allDates.map(d=>d.getFullYear())) : 2012;
+  const maxY = allDates.length ? Math.max(...allDates.map(d=>d.getFullYear())) : 2025;
+  const frontierCount = fm.filter(isFrontierModel).length;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card"><span class="kpi-label">Total Models</span>
+      <span class="kpi-value">${fm.length}</span>
+      <span class="kpi-sub">in selected window</span></div>
+    <div class="kpi-card"><span class="kpi-label">Frontier Models</span>
+      <span class="kpi-value">${frontierCount}</span>
+      <span class="kpi-sub">TRUE in dataset</span></div>
+    <div class="kpi-card cyan"><span class="kpi-label">Hardware Chips</span>
+      <span class="kpi-value">${fh.length}</span>
+      <span class="kpi-sub">accelerators tracked</span></div>
+    <div class="kpi-card cyan"><span class="kpi-label">Year Range</span>
+      <span class="kpi-value" style="font-size:1.4rem">${minY}–${maxY}</span>
+      <span class="kpi-sub">publication dates</span></div>`;
+
+  // Recent table
+  const recent = [...fm].filter(m=>m.date).sort((a,b)=>b.date-a.date).slice(0,5);
+  const tbody = document.querySelector('#recent-table tbody');
+  tbody.innerHTML = recent.map(m=>`<tr>
+    <td>${m.name}</td>
+    <td><span class="badge org">${m.org}</span></td>
+    <td style="font-family:var(--font-mono);font-size:0.7rem">${m.date ? fmtDate(m.date) : '—'}</td>
+    <td>${m.domain}</td>
+    <td style="font-family:var(--font-mono);font-size:0.68rem">${m.flop?fmtFLOPTooltip(m.flop):'—'}</td>
+    <td>${m.frontier ? '<span class="badge frontier">Yes</span>' : '<span class="badge closed">No</span>'}</td>
+  </tr>`).join('');
+}
+
+function isFrontierModel(m) { return m.frontier; }
+
+// ═══════════════════════════════════════════════
+//  DATE SCRUBBER INIT
+// ═══════════════════════════════════════════════
+function initScrubber() {
+  const { models, hardware } = AppState.data;
+  const allDates = [...models.map(m=>m.date),...hardware.map(h=>h.releaseDate)].filter(Boolean);
+  const minY = Math.max(2012, Math.min(...allDates.map(d=>d.getFullYear())));
+  const maxY = Math.max(...allDates.map(d=>d.getFullYear()));
+  const rMin = document.getElementById('range-min');
+  const rMax = document.getElementById('range-max');
+  rMin.min = 2012; rMin.max = maxY+1; rMin.value = 2012;
+  rMax.min = 2012; rMax.max = maxY+1; rMax.value = maxY+1;
+
+  // Ticks
+  const ticks = document.getElementById('scrubber-ticks');
+  ticks.innerHTML = '';
+  for(let y=minY; y<=maxY; y+=3) {
+    const s = document.createElement('span');
+    s.className='scrubber-tick'; s.textContent=y;
+    ticks.appendChild(s);
+  }
+
+  function update() {
+    let lo=parseInt(rMin.value), hi=parseInt(rMax.value);
+    if(lo>=hi) { if(this===rMin) lo=hi-1; else hi=lo+1; }
+    rMin.value=lo; rMax.value=hi;
+    AppState.dateRange=[new Date(lo,0,1),new Date(hi,11,31)];
+    document.getElementById('scrubber-display').textContent=`${lo} – ${hi===maxY+1?maxY:hi}`;
+    const pct0=100*(lo-minY)/(maxY+1-minY);
+    const pct1=100*(hi-minY)/(maxY+1-minY);
+    document.getElementById('range-fill').style.left=pct0+'%';
+    document.getElementById('range-fill').style.right=(100-pct1)+'%';
+    renderCurrentTab();
+  }
+  rMin.addEventListener('input', update);
+  rMax.addEventListener('input', update);
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 2 — COMPUTE SCATTER
+// ═══════════════════════════════════════════════
+function renderComputeRace() {
+  renderComputeScatter();
+  renderDomainBar();
+  renderDomainFilters();
+  renderCostChart();
+}
+
+function renderCostChart() {
+  const container = document.getElementById('cost-chart');
+  if(!container) return;
+  const allModels = AppState.data.models.filter(m=>m.cost>0&&m.date);
+  if(!allModels.length) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No cost data available</div>'; return; }
+
+  // Max cost model per year
+  const yearMap = {};
+  allModels.forEach(m=>{
+    const y=m.date.getFullYear();
+    if(!yearMap[y]||m.cost>yearMap[y].cost) yearMap[y]=m;
+  });
+  const series=Object.entries(yearMap).map(([y,m])=>({year:+y,cost:m.cost,model:m})).sort((a,b)=>a.year-b.year);
+  if(series.length<2) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">Insufficient cost data</div>'; return; }
+
+  const {g,iW,iH}=makeSVG(container,{l:80,r:24,t:28,b:36});
+  const xFn=linScale(series[0].year-0.5,series[series.length-1].year+0.5,0,iW);
+  const costs=series.map(p=>p.cost);
+  const minC=Math.min(...costs), maxC=Math.max(...costs);
+  const yFn=logScale(minC*0.2,maxC*5,iH,0);
+
+  // X grid + ticks
+  series.forEach(p=>{
+    const x=xFn(p.year);
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.03)','stroke-width':'0.5'}));
+    const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=p.year;
+    g.appendChild(tx);
+  });
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+
+  // Y axis with dollar labels
+  drawYAxisLog(g,[minC*0.2,maxC*5],yFn,null,costLabel,2);
+
+  // $1B reference line
+  if(maxC>=1e9) {
+    const refY=yFn(1e9);
+    if(isFinite(refY)&&refY>=0&&refY<=iH) {
+      g.appendChild(el('line',{x1:0,y1:refY,x2:iW,y2:refY,
+        stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'6 4'}));
+      const rt=el('text',{x:iW-4,y:refY-4,'text-anchor':'end',
+        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.75)'});
+      rt.textContent='The Billion Dollar Threshold';
+      g.appendChild(rt);
+    }
+  }
+
+  // Amber line connecting max-cost per year
+  if(series.length>1) {
+    const ld=series.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.cost).toFixed(1)}`).join(' ');
+    const lp=el('path',{d:ld,stroke:'#f0a500','stroke-width':'2',fill:'none'});
+    g.appendChild(lp);
+    animateLine(lp);
+  }
+
+  // Landmark annotation years — with anti-collision spacing
+  const landmarkYears=new Set([2020,2022,2023,2024,2025]);
+  let lastNameLabelY = Infinity;
+  series.forEach(p=>{
+    const x=xFn(p.year), y=yFn(p.cost);
+    if(!isFinite(x)||!isFinite(y)) return;
+    const isLandmark=landmarkYears.has(p.year)||p.year>=2024;
+    const r=isLandmark?7:4;
+    const c=el('circle',{cx:x,cy:y,r,fill:'#f0a500',stroke:'var(--bg)','stroke-width':'1.5'});
+    c.addEventListener('mouseenter',ev=>{
+      c.setAttribute('r',r+2);
+      showTT(ev,`<div class="tt-title">${p.model.name}</div>
+        ${ttRow('Year',p.year)}
+        ${ttRow('Est. Cost',formatCost(p.cost))}`);
+    });
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',r); hideTT(); });
+    g.appendChild(c);
+    if(isLandmark) {
+      // Anti-collision: nudge up if too close to previous label
+      let nameLabelY = y - 14;
+      if(lastNameLabelY - nameLabelY < 16) nameLabelY = lastNameLabelY - 16;
+      lastNameLabelY = nameLabelY;
+      const name=el('text',{x,y:nameLabelY,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
+      name.textContent=p.model.name.replace(/\s*\(.*?\)\s*/g,'').trim().slice(0,16);
+      g.appendChild(name);
+      const cost=el('text',{x,y:y+20,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
+      cost.textContent=formatCost(p.cost);
+      g.appendChild(cost);
+    }
+  });
+}
+
+function renderDomainFilters() {
+  // Only show domains that actually have models with compute data
+  const domainsWithData = new Set(
+    AppState.data.models.filter(m=>m.flop>0&&m.date).map(m=>m.domain)
+  );
+  const domains = Object.keys(DOMAIN_COLORS).filter(d=>domainsWithData.has(d));
+
+  const container = document.getElementById('domain-filters');
+  container.innerHTML = '';
+  // Default to all available domains if none set
+  if (!AppState.filters.domain.length) AppState.filters.domain = [...domains];
+  domains.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'domain-chip' + (AppState.filters.domain.includes(d)?' active':'');
+    btn.textContent = d;
+    btn.style.color = DOMAIN_COLORS[d];
+    btn.style.borderColor = DOMAIN_COLORS[d]+'66';
+    btn.addEventListener('click', () => {
+      const idx = AppState.filters.domain.indexOf(d);
+      if(idx>=0) AppState.filters.domain.splice(idx,1);
+      else AppState.filters.domain.push(d);
+      btn.classList.toggle('active');
+      renderComputeScatter();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderComputeScatter() {
+  const container = document.getElementById('compute-scatter');
+  const allModels = applyDateFilter(AppState.data.models,'date');
+  let data = allModels.filter(m => m.flop > 0 && m.date);
+  if (AppState.filters.domain.length > 0) data = data.filter(m=>AppState.filters.domain.includes(m.domain));
+
+  if (!data.length) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data in selected range</div>'; return; }
+
+  const { g, iW, iH } = makeSVG(container, {l:96,r:20,t:20,b:36});
+
+  // Sort chronologically before computing scales
+  data.sort((a,b) => a.date - b.date);
+
+  const flops = data.map(m=>m.flop).filter(f => f > 0);
+  const dateMin = data[0].date, dateMax = data[data.length-1].date;
+  const xFn = timeScale(dateMin, dateMax, 0, iW);
+  const minF=Math.min(...flops), maxF=Math.max(...flops);
+  const yFn = logScale(minF*0.3,maxF*3,iH,0);
+
+  // Year ticks (now guaranteed minY <= maxY)
+  const minY=dateMin.getFullYear(), maxY=dateMax.getFullYear();
+  const yearTicks=[];
+  for(let y=minY; y<=maxY; y+=2) yearTicks.push(new Date(y,0,1));
+  drawGrid(g, yearTicks, [], xFn, yFn, iH, iW);
+  drawXAxisDates(g, yearTicks, xFn, iH);
+  drawYAxisLog(g, [minF*0.3,maxF*3], yFn, 'Training Compute', flopLabel, 3);
+
+  // Trend line (exponential fit)
+  if (AppState.filters.showTrend) {
+    const pts = data.filter(m=>m.flop>0&&m.date).map(m=>({
+      t:(m.date.getTime()-new Date('2012-01-01').getTime())/(1000*86400*365),
+      l:Math.log10(m.flop)
+    }));
+    if(pts.length>2) {
+      const n=pts.length;
+      const mx=pts.reduce((s,p)=>s+p.t,0)/n;
+      const my=pts.reduce((s,p)=>s+p.l,0)/n;
+      const num=pts.reduce((s,p)=>s+(p.t-mx)*(p.l-my),0);
+      const den=pts.reduce((s,p)=>s+(p.t-mx)*(p.t-mx),0);
+      if(den>0) {
+        const slope=num/den, intercept=my-slope*mx;
+        const dateTimes=data.map(m=>m.date.getTime());
+        const tMin=(Math.min(...dateTimes)-new Date('2012-01-01').getTime())/(1000*86400*365);
+        const tMax=(Math.max(...dateTimes)-new Date('2012-01-01').getTime())/(1000*86400*365);
+        const x1=xFn(new Date(Math.min(...dateTimes))), x2=xFn(new Date(Math.max(...dateTimes)));
+        const y1=yFn(Math.pow(10,slope*tMin+intercept)), y2=yFn(Math.pow(10,slope*tMax+intercept));
+        const trendPath=el('path',{d:`M${x1},${y1} L${x2},${y2}`,
+          stroke:'rgba(240,165,0,0.5)','stroke-width':'1.5',
+          fill:'none','stroke-dasharray':'6 4'});
+        g.appendChild(trendPath);
+      }
+    }
+  }
+
+  // Points
+  const orgMap = AppState.orgColors;
+  data.forEach((m, i) => {
+    const x = xFn(m.date), y = yFn(m.flop);
+    if(!isFinite(x)||!isFinite(y)) return;
+    const c = el('circle',{
+      cx:x, cy:y, r: m.frontier?5:3.5,
+      fill: m.frontier ? (orgMap[m.org]||'#4b5568') : 'none',
+      stroke: orgMap[m.org]||'#4b5568',
+      'stroke-width': m.frontier?0:1.5,
+      opacity: '0',
+      style:`transition:opacity 0.4s ${Math.min(i*8,600)}ms,r 0.15s`,
+      class:'chart-point'
+    });
+    c.addEventListener('mouseenter', ev => {
+      c.setAttribute('r', m.frontier?7:5);
+      showTT(ev, `<div class="tt-title">${m.name}</div>
+        ${ttRow('Org',m.org)}
+        ${ttRow('Date',fmtDate(m.date))}
+        ${ttRow('Compute',fmtFLOPTooltip(m.flop))}
+        ${ttRow('Domain',m.domain)}`);
+    });
+    c.addEventListener('mousemove', moveTT);
+    c.addEventListener('mouseleave', ev => { c.setAttribute('r',m.frontier?5:3.5); hideTT(); });
+    g.appendChild(c);
+    requestAnimationFrame(()=>{ c.setAttribute('opacity','0.85'); });
+  });
+
+  // Legend (top 10 orgs)
+  const orgCounts={};
+  data.forEach(m=>{ orgCounts[m.org]=(orgCounts[m.org]||0)+1; });
+  const top10=Object.entries(orgCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>e[0]);
+  const leg = document.getElementById('compute-legend');
+  leg.innerHTML = top10.map(o=>`<div class="legend-item"><div class="legend-swatch" style="background:${orgMap[o]||'#4b5568'}"></div>${o}</div>`).join('');
+  leg.innerHTML += '<div class="legend-item" style="margin-left:16px"><div style="width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted2);margin-right:5px;flex-shrink:0"></div>Non-frontier</div>';
+  leg.innerHTML += '<div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:var(--muted2);margin-right:5px;flex-shrink:0"></div>Frontier</div>';
+}
+
+function renderDomainBar() {
+  const container = document.getElementById('domain-bar');
+  const models = applyDateFilter(AppState.data.models,'date').filter(m=>m.date);
+
+  const yearMap={};
+  models.forEach(m=>{
+    const y=m.date.getFullYear();
+    if(!yearMap[y]) yearMap[y]={};
+    const d=m.domain;
+    yearMap[y][d]=(yearMap[y][d]||0)+1;
+  });
+
+  const years=Object.keys(yearMap).map(Number).sort();
+  if(!years.length) return;
+  const domains=Object.keys(DOMAIN_COLORS);
+
+  const { g, iW, iH } = makeSVG(container,{l:44,r:16,t:16,b:36});
+
+  const maxVal=Math.max(...years.map(y=>Object.values(yearMap[y]).reduce((s,v)=>s+v,0)));
+  const xFn=linScale(0,years.length,0,iW);
+  const yFn=linScale(0,maxVal*1.1,iH,0);
+  const barW=Math.max(4,(iW/years.length)*0.7);
+
+  // Y ticks
+  const yTicks=[0,Math.round(maxVal/4),Math.round(maxVal/2),Math.round(maxVal*3/4),maxVal];
+  drawYAxisLin(g, yTicks.reverse(), yFn, v=>v);
+  yTicks.slice(0,-1).forEach(t=>{
+    const y=yFn(t);
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+  });
+
+  // Bars
+  years.forEach((yr,i)=>{
+    const xCenter=xFn(i+0.5);
+    const x=xCenter-barW/2;
+    let yBase=iH;
+    domains.forEach(d=>{
+      const count=yearMap[yr][d]||0;
+      if(!count) return;
+      const barH=(count/maxVal/1.1)*iH;
+      if(barH<1) return;
+      const rect=el('rect',{
+        x:x,y:yBase-barH,width:barW,height:barH,
+        fill:DOMAIN_COLORS[d],opacity:'0.8',rx:'1'
+      });
+      rect.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${yr} — ${d}</div>${ttRow('Count',count)}`));
+      rect.addEventListener('mousemove',moveTT);
+      rect.addEventListener('mouseleave',hideTT);
+      g.appendChild(rect);
+      yBase-=barH;
+    });
+    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=yr;
+    g.appendChild(tx);
+  });
+
+  // 2019 marker
+  const idx2019=years.indexOf(2019);
+  if(idx2019>=0) {
+    const ax=xFn(idx2019);
+    g.appendChild(el('line',{x1:ax,y1:0,x2:ax,y2:iH,
+      stroke:'rgba(240,165,0,0.35)','stroke-width':'1','stroke-dasharray':'4 3'}));
+    const at=el('text',{x:ax+4,y:14,'text-anchor':'start',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.7)'});
+    at.textContent='ChatGPT era begins';
+    g.appendChild(at);
+  }
+
+  // Legend
+  const leg=document.getElementById('domain-legend');
+  leg.innerHTML=domains.map(d=>`<div class="legend-item"><div class="legend-swatch" style="background:${DOMAIN_COLORS[d]}"></div>${d}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 3 — HARDWARE
+// ═══════════════════════════════════════════════
+let hwFilter = 'all';
+
+function renderHardwareEvolution() {
+  renderHWLine();
+  renderHWPriceBar();
+}
+
+function getFilteredHW() {
+  const hw = applyDateFilter(AppState.data.hardware,'releaseDate');
+  if(hwFilter === 'all') return hw;
+  return hw.filter(h=>h.type===hwFilter);
+}
+
+function renderHWLine() {
+  const container = document.getElementById('hw-line');
+  const allHW = getFilteredHW().filter(h=>h.releaseDate&&h.fp16>0);
+  if(!allHW.length) { container.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data</div>'; return; }
+
+  const nvData=allHW.filter(h=>h.mfr==='NVIDIA');
+  const gData =allHW.filter(h=>h.mfr==='Google');
+  const otData=allHW.filter(h=>h.mfr!=='NVIDIA'&&h.mfr!=='Google');
+
+  function rollingMilestones(pts) {
+    if(!pts.length) return [];
+    const sorted=[...pts].sort((a,b)=>a.releaseDate-b.releaseDate);
+    let maxVal=0, result=[];
+    sorted.forEach(p=>{ if(p.fp16>maxVal){ maxVal=p.fp16; result.push({date:p.releaseDate,val:maxVal,chip:p}); } });
+    return result;
+  }
+
+  const nvSeries=rollingMilestones(nvData);
+  const gSeries =rollingMilestones(gData);
+  const otSeries=rollingMilestones(otData);
+
+  const allPts=[...nvSeries,...gSeries,...otSeries];
+  if(!allPts.length) return;
+
+  const allDates=[...allHW.map(h=>h.releaseDate)];
+  const minDate=new Date(Math.min(...allDates));
+  const maxDate=new Date(Math.max(...allDates));
+  const allVals=allPts.map(p=>p.val).filter(v=>v>0);
+  const minVal=Math.min(...allVals), maxVal=Math.max(...allVals);
+
+  const {g,iW,iH}=makeSVG(container,{l:75,r:160,t:20,b:36});
+  const xFn=timeScale(minDate,maxDate,0,iW);
+  const yFn=logScale(minVal*0.3,maxVal*3,iH,0);
+
+  const minY=minDate.getFullYear(), maxY=maxDate.getFullYear();
+  const yearTicks=[];
+  for(let y=minY;y<=maxY;y+=2) yearTicks.push(new Date(y,0,1));
+  drawGrid(g,yearTicks,[],xFn,yFn,iH,iW);
+  drawXAxisDates(g,yearTicks,xFn,iH);
+  drawYAxisLog(g,[minVal*0.3,maxVal*3],yFn,null,fp16Label,1);
+
+  function drawRollingLine(series,color,opacity,label,labelOffsetY) {
+    if(!series.length) return;
+    // Build step path: horizontal then vertical at each new record
+    let d=`M${xFn(series[0].date).toFixed(1)},${yFn(series[0].val).toFixed(1)}`;
+    for(let i=1;i<series.length;i++){
+      d+=` L${xFn(series[i].date).toFixed(1)},${yFn(series[i-1].val).toFixed(1)}`;
+      d+=` L${xFn(series[i].date).toFixed(1)},${yFn(series[i].val).toFixed(1)}`;
+    }
+    // Extend horizontal to maxDate
+    d+=` L${xFn(maxDate).toFixed(1)},${yFn(series[series.length-1].val).toFixed(1)}`;
+    const path=el('path',{d,stroke:color,'stroke-width':'2.5',fill:'none',opacity:String(opacity)});
+    g.appendChild(path);
+    animateLine(path);
+    // Milestone dots with tooltip
+    series.forEach(p=>{
+      const x=xFn(p.date),y=yFn(p.val);
+      if(!isFinite(x)||!isFinite(y)) return;
+      const c=el('circle',{cx:x,cy:y,r:4,fill:color,opacity:String(opacity)});
+      c.addEventListener('mouseenter',ev=>{
+        c.setAttribute('r',6);
+        showTT(ev,`<div class="tt-title">${p.chip.name}</div>
+          ${ttRow('Maker',p.chip.mfr)}
+          ${ttRow('Released',fmtDate(p.chip.releaseDate))}
+          ${ttRow('FP16 Speed',fmtFP16Tooltip(p.chip.fp16))}
+          ${ttRow('Process',p.chip.process?p.chip.process+'nm':'—')}`);
+      });
+      c.addEventListener('mousemove',moveTT);
+      c.addEventListener('mouseleave',()=>{ c.setAttribute('r',4); hideTT(); });
+      g.appendChild(c);
+    });
+    // Inline label at right end
+    const last=series[series.length-1];
+    const lx=xFn(maxDate)+8;
+    const ly=yFn(last.val)+(labelOffsetY||0);
+    const lb=el('text',{x:lx,y:ly+4,'text-anchor':'start',fill:color,opacity:String(opacity),
+      style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
+    lb.textContent=label;
+    g.appendChild(lb);
+  }
+
+  drawRollingLine(otSeries,'#8892a4',0.5,'Others',0);
+  drawRollingLine(gSeries,'#00c8d4',1,'Google TPU',-14);
+  drawRollingLine(nvSeries,'#f0a500',1,'NVIDIA',-28);
+}
+
+function renderHWPriceBar() {
+  const container = document.getElementById('hw-price-bar');
+  if(!container) return;
+  const data = getFilteredHW().filter(h=>h.price>0&&h.releaseDate);
+  if(!data.length) {
+    container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No price data available</div>';
+    return;
+  }
+
+  const yearMin=2015, yearMax=Math.max(2025,new Date().getFullYear());
+  const GROUPS=['NVIDIA','Google','Others'];
+  const GC={'NVIDIA':'#f0a500','Google':'#00c8d4','Others':'#8892a4'};
+
+  const byYear={};
+  for(let y=yearMin;y<=yearMax;y++) byYear[y]={'NVIDIA':[],'Google':[],'Others':[]};
+  data.forEach(h=>{
+    if(!h.releaseDate||!h.price) return;
+    const y=h.releaseDate.getFullYear();
+    if(y<yearMin||y>yearMax) return;
+    const g=h.mfr==='NVIDIA'?'NVIDIA':h.mfr==='Google'?'Google':'Others';
+    byYear[y][g].push({price:h.price,name:h.name});
+  });
+
+  const years=Object.keys(byYear).map(Number).filter(y=>GROUPS.some(g=>byYear[y][g].length>0));
+  if(!years.length) return;
+
+  const allPrices=data.map(h=>h.price);
+  const maxPrice=Math.max(...allPrices);
+
+  const {g,iW,iH}=makeSVG(container,{l:75,r:16,t:20,b:44});
+  const xFn=linScale(0,years.length,0,iW);
+  const yFn=linScale(0,maxPrice*1.15,iH,0);
+  const slotW=iW/years.length;
+  const gBarW=Math.max(4,slotW*0.65/GROUPS.length);
+  const totalW=gBarW*GROUPS.length+(gBarW*0.2*(GROUPS.length-1));
+
+  // Y axis
+  const maxK=Math.ceil(maxPrice/10000)*10;
+  const rawTicks=[0,5000,10000,20000,30000,40000,50000,75000,100000].filter(v=>v<=maxPrice*1.15);
+  drawYAxisLin(g,rawTicks.slice().reverse(),yFn,v=>{
+    if(v>=1000) return '$'+(v/1000).toFixed(0)+'K';
+    return '$'+v;
+  });
+  rawTicks.forEach(v=>{
+    g.appendChild(el('line',{x1:0,y1:yFn(v),x2:iW,y2:yFn(v),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+  });
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+
+  years.forEach((yr,i)=>{
+    const xCenter=xFn(i+0.5);
+    const startX=xCenter-totalW/2;
+    GROUPS.forEach((grp,gi)=>{
+      const entries=byYear[yr][grp];
+      if(!entries.length) return;
+      const maxP=Math.max(...entries.map(e=>e.price));
+      const bestChip=entries.find(e=>e.price===maxP);
+      const x=startX+gi*(gBarW+(gBarW*0.2));
+      const barH=iH-yFn(maxP);
+      if(barH<1) return;
+      const rect=el('rect',{x,y:yFn(maxP),width:gBarW,height:barH,fill:GC[grp],opacity:'0.8',rx:'1'});
+      rect.addEventListener('mouseenter',ev=>showTT(ev,
+        `<div class="tt-title">${bestChip?bestChip.name:grp+' '+yr}</div>
+        ${ttRow('Year',yr)}${ttRow('Group',grp)}${ttRow('Price','$'+maxP.toLocaleString())}`));
+      rect.addEventListener('mousemove',moveTT);
+      rect.addEventListener('mouseleave',hideTT);
+      g.appendChild(rect);
+    });
+    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=yr;
+    g.appendChild(tx);
+  });
+
+  // Legend
+  const leg=document.getElementById('hw-price-legend');
+  if(leg) leg.innerHTML=GROUPS.map(g=>`<div class="legend-item"><div class="legend-swatch" style="background:${GC[g]}"></div>${g}</div>`).join('');
+}
+
+function renderTDPPerf() {
+  const container=document.getElementById('hw-tdp-perf');
+  const cutoff=new Date('2015-01-01');
+  const data=getFilteredHW()
+    .filter(h=>h.tdp>0&&h.fp16>0&&h.releaseDate&&h.releaseDate>=cutoff&&h.tdp<=1500);
+  if(!data.length) { container.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data</div>'; return; }
+
+  const {g,iW,iH}=makeSVG(container,{l:90,r:16,t:16,b:44});
+  const maxTDP=Math.min(1500,Math.max(...data.map(h=>h.tdp))*1.05);
+  const xFn=linScale(0,maxTDP,0,iW);
+  const fpVals=data.map(h=>h.fp16);
+  const yFn=logScale(Math.min(...fpVals)*0.3,Math.max(...fpVals)*3,iH,0);
+
+  // X grid + ticks
+  [0,300,600,900,1200,1500].forEach(v=>{
+    if(v>maxTDP+100) return;
+    const x=xFn(v);
+    if(!isFinite(x)||x<0||x>iW+1) return;
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+    const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=v+'W';
+    g.appendChild(tx);
+  });
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  const axTx=el('text',{x:iW/2,y:iH+30,'text-anchor':'middle',class:'axis-label'});
+  axTx.textContent='Power Draw (Watts)';
+  g.appendChild(axTx);
+
+  drawYAxisLog(g,[Math.min(...fpVals)*0.3,Math.max(...fpVals)*3],yFn,'FP16 Speed',fp16Label,2);
+
+  data.forEach(h=>{
+    const x=xFn(h.tdp),y=yFn(h.fp16);
+    if(!isFinite(x)||!isFinite(y)||x<0||x>iW) return;
+    let fill,opacity;
+    if(h.mfr==='NVIDIA'){ fill='#f0a500'; opacity='0.85'; }
+    else if(h.mfr==='Google'){ fill='#00c8d4'; opacity='0.85'; }
+    else { fill='#8892a4'; opacity='0.4'; }
+    const c=el('circle',{cx:x,cy:y,r:5,fill,opacity});
+    c.addEventListener('mouseenter',ev=>{
+      c.setAttribute('r',7);
+      showTT(ev,`<div class="tt-title">${h.name}</div>
+        ${ttRow('Maker',h.mfr)}
+        ${ttRow('Power Draw',h.tdp+'W')}
+        ${ttRow('FP16 Speed',fmtFP16Tooltip(h.fp16))}
+        ${ttRow('Released',h.releaseDate?fmtDate(h.releaseDate):'—')}`);
+    });
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',5); hideTT(); });
+    g.appendChild(c);
+  });
+}
+
+function renderProcessBar() {
+  const container=document.getElementById('hw-process');
+  const data=getFilteredHW().filter(h=>h.process>0&&h.releaseDate).sort((a,b)=>a.releaseDate-b.releaseDate);
+  if(!data.length) return;
+
+  const {g,iW,iH}=makeSVG(container,{l:44,r:16,t:16,b:36});
+  const maxNm=Math.max(...data.map(h=>h.process));
+  const minNm=Math.min(...data.map(h=>h.process));
+  const dates=data.map(h=>h.releaseDate);
+  const xFn=timeScale(new Date(Math.min(...dates)),new Date(Math.max(...dates)),0,iW);
+  const yFn=linScale(0,maxNm*1.1,iH,0);
+
+  const yTicks=[0,5,7,10,14,20,28].filter(v=>v<=maxNm);
+  drawYAxisLin(g,yTicks.reverse(),yFn,v=>v+'nm');
+  yTicks.forEach(t=>{
+    g.appendChild(el('line',{x1:0,y1:yFn(t),x2:iW,y2:yFn(t),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+  });
+
+  const minY2=new Date(Math.min(...dates)).getFullYear();
+  const maxY2=new Date(Math.max(...dates)).getFullYear();
+  const ytks2=[];
+  for(let y=minY2;y<=maxY2;y+=3) ytks2.push(new Date(y,0,1));
+  drawXAxisDates(g,ytks2,xFn,iH);
+
+  // Reference lines at key process nodes
+  [[28,'28nm'],[7,'7nm'],[4,'4nm']].forEach(([nm,label])=>{
+    if(nm>maxNm) return;
+    const y=yFn(nm);
+    if(!isFinite(y)||y<0||y>iH) return;
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,
+      stroke:'rgba(255,255,255,0.15)','stroke-width':'0.75','stroke-dasharray':'5 3'}));
+    const lt=el('text',{x:iW-4,y:y-3,'text-anchor':'end',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(255,255,255,0.4)'});
+    lt.textContent=label;
+    g.appendChild(lt);
+  });
+
+  data.forEach(h=>{
+    const x=xFn(h.releaseDate),y=yFn(h.process);
+    if(!isFinite(x)||!isFinite(y)) return;
+    let fill='#8892a4';
+    if(h.mfr==='NVIDIA') fill='#f0a500';
+    else if(h.mfr==='Google') fill='#00c8d4';
+    else fill=HW_COLORS[h.mfr]||HW_COLORS['Other'];
+    const c=el('circle',{cx:x,cy:y,r:4,fill,opacity:'0.8'});
+    c.addEventListener('mouseenter',ev=>{
+      showTT(ev,`<div class="tt-title">${h.name}</div>
+        ${ttRow('Process',h.process+'nm')}
+        ${ttRow('Year',h.releaseDate.getFullYear())}
+        ${ttRow('Maker',h.mfr)}`);
+    });
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',hideTT);
+    g.appendChild(c);
+  });
+
+  // Connecting line
+  if(data.length>1) {
+    const d=data.map((p,i)=>`${i?'L':'M'}${xFn(p.releaseDate).toFixed(1)},${yFn(p.process).toFixed(1)}`).join(' ');
+    const path=el('path',{d,stroke:'rgba(255,255,255,0.2)','stroke-width':'1',fill:'none','stroke-dasharray':'3 3'});
+    g.insertBefore(path,g.firstChild);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 4 — ORG LANDSCAPE
+// ═══════════════════════════════════════════════
+function renderOrgLandscape() {
+  renderTreemap();
+  renderOrgBar();
+  renderDonut();
+  renderNarrowingField();
+}
+
+function renderNarrowingField() {
+  const container=document.getElementById('narrowing-field');
+  if(!container) return;
+  const models=AppState.data.models.filter(m=>m.frontier&&m.date);
+  if(!models.length) return;
+
+  // Count unique orgs per year — hard-capped to 2012–2025
+  const yearOrgs={};
+  models.forEach(m=>{
+    const y=m.date.getFullYear();
+    if(y<2012||y>2025) return;
+    if(!yearOrgs[y]) yearOrgs[y]=new Set();
+    yearOrgs[y].add(m.org);
+  });
+
+  const years=Object.keys(yearOrgs).map(Number).sort();
+  const series=years.map(y=>({year:y,count:yearOrgs[y].size,orgs:[...yearOrgs[y]]}));
+  if(series.length<2) return;
+
+  const {g,iW,iH}=makeSVG(container,{l:75,r:20,t:24,b:36});
+  const xFn=linScale(2012,2025,0,iW);
+  const maxCount=Math.max(...series.map(p=>p.count));
+  const yFn=linScale(0,Math.ceil(maxCount*1.3),iH,0);
+
+  // Grid + X ticks every 2 years
+  for(let y=2012;y<=2025;y++) {
+    const x=xFn(y);
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+    if((y-2012)%2===0) {
+      const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+      tx.textContent=y;
+      g.appendChild(tx);
+    }
+  }
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+
+  // Y axis
+  const yTicks=[0,5,10,15,20,25].filter(v=>v<=maxCount*1.3);
+  drawYAxisLin(g,yTicks.slice().reverse(),yFn,v=>v);
+  yTicks.forEach(v=>{
+    g.appendChild(el('line',{x1:0,y1:yFn(v),x2:iW,y2:yFn(v),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+  });
+
+  // Area fill
+  const areaD=`M${xFn(series[0].year)},${iH} `+
+    series.map(p=>`L${xFn(p.year).toFixed(1)},${yFn(p.count).toFixed(1)}`).join(' ')+
+    ` L${xFn(series[series.length-1].year)},${iH} Z`;
+  g.appendChild(el('path',{d:areaD,fill:'rgba(240,165,0,0.07)',stroke:'none'}));
+
+  // Jagged raw line
+  const lineD=series.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.count).toFixed(1)}`).join(' ');
+  const lp=el('path',{d:lineD,stroke:'#f0a500','stroke-width':'2.5',fill:'none'});
+  g.appendChild(lp);
+  animateLine(lp);
+
+  // 5-year rolling average trend line (lighter amber at 50% opacity)
+  if(series.length>=3) {
+    const smoothed=series.map((p,i)=>{
+      const win=series.slice(Math.max(0,i-2),Math.min(series.length,i+3));
+      const avg=win.reduce((s,w)=>s+w.count,0)/win.length;
+      return {year:p.year,avg};
+    });
+    const trendD=smoothed.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.avg).toFixed(1)}`).join(' ');
+    g.appendChild(el('path',{d:trendD,stroke:'rgba(240,165,0,0.5)','stroke-width':'2.5',fill:'none'}));
+  }
+
+  // GPT-3 era annotation
+  const x20=xFn(2020);
+  g.appendChild(el('line',{x1:x20,y1:0,x2:x20,y2:iH,
+    stroke:'rgba(240,165,0,0.35)','stroke-width':'1','stroke-dasharray':'4 3'}));
+  const at=el('text',{x:x20+4,y:14,'text-anchor':'start',
+    style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.7)'});
+  at.textContent='GPT-3 era';
+  g.appendChild(at);
+
+  // Dots
+  series.forEach(p=>{
+    const x=xFn(p.year),y=yFn(p.count);
+    if(!isFinite(x)||!isFinite(y)) return;
+    const c=el('circle',{cx:x,cy:y,r:4,fill:'#f0a500'});
+    c.addEventListener('mouseenter',ev=>{
+      c.setAttribute('r',6);
+      showTT(ev,`<div class="tt-title">${p.year}</div>${ttRow('Orgs in frontier',p.count)}${ttRow('Top orgs',p.orgs.slice(0,5).join(', '))}`);
+    });
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',4); hideTT(); });
+    g.appendChild(c);
+  });
+
+  // Peak + latest annotations
+  const peak=series.reduce((a,b)=>b.count>a.count?b:a);
+  const curr=series[series.length-1];
+  const px=xFn(peak.year),py=yFn(peak.count);
+  if(isFinite(px)&&isFinite(py)) {
+    const pt=el('text',{x:px,y:py-10,'text-anchor':'middle',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
+    pt.textContent=`Peak: ${peak.count} orgs`;
+    g.appendChild(pt);
+  }
+  if(curr.year!==peak.year) {
+    const cx2=xFn(curr.year),cy2=yFn(curr.count);
+    if(isFinite(cx2)&&isFinite(cy2)) {
+      const ct=el('text',{x:cx2-6,y:cy2-10,'text-anchor':'end',
+        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
+      ct.textContent=`${curr.count} orgs (${curr.year})`;
+      g.appendChild(ct);
+    }
+  }
+}
+
+function renderTreemap() {
+  const container=document.getElementById('treemap-container');
+  const models=applyDateFilter(AppState.data.models,'date');
+  const orgCounts={}, orgCountry={};
+  models.forEach(m=>{
+    orgCounts[m.org]=(orgCounts[m.org]||0)+1;
+    orgCountry[m.org]=m.country;
+  });
+
+  const items=Object.entries(orgCounts).map(([org,count])=>({org,count,country:orgCountry[org]||'Other'}))
+    .sort((a,b)=>b.count-a.count).slice(0,30);
+
+  const W=container.offsetWidth||600, H=container.offsetHeight||340;
+  const rects=squarify(items.map(d=>({...d,value:d.count})),{x:0,y:0,w:W,h:H});
+
+  container.querySelectorAll('.tm-cell').forEach(el=>el.remove());
+
+  rects.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='tm-cell';
+    div.style.left=r.x+'px'; div.style.top=r.y+'px';
+    div.style.width=Math.max(r.w-1,0)+'px'; div.style.height=Math.max(r.h-1,0)+'px';
+    const baseColor=getCountryColor(r.country);
+    div.style.background=baseColor+'cc';
+    if(AppState.filters.selectedOrg&&AppState.filters.selectedOrg!==r.org) div.classList.add('dimmed');
+    if(r.w>40&&r.h>24) {
+      div.innerHTML=`<div class="tm-name">${r.org}</div><div class="tm-count">${r.count}</div>`;
+    } else if(r.w>20&&r.h>14) {
+      div.innerHTML=`<div class="tm-name" style="font-size:0.5rem">${r.org.slice(0,12)}</div>`;
+    }
+    div.addEventListener('click',()=>{
+      if(AppState.filters.selectedOrg===r.org) AppState.filters.selectedOrg=null;
+      else AppState.filters.selectedOrg=r.org;
+      renderTreemap();
+      renderOrgBar();
+    });
+    div.addEventListener('mouseenter',ev=>{
+      showTT(ev,`<div class="tt-title">${r.org}</div>
+        ${ttRow('Models',r.count)}
+        ${ttRow('Country',r.country)}`);
+    });
+    div.addEventListener('mousemove',moveTT);
+    div.addEventListener('mouseleave',hideTT);
+    container.appendChild(div);
+  });
+}
+
+function getCountryColor(country) {
+  if(!country) return COUNTRY_COLORS['Other'];
+  for(const[k,v] of Object.entries(COUNTRY_COLORS)) {
+    if(country.toLowerCase().includes(k.toLowerCase().slice(0,6))) return v;
+  }
+  return COUNTRY_COLORS['Other'];
+}
+
+function squarify(items,rect) {
+  if(!items.length) return [];
+  if(items.length===1) return [{...items[0],...rect}];
+  const sorted=[...items].sort((a,b)=>b.value-a.value);
+  return layoutSquarify(sorted,rect,sorted.reduce((s,d)=>s+d.value,0));
+}
+
+function layoutSquarify(items,rect,total) {
+  if(!items.length) return [];
+  if(items.length===1) return [{...items[0],x:rect.x,y:rect.y,w:rect.w,h:rect.h}];
+  const {x,y,w,h}=rect;
+  const isWide=w>=h;
+  let row=[],rowSum=0,bestWorst=Infinity,result=[];
+  let cutIdx=0;
+  for(let i=0;i<items.length;i++) {
+    row.push(items[i]); rowSum+=items[i].value;
+    const wAR=worstAR(row,rowSum,rect,total);
+    if(wAR>bestWorst) { row.pop(); rowSum-=items[i].value; cutIdx=i; break; }
+    bestWorst=wAR; cutIdx=i+1;
+  }
+  const rowFrac=rowSum/total;
+  let off=isWide?y:x;
+  if(isWide) {
+    const rw=w*rowFrac;
+    row.forEach(item=>{
+      const ih=h*(item.value/rowSum);
+      result.push({...item,x,y:off,w:rw,h:ih});
+      off+=ih;
+    });
+    const rest=items.slice(cutIdx);
+    if(rest.length) result.push(...layoutSquarify(rest,{x:x+rw,y,w:w-rw,h},total-rowSum));
+  } else {
+    const rh=h*rowFrac;
+    row.forEach(item=>{
+      const iw=w*(item.value/rowSum);
+      result.push({...item,x:off,y,w:iw,h:rh});
+      off+=iw;
+    });
+    const rest=items.slice(cutIdx);
+    if(rest.length) result.push(...layoutSquarify(rest,{x,y:y+rh,w,h:h-rh},total-rowSum));
+  }
+  return result;
+}
+
+function worstAR(row,rowSum,rect,total) {
+  const {w,h}=rect;
+  const isWide=w>=h;
+  const rowFrac=rowSum/total;
+  const rs=isWide?w*rowFrac:h*rowFrac;
+  const rl=isWide?h:w;
+  let max=0;
+  row.forEach(item=>{
+    const il=rl*(item.value/rowSum);
+    const ar=il>0?Math.max(rs/il,il/rs):Infinity;
+    if(ar>max) max=ar;
+  });
+  return max;
+}
+
+function renderOrgBar() {
+  const container=document.getElementById('org-bar');
+  let models=applyDateFilter(AppState.data.models,'date');
+  if(AppState.filters.selectedOrg) models=models.filter(m=>m.org===AppState.filters.selectedOrg);
+
+  const orgMax={};
+  models.forEach(m=>{ if(m.flop>0) orgMax[m.org]=Math.max(orgMax[m.org]||0,m.flop); });
+  const sorted=Object.entries(orgMax).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  if(!sorted.length) return;
+
+  const {g,iW,iH}=makeSVG(container,{l:150,r:24,t:12,b:24});
+  const maxVal=sorted[0][1];
+  const barH=Math.max(6,iH/sorted.length-4);
+  const xFn=logScale(sorted[sorted.length-1][1]*0.3,maxVal*2,0,iW);
+
+  // X log ticks
+  for(let e=Math.ceil(Math.log10(sorted[sorted.length-1][1]*0.3));e<=Math.floor(Math.log10(maxVal*2));e+=2) {
+    const x=xFn(Math.pow(10,e));
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+    const tx=el('text',{x:x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=flopLabel(e);
+    g.appendChild(tx);
+  }
+
+  sorted.forEach(([org,val],i)=>{
+    const y=i*(iH/sorted.length);
+    const bw=xFn(val);
+    const color=AppState.orgColors[org]||'#4b5568';
+    const rect=el('rect',{x:0,y:y+(iH/sorted.length-barH)/2,width:Math.max(bw,2),height:barH,
+      fill:color,opacity:'0.8',rx:'2'});
+    rect.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${org}</div>${ttRow('Max FLOP',formatFLOP(val))}`));
+    rect.addEventListener('mousemove',moveTT);
+    rect.addEventListener('mouseleave',hideTT);
+    g.appendChild(rect);
+    const tx=el('text',{x:-6,y:y+(iH/sorted.length)/2+4,'text-anchor':'end',class:'axis-tick',
+      style:'font-size:10px'});
+    tx.textContent=org.slice(0,22);
+    g.appendChild(tx);
+  });
+}
+
+function renderDonut() {
+  const svg=document.getElementById('donut-svg');
+  const leg=document.getElementById('donut-legend');
+  const models=applyDateFilter(AppState.data.models,'date');
+  const yes=models.filter(m=>m.openWeights).length;
+  const no=models.filter(m=>!m.openWeights).length;
+  const total=models.length||1;
+
+  const cats=[{label:'Open',val:yes,color:'#00c8d4'},{label:'Closed',val:no,color:'#ff5f5f'}];
+  svg.innerHTML='';
+  const cx=90,cy=90,R=72,r=42;
+  let angle=-Math.PI/2;
+  cats.forEach(cat=>{
+    const a=2*Math.PI*cat.val/total;
+    if(a<0.001) return;
+    const x1=cx+R*Math.cos(angle), y1=cy+R*Math.sin(angle);
+    const x2=cx+R*Math.cos(angle+a), y2=cy+R*Math.sin(angle+a);
+    const ix1=cx+r*Math.cos(angle), iy1=cy+r*Math.sin(angle);
+    const ix2=cx+r*Math.cos(angle+a), iy2=cy+r*Math.sin(angle+a);
+    const large=a>Math.PI?1:0;
+    const path=el('path',{
+      d:`M${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} L${ix2},${iy2} A${r},${r} 0 ${large} 0 ${ix1},${iy1} Z`,
+      fill:cat.color,opacity:'0.85'
+    });
+    path.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${cat.label}</div>${ttRow('Count',cat.val)}${ttRow('Share',(100*cat.val/total).toFixed(1)+'%')}`));
+    path.addEventListener('mousemove',moveTT);
+    path.addEventListener('mouseleave',hideTT);
+    svg.appendChild(path);
+    angle+=a;
+  });
+  // Center text
+  const ct=el('text',{x:cx,y:cy+5,'text-anchor':'middle',fill:'var(--text)',
+    style:'font-family:DM Mono,monospace;font-size:14px;font-weight:500'});
+  ct.textContent=total;
+  svg.appendChild(ct);
+  const cl=el('text',{x:cx,y:cy+18,'text-anchor':'middle',fill:'var(--muted)',
+    style:'font-family:DM Mono,monospace;font-size:9px'});
+  cl.textContent='models';
+  svg.appendChild(cl);
+
+  leg.innerHTML=cats.map(c=>`<div class="donut-item">
+    <div class="donut-swatch" style="background:${c.color}"></div>
+    <span class="donut-label">${c.label}</span>
+    <span class="donut-pct">${(100*c.val/total).toFixed(0)}%</span>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 5 — CROSS-DATASET
+// ═══════════════════════════════════════════════
+function renderCrossDataset() {
+  renderGapBarChart();
+  renderArmsRace();
+}
+
+function getBestHWAtDate(hwData, targetDate) {
+  const avail=hwData.filter(h=>h.releaseDate&&h.releaseDate<=targetDate&&h.fp16>0);
+  if(!avail.length) return null;
+  return avail.reduce((best,h)=>h.fp16>best.fp16?h:best);
+}
+
+function renderGapBarChart() {
+  const container=document.getElementById('cross-scatter');
+  const models=AppState.data.models.filter(m=>m.flop>0&&m.date);
+  const hw=AppState.data.hardware.filter(h=>h.fp16>0&&h.releaseDate);
+  if(!models.length||!hw.length) return;
+
+  const startYear=2016, endYear=2025;
+  const ratioByYear={}, modelMaxByYear={}, hwMaxByYear={};
+
+  for(let y=startYear;y<=endYear;y++) {
+    const mVals=models.filter(m=>m.date.getFullYear()<=y).map(m=>m.flop);
+    const hVals=hw.filter(h=>h.releaseDate.getFullYear()<=y).map(h=>h.fp16);
+    if(mVals.length&&hVals.length) {
+      modelMaxByYear[y]=Math.max(...mVals);
+      hwMaxByYear[y]=Math.max(...hVals);
+      ratioByYear[y]=modelMaxByYear[y]/hwMaxByYear[y];
+    }
+  }
+
+  const years=Object.keys(ratioByYear).map(Number).sort();
+  if(!years.length) return;
+
+  const ratios=years.map(y=>ratioByYear[y]);
+  const maxRatio=Math.max(...ratios);
+  const minRatio=Math.min(...ratios);
+
+  const {g,iW,iH}=makeSVG(container,{l:90,r:110,t:32,b:40});
+  const xFn=linScale(0,years.length,0,iW);
+  const yLoE=Math.max(0,Math.floor(Math.log10(minRatio))-1);
+  const yHiE=Math.ceil(Math.log10(maxRatio))+1;
+  const yLo=Math.pow(10,yLoE), yHi=Math.pow(10,yHiE);
+  const yFn=logScale(yLo,yHi,iH,0);
+
+  // Y axis — log scale with × labels
+  const ratioLabel=(e)=>{
+    const labels={
+      0:'1×', 1:'10×', 2:'100×', 3:'1,000×', 4:'10,000×', 5:'100,000×',
+      6:'1,000,000×', 7:'10M×', 8:'100M×',
+      9:'1B×', 10:'10B×', 11:'100B×',
+      12:'1,000B×', 13:'10,000B×', 14:'100,000B×', 15:'1,000,000B×'
+    };
+    return labels[e] || `10^${e}×`;
+  };
+  for(let e=yLoE;e<=yHiE;e++) {
+    const v=Math.pow(10,e);
+    const y=yFn(v);
+    if(!isFinite(y)||y<0||y>iH) continue;
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+    const tx=el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
+    tx.textContent=ratioLabel(e);
+    g.appendChild(tx);
+    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  }
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+
+  // Y axis title
+  const yTitle=el('text',{x:-72,y:iH/2,'text-anchor':'middle',class:'axis-label',
+    transform:`rotate(-90,-72,${iH/2})`});
+  yTitle.textContent='Chips needed to match demand';
+  g.appendChild(yTitle);
+
+  // Reference line at 1× (hardware matches demand)
+  const refY1=yFn(1);
+  if(isFinite(refY1)&&refY1>=0&&refY1<=iH) {
+    g.appendChild(el('line',{x1:0,y1:refY1,x2:iW,y2:refY1,
+      stroke:'rgba(255,255,255,0.3)','stroke-width':'1','stroke-dasharray':'6 4'}));
+    const rt=el('text',{x:iW-4,y:refY1-4,'text-anchor':'end',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(255,255,255,0.6)'});
+    rt.textContent='Hardware matches demand';
+    g.appendChild(rt);
+  }
+
+  // Bars
+  const barW=(iW/years.length)*0.6;
+  const tallestYear=years.reduce((a,b)=>ratioByYear[a]>ratioByYear[b]?a:b);
+
+  years.forEach((y,i)=>{
+    const ratio=ratioByYear[y];
+    if(!ratio) return;
+    const xCenter=xFn(i+0.5);
+    const barTop=yFn(ratio);
+    const barH=iH-barTop;
+    if(barH<1) return;
+    const rect=el('rect',{x:xCenter-barW/2,y:barTop,width:barW,height:barH,
+      fill:'#f0a500',opacity:'0.85',rx:'2'});
+    rect.addEventListener('mouseenter',ev=>showTT(ev,
+      `<div class="tt-title">${y}</div>
+      ${ttRow('Gap ratio',Math.round(ratio).toLocaleString()+'×')}
+      ${ttRow('Model compute',fmtFLOPTooltip(modelMaxByYear[y]))}
+      ${ttRow('Best chip',fmtFP16Tooltip(hwMaxByYear[y]))}`));
+    rect.addEventListener('mousemove',moveTT);
+    rect.addEventListener('mouseleave',hideTT);
+    g.appendChild(rect);
+
+    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=y;
+    g.appendChild(tx);
+
+    // Annotation on tallest bar
+    if(y===tallestYear) {
+      const fmt=ratio>=1e9?Math.round(ratio/1e9).toLocaleString()+'B×':
+                ratio>=1e6?Math.round(ratio/1e6).toLocaleString()+'M×':
+                ratio>=1e3?Math.round(ratio/1e3).toLocaleString()+'K×':Math.round(ratio).toLocaleString()+'×';
+      const at=el('text',{x:xCenter,y:barTop-8,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
+      at.textContent=`Today: frontier models need ${fmt} more compute`;
+      g.appendChild(at);
+    }
+  });
+
+  // Clear legend (not needed for bar chart)
+  const leg=document.getElementById('cross-legend');
+  if(leg) leg.innerHTML='';
+}
+
+function renderArmsRace() {
+  const container=document.getElementById('arms-race');
+  const allModels=AppState.data.models.filter(m=>m.flop>0&&m.date);
+  const allHW=AppState.data.hardware.filter(h=>h.fp16>0&&h.releaseDate);
+  if(!allModels.length||!allHW.length) return;
+
+  const allDates=[...allModels.map(m=>m.date),...allHW.map(h=>h.releaseDate)];
+  const minY=2012;
+  const maxY=Math.max(...allDates.map(d=>d.getFullYear()));
+
+  // Build rolling max per year from 2012
+  const modelYears={},hwYears={};
+  for(let y=minY;y<=maxY;y++) {
+    const mCut=new Date(y,11,31);
+    const mVals=allModels.filter(m=>m.date<=mCut).map(m=>m.flop);
+    const hVals=allHW.filter(h=>h.releaseDate<=mCut).map(h=>h.fp16);
+    modelYears[y]=mVals.length?Math.max(...mVals):null;
+    hwYears[y]=hVals.length?Math.max(...hVals):null;
+  }
+
+  const mSeries=Object.entries(modelYears).filter(([,v])=>v).map(([y,v])=>({year:+y,val:v}));
+  const hSeries=Object.entries(hwYears).filter(([,v])=>v).map(([y,v])=>({year:+y,val:v}));
+  if(!mSeries.length||!hSeries.length) return;
+
+  const {g,iW,iH}=makeSVG(container,{l:75,r:160,t:20,b:40});
+
+  const xFn=linScale(minY,maxY,0,iW);
+  const allMVals=mSeries.map(p=>p.val), allHVals=hSeries.map(p=>p.val);
+  const mMinF=Math.min(...allMVals), mMaxF=Math.max(...allMVals);
+  const hMinF=Math.min(...allHVals), hMaxF=Math.max(...allHVals);
+  const yFnM=logScale(mMinF*0.5,mMaxF*2,iH,0);
+  const yFnH=logScale(hMinF*0.5,hMaxF*2,iH,0);
+
+  // Grid
+  for(let y=minY;y<=maxY;y+=2) {
+    const x=xFn(y);
+    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+  }
+
+  // X axis
+  for(let y=minY;y<=maxY;y+=2) {
+    const x=xFn(y);
+    const tx=el('text',{x:x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
+    tx.textContent=y;
+    g.appendChild(tx);
+  }
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+
+  // Left Y axis (model FLOP) — amber, plain-English labels, step=2
+  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  const mLoE=Math.ceil(Math.log10(mMinF*0.5)), mHiE=Math.floor(Math.log10(mMaxF*2));
+  for(let e=mLoE;e<=mHiE;e+=2) {
+    const y=yFnM(Math.pow(10,e));
+    if(!isFinite(y)||y<0||y>iH) continue;
+    const lbl=flopLabel(e);
+    if(!lbl) continue;
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(240,165,0,0.06)','stroke-width':'0.5'}));
+    const tx=el('text',{x:-6,y:y+3,'text-anchor':'end',fill:'rgba(240,165,0,0.7)',
+      style:'font-family:DM Mono,monospace;font-size:9px'});
+    tx.textContent=lbl;
+    g.appendChild(tx);
+  }
+
+  // Right Y axis (hw FP16) — cyan, plain-English labels, step=2
+  g.appendChild(el('line',{x1:iW,y1:0,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  const hLoE=Math.ceil(Math.log10(hMinF*0.5)), hHiE=Math.floor(Math.log10(hMaxF*2));
+  for(let e=hLoE;e<=hHiE;e+=2) {
+    const y=yFnH(Math.pow(10,e));
+    if(!isFinite(y)||y<0||y>iH) continue;
+    const lbl=fp16Label(e);
+    if(!lbl) continue;
+    const tx=el('text',{x:iW+6,y:y+3,'text-anchor':'start',fill:'rgba(0,200,212,0.7)',
+      style:'font-family:DM Mono,monospace;font-size:9px'});
+    tx.textContent=lbl;
+    g.appendChild(tx);
+  }
+
+  // Model line (amber)
+  const mD=mSeries.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFnM(p.val).toFixed(1)}`).join(' ');
+  const mPath=el('path',{d:mD,stroke:'#f0a500','stroke-width':'2',fill:'none'});
+  g.appendChild(mPath);
+  animateLine(mPath);
+  mSeries.forEach(p=>{
+    const c=el('circle',{cx:xFn(p.year),cy:yFnM(p.val),r:4,fill:'#f0a500'});
+    c.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">Max Model FLOP</div>${ttRow('Year',p.year)}${ttRow('Compute',fmtFLOPTooltip(p.val))}`));
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',hideTT);
+    g.appendChild(c);
+  });
+
+  // HW line (cyan)
+  const hD=hSeries.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFnH(p.val).toFixed(1)}`).join(' ');
+  const hPath=el('path',{d:hD,stroke:'#00c8d4','stroke-width':'2',fill:'none'});
+  g.appendChild(hPath);
+  animateLine(hPath);
+  hSeries.forEach(p=>{
+    const c=el('circle',{cx:xFn(p.year),cy:yFnH(p.val),r:4,fill:'#00c8d4'});
+    c.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">Max HW FP16</div>${ttRow('Year',p.year)}${ttRow('Speed',fmtFP16Tooltip(p.val))}`));
+    c.addEventListener('mousemove',moveTT);
+    c.addEventListener('mouseleave',hideTT);
+    g.appendChild(c);
+  });
+
+  // Inline end-of-line labels in right margin
+  const mLast=mSeries[mSeries.length-1];
+  const hLast=hSeries[hSeries.length-1];
+  const mEndY=yFnM(mLast.val);
+  const hEndY=yFnH(hLast.val);
+  const mLbl=el('text',{x:iW+10,y:mEndY+4,'text-anchor':'start',fill:'rgba(240,165,0,0.9)',
+    style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
+  mLbl.textContent='Model demand';
+  g.appendChild(mLbl);
+  const hLbl=el('text',{x:iW+10,y:hEndY+4,'text-anchor':'start',fill:'rgba(0,200,212,0.9)',
+    style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
+  hLbl.textContent='Best chip';
+  g.appendChild(hLbl);
+  const hLbl2=el('text',{x:iW+10,y:hEndY+16,'text-anchor':'start',fill:'rgba(0,200,212,0.55)',
+    style:'font-family:DM Mono,monospace;font-size:8px'});
+  hLbl2.textContent='100 TFLOP/s';
+  g.appendChild(hLbl2);
+
+  // Landmark annotations
+  LANDMARKS.forEach(lm=>{
+    const m=AppState.data.models.find(md=>md.name.toLowerCase().includes(lm.name.toLowerCase())&&md.date&&md.date.getFullYear()>=minY);
+    if(!m||!m.flop) return;
+    const yr=m.date.getFullYear();
+    const x=xFn(yr);
+    const y=yFnM(m.flop);
+    if(!isFinite(x)||!isFinite(y)||y<0||y>iH) return;
+    g.appendChild(el('line',{x1:x,y1:y-20,x2:x,y2:y-6,
+      stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'3 2'}));
+    const lines=lm.label.split('\n');
+    lines.forEach((line,li)=>{
+      const tx=el('text',{x:x,y:y-24-li*11,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:8px;fill:rgba(240,165,0,0.75)'});
+      tx.textContent=line;
+      g.appendChild(tx);
+    });
+  });
+
+  // Gap bracket callout at rightmost year with data on both lines
+  const lastYearBoth=Math.min(mSeries[mSeries.length-1].year,hSeries[hSeries.length-1].year);
+  const mAtLast=mSeries.slice().reverse().find(p=>p.year<=lastYearBoth);
+  const hAtLast=hSeries.slice().reverse().find(p=>p.year<=lastYearBoth);
+  if(mAtLast&&hAtLast&&hAtLast.val>0&&mAtLast.val>0) {
+    const gx=xFn(lastYearBoth);
+    const gy1=yFnM(mAtLast.val);
+    const gy2=yFnH(hAtLast.val);
+    const topY=Math.min(gy1,gy2), botY=Math.max(gy1,gy2);
+    // Dashed white vertical bracket
+    g.appendChild(el('line',{x1:gx,y1:topY,x2:gx,y2:botY,
+      stroke:'rgba(255,255,255,0.4)','stroke-width':'1.5','stroke-dasharray':'4 3'}));
+    // Bracket end caps
+    g.appendChild(el('line',{x1:gx-4,y1:topY,x2:gx+4,y2:topY,stroke:'rgba(255,255,255,0.4)','stroke-width':'1'}));
+    g.appendChild(el('line',{x1:gx-4,y1:botY,x2:gx+4,y2:botY,stroke:'rgba(255,255,255,0.4)','stroke-width':'1'}));
+    // Single gap ratio label positioned at vertical midpoint, right of bracket
+    const ratio=mAtLast.val/hAtLast.val;
+    const ratioFmt=ratio>=1e9?Math.round(ratio/1e9).toLocaleString()+'B':
+                   ratio>=1e6?Math.round(ratio/1e6).toLocaleString()+'M':
+                   ratio>=1e3?Math.round(ratio/1e3).toLocaleString()+'K':Math.round(ratio).toLocaleString();
+    const midY=(topY+botY)/2;
+    const gt1=el('text',{x:iW+10,y:midY+4,'text-anchor':'start',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.75)'});
+    gt1.textContent=`~${ratioFmt}× gap`;
+    g.appendChild(gt1);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════
+function renderCurrentTab() {
+  switch(AppState.activeTab) {
+    case 'overview':  renderOverview(); break;
+    case 'compute':   renderComputeRace(); break;
+    case 'hardware':  renderHardwareEvolution(); break;
+    case 'orgs':      renderOrgLandscape(); break;
+    case 'cross':     renderCrossDataset(); break;
+  }
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabId));
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    if(p.id===`tab-${tabId}`) {
+      p.style.display='block';
+      requestAnimationFrame(()=>{
+        p.classList.add('active');
+        p.style.opacity='1';
+        p.style.transform='translateY(0)';
+      });
+    } else {
+      p.classList.remove('active');
+      p.style.display='none';
+    }
+  });
+  AppState.activeTab=tabId;
+  renderCurrentTab();
+}
+
+// ═══════════════════════════════════════════════
+//  CONTROLS WIRING
+// ═══════════════════════════════════════════════
+function wireControls() {
+  // Tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
+  });
+
+  // Theme toggle
+  document.getElementById('theme-btn').addEventListener('click',()=>{
+    const t=document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme',t==='dark'?'light':'dark');
+  });
+
+  // Trend toggle
+  document.getElementById('trend-toggle').addEventListener('click',function(){
+    AppState.filters.showTrend=!AppState.filters.showTrend;
+    this.classList.toggle('active',AppState.filters.showTrend);
+    this.textContent=AppState.filters.showTrend?'Hide':'Show';
+    renderComputeScatter();
+  });
+
+  // Hardware type filter buttons
+  document.querySelectorAll('.hw-filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=btn.dataset.hw;
+      hwFilter = (hwFilter===t&&t!=='all') ? 'all' : t;
+      document.querySelectorAll('.hw-filter-btn').forEach(b=>{
+        b.classList.toggle('active', b.dataset.hw===hwFilter || (hwFilter==='all'&&b.dataset.hw==='all'));
+      });
+      renderHardwareEvolution();
+    });
+  });
+
+  // ⓘ info icon tooltips
+  document.querySelectorAll('.info-icon').forEach(icon=>{
+    icon.addEventListener('mouseenter',ev=>{
+      showTT(ev,`<div style="font-family:var(--font-body);font-size:0.73rem;line-height:1.65;color:var(--text)">${icon.dataset.tip}</div>`);
+    });
+    icon.addEventListener('mousemove',moveTT);
+    icon.addEventListener('mouseleave',hideTT);
+  });
+
+  // Treemap reset
+  document.getElementById('treemap-reset').addEventListener('click',()=>{
+    AppState.filters.selectedOrg=null;
+    renderTreemap(); renderOrgBar();
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════
+async function loadCSV(path) {
+  const res=await fetch(path);
+  if(!res.ok) throw new Error(`Failed: ${path}`);
+  const text=await res.text();
+  return new Promise((resolve,reject)=>{
+    Papa.parse(text,{
+      header:true,
+      skipEmptyLines:true,
+      complete:r=>resolve(r.data),
+      error:reject
+    });
+  });
+}
+
+function processModels(rows) {
+  return rows.map(r=>({
+    name:         r['Model']||'',
+    date:         parseDate(r['Publication date']),
+    org:          r['Organization']||'Unknown',
+    flop:         parseNum(r['Training compute (FLOP)']),
+    domain:       getPrimaryDomain(r['Domain']),
+    params:       parseNum(r['Parameters']),
+    accessibility:r['Model accessibility']||'',
+    cost:         parseNum(r['Training compute cost (2023 USD)']),
+    country:      r['Country (of organization)']||'Other',
+    openWeights:  isOpenWeights(r),
+    frontier:     isFrontier(r),
+  })).filter(r=>r.name);
+}
+
+function processHardware(rows) {
+  return rows.map(r=>({
+    name:       r['Hardware name']||'',
+    mfr:        r['Manufacturer']||'Other',
+    type:       r['Type']||'Other',
+    releaseDate:parseDate(r['Release date']),
+    price:      parseNum(r['Release price (USD)']),
+    fp16:       parseNum(r['Tensor-FP16/BF16 performance (FLOP/s)']) || parseNum(r['FP16 (half precision) performance (FLOP/s)']),
+    mem:        parseNum(r['Memory (bytes)']),
+    memBW:      parseNum(r['Memory bandwidth (byte/s)']),
+    tdp:        parseNum(r['TDP (W)']),
+    effic:      parseNum(r['Energy efficiency']),
+    process:    parseNum(r['Process size (nm)']),
+  })).filter(r=>r.name);
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+async function init() {
+  try {
+    const [modelRows, hwRows] = await Promise.all([
+      loadCSV('./data/frontier_ai_models.csv'),
+      loadCSV('./data/ml_hardware.csv'),
+    ]);
+
+    const models = processModels(modelRows);
+    const hardware = processHardware(hwRows);
+
+    AppState.data.models = models;
+    AppState.data.hardware = hardware;
+    AppState.orgColors = buildOrgColors(models);
+
+    wireControls();
+    initScrubber();
+
+    // Domain filter auto-populated by renderDomainFilters to only domains with data
+    AppState.filters.domain = [];
+
+    // Initial render
+    renderOverview();
+
+    // Hide loading
+    const loading = document.getElementById('loading');
+    loading.classList.add('hidden');
+    setTimeout(()=>{ loading.style.display='none'; }, 500);
+
+  } catch(err) {
+    document.getElementById('loading').innerHTML=`
+      <div style="color:var(--danger);font-family:var(--font-mono);font-size:0.8rem;text-align:center;padding:40px">
+        <div style="font-size:2rem;margin-bottom:12px">✕</div>
+        <div>Failed to load data</div>
+        <div style="color:var(--muted);margin-top:8px;font-size:0.7rem">${err.message}</div>
+        <div style="color:var(--muted);margin-top:4px;font-size:0.65rem">Ensure CSVs are in ./data/ and served via HTTP</div>
+      </div>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

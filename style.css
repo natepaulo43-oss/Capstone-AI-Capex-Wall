@@ -1,0 +1,356 @@
+/* ================================================================
+   THE AI CAPEX WALL — Corporate Minimalist Design System
+   ================================================================
+   Palette: Deep navy backgrounds, white/light-grey text, cyan accent.
+   Typography: system sans-serif stack for crisp rendering.
+   Philosophy: Zero chart-junk. High data-ink ratio. C-Suite legible.
+   ================================================================ */
+
+/* ── CSS Custom Properties (Design Tokens) ───────────────────── */
+:root {
+  --bg-primary:    #0b0f1a;
+  --bg-sidebar:    #10152a;
+  --bg-card:       #161d35;
+  --bg-input:      #1c2440;
+  --text-primary:  #e8ecf4;
+  --text-secondary:#8892a8;
+  --text-muted:    #545e74;
+  --accent:        #00d4ff;
+  --accent-dim:    #007a99;
+  --accent-glow:   rgba(0, 212, 255, 0.15);
+  --danger:        #ff4d6a;
+  --grid-line:     rgba(136, 146, 168, 0.10);
+  --font-stack:    'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --radius:        6px;
+  --transition:    180ms ease;
+}
+
+/* ── Reset & Base ────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-stack);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App Grid Layout ─────────────────────────────────────────── */
+#app {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────────────── */
+#sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid rgba(255,255,255,0.04);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+
+.sidebar-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.sidebar-header .subtitle {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+
+.controls h2 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* ── Slider Control Groups ───────────────────────────────────── */
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider-value {
+  min-width: 72px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  padding: 0 2px;
+}
+
+/* ── Range Input Styling ─────────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 4px;
+  background: var(--bg-input);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-sidebar);
+  box-shadow: 0 0 8px var(--accent-glow);
+  transition: box-shadow var(--transition);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.35);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-sidebar);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* ── Sidebar Footer ──────────────────────────────────────────── */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.hw-note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.hw-note strong {
+  color: var(--text-secondary);
+}
+
+.methodology-note {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── MAIN CONTENT ────────────────────────────────────────────── */
+#main {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  overflow: hidden;
+}
+
+/* ── KPI Bar ─────────────────────────────────────────────────── */
+#kpi-bar {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.kpi {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 14px 22px;
+  min-width: 170px;
+}
+
+.kpi-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Chart Container ─────────────────────────────────────────── */
+#chart-container {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── D3 SVG Styling ──────────────────────────────────────────── */
+
+/* Axis lines and ticks */
+#chart-container .axis line,
+#chart-container .axis path {
+  stroke: var(--grid-line);
+  shape-rendering: crispEdges;
+}
+
+#chart-container .axis text {
+  fill: var(--text-secondary);
+  font-size: 11px;
+  font-family: var(--font-stack);
+}
+
+/* Gridlines — subtle horizontal rules only */
+#chart-container .grid line {
+  stroke: var(--grid-line);
+  stroke-dasharray: 2, 4;
+  shape-rendering: crispEdges;
+}
+
+#chart-container .grid path {
+  stroke: none;
+}
+
+/* Data points */
+.dot {
+  fill: var(--accent);
+  stroke: none;
+  opacity: 0.8;
+  transition: opacity var(--transition), r var(--transition);
+  cursor: pointer;
+}
+
+.dot:hover {
+  opacity: 1;
+}
+
+/* Axis labels */
+.axis-label {
+  fill: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font-stack);
+  font-weight: 600;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────── */
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: rgba(16, 21, 42, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  max-width: 300px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  z-index: 1000;
+}
+
+.tooltip.visible {
+  opacity: 1;
+}
+
+.tooltip .tt-model {
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.tooltip .tt-org {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.tooltip .tt-cost {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.tooltip .tt-detail {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+/* ── Loading State ───────────────────────────────────────────── */
+.loading-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Responsive: collapse sidebar on narrow screens ──────────── */
+@media (max-width: 860px) {
+  #app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  #sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 20px 16px;
+  }
+
+  #main {
+    padding: 16px;
+    min-height: 70vh;
+  }
+}
