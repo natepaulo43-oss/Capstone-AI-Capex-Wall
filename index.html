@@ -524,18 +524,85 @@ tr:hover td{background:var(--surface2)}
 .tm-cell.dimmed{filter:brightness(0.4)}
 .tm-name{
   font-family:var(--font-mono);
-  font-size:0.6rem;
   font-weight:500;
   color:#fff;
   text-shadow:0 1px 3px rgba(0,0,0,0.8);
   line-height:1.3;
-  word-break:break-word;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
 }
 .tm-count{
   font-family:var(--font-mono);
-  font-size:0.55rem;
   color:rgba(255,255,255,0.7);
-  margin-top:2px;
+  margin-top:1px;
+  white-space:nowrap;
+}
+
+/* ── TREEMAP NESTED ─────────────────────────────────── */
+.tm-country-group{
+  position:absolute;
+  overflow:hidden;
+  border-radius:3px;
+  box-sizing:border-box;
+}
+.tm-country-header{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 5px;
+  box-sizing:border-box;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.tm-country-name{
+  font-family:var(--font-mono);
+  font-size:0.58rem;
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,0.6);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.tm-country-total{
+  font-family:var(--font-mono);
+  font-size:0.55rem;
+  color:rgba(255,255,255,0.8);
+  white-space:nowrap;
+  margin-left:4px;
+}
+.tm-inner{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+}
+/* ── TREEMAP LEGEND ──────────────────────────────────── */
+#treemap-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px 12px;
+  padding:6px 2px 2px;
+}
+.tl-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  cursor:default;
+}
+.tl-swatch{
+  width:10px;
+  height:10px;
+  border-radius:2px;
+  flex-shrink:0;
+}
+.tl-label{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  color:var(--muted);
+  white-space:nowrap;
 }
 
 /* ── DONUT ───────────────────────────────────────────── */
@@ -772,6 +839,12 @@ tr:hover td{background:var(--surface2)}
       <div class="chart-area" id="domain-bar"></div>
       <div class="legend" id="domain-legend"></div>
     </div>
+    <div class="section-title">Compute Distribution by Domain</div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-title">How Much Compute Does Each Domain Use? <span class="info-icon" data-tip="Each violin shows the distribution of training compute across all models in that domain. Wider = more models at that compute level. The box shows Q1–Q3; the white line is the median.">ⓘ</span></div>
+      <div class="chart-insight">Language &amp; Multimodal models push the frontier; specialized domains cluster lower</div>
+      <div class="chart-area" id="compute-violin" style="height:300px"></div>
+    </div>
     <div class="section-title">The Rising Cost of Frontier AI</div>
     <div class="chart-card">
       <div class="chart-title">The Rising Cost of Staying Competitive <span class="info-icon" data-tip="The price tag of the most expensive model trained each year. Shows how quickly costs are escalating.">ⓘ</span></div>
@@ -797,9 +870,9 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="chart-grid full" style="margin-top:16px">
       <div class="chart-card">
-        <div class="chart-title">Hardware Investment Arms Race <span class="info-icon" data-tip="Launch price of new AI accelerators by manufacturer, grouped by year. Shows how rapidly chip prices have escalated as demand for AI compute exploded.">ⓘ</span></div>
-        <div class="chart-insight">Flagship chip prices have risen 10× in a decade — only the wealthiest labs can afford at scale</div>
-        <div class="chart-area" id="hw-price-bar"></div>
+        <div class="chart-title">Hardware Investment Arms Race <span class="info-icon" data-tip="Launch price of each manufacturer's flagship AI accelerator by year, log scale. Each dot is a chip release. Hover for details.">ⓘ</span></div>
+        <div class="chart-insight">Each GPU generation costs 3–10× more than the last — exponential on a log scale means straight lines</div>
+        <div class="chart-area tall" id="hw-price-bar"></div>
         <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">These are single-chip launch prices. Training a frontier model requires thousands of chips.</div>
         <div class="legend" id="hw-price-legend"></div>
       </div>
@@ -811,10 +884,11 @@ tr:hover td{background:var(--surface2)}
     <div class="section-title">Research Output by Organization</div>
     <div class="chart-grid">
       <div class="chart-card" style="grid-column:1/-1">
-        <div class="card-header"><div class="dot"></div>Model Count by Organization (colored by country)</div>
+        <div class="card-header"><div class="dot"></div>Model Count by Country &amp; Organization</div>
         <div id="treemap-container"></div>
+        <div id="treemap-legend"></div>
         <div class="controls-bar">
-          <span class="ctrl-label">Click org to filter</span>
+          <span class="ctrl-label">Click org to filter · grouped by country</span>
           <button class="ctrl-toggle" id="treemap-reset">Reset Filter</button>
         </div>
       </div>
@@ -921,8 +995,45 @@ const COUNTRY_COLORS = {
   'Germany':                  '#e879f9',
   'Israel':                   '#38bdf8',
   'UAE':                      '#fbbf24',
+  'Japan':                    '#fb923c',
+  'South Korea':              '#f472b6',
+  'Switzerland':              '#4ade80',
+  'Russia':                   '#f87171',
+  'India':                    '#c084fc',
+  'Australia':                '#67e8f9',
+  'Netherlands':              '#86efac',
   'Other':                    '#4b5568',
 };
+
+// Normalize territory/alternate names to canonical country key in COUNTRY_COLORS
+const COUNTRY_ALIASES = {
+  'Hong Kong':               'China',
+  'Hong Kong SAR':           'China',
+  'Macau':                   'China',
+  'United States':           'United States of America',
+  'USA':                     'United States of America',
+  'US':                      'United States of America',
+  'UK':                      'United Kingdom',
+  'Great Britain':           'United Kingdom',
+  'Korea':                   'South Korea',
+  'Republic of Korea':       'South Korea',
+  'United Arab Emirates':    'UAE',
+  'Emirates':                'UAE',
+};
+
+function normalizeCountry(country) {
+  if (!country || country === 'Other') return 'Other';
+  if (COUNTRY_ALIASES[country]) return COUNTRY_ALIASES[country];
+  for (const [alias, canonical] of Object.entries(COUNTRY_ALIASES)) {
+    if (country.toLowerCase().includes(alias.toLowerCase())) return canonical;
+  }
+  if (COUNTRY_COLORS[country] !== undefined) return country;
+  for (const key of Object.keys(COUNTRY_COLORS)) {
+    if (key === 'Other') continue;
+    if (country.toLowerCase().includes(key.toLowerCase())) return key;
+  }
+  return 'Other';
+}
 
 const ORG_PALETTE = [
   '#00c8d4','#f0a500','#a78bfa','#34d399','#fb923c',
@@ -1339,10 +1450,148 @@ function initScrubber() {
 // ═══════════════════════════════════════════════
 //  TAB 2 — COMPUTE SCATTER
 // ═══════════════════════════════════════════════
+//  VIOLIN CHART — Compute Distribution by Domain
+// ═══════════════════════════════════════════════
+function renderComputeViolin() {
+  const container = document.getElementById('compute-violin');
+  if (!container) return;
+
+  const models = applyDateFilter(AppState.data.models, 'date').filter(m => m.flop > 0 && m.domain);
+  if (models.length < 5) {
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">Not enough compute data</div>';
+    return;
+  }
+
+  // Group log10(flop) values by domain
+  const domainMap = {};
+  models.forEach(m => {
+    const d = m.domain || 'Other';
+    if (!domainMap[d]) domainMap[d] = [];
+    domainMap[d].push(Math.log10(m.flop));
+  });
+
+  // Helpers
+  function gauss(u) { return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI); }
+  function silverman(vals) {
+    const n = vals.length;
+    const mean = vals.reduce((s, v) => s + v, 0) / n;
+    const std = Math.sqrt(vals.reduce((s, v) => s + (v - mean) ** 2, 0) / Math.max(n - 1, 1));
+    return Math.max(1.06 * std * Math.pow(n, -0.2), 0.15);
+  }
+  function quantile(sorted, q) {
+    const pos = q * (sorted.length - 1);
+    const lo = Math.floor(pos), hi = Math.ceil(pos);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+  }
+
+  // Only keep domains with enough data; sort by median descending
+  const domains = Object.entries(domainMap)
+    .filter(([, v]) => v.length >= 4)
+    .map(([domain, vals]) => {
+      const sorted = [...vals].sort((a, b) => a - b);
+      return { domain, vals, sorted, med: quantile(sorted, 0.5) };
+    })
+    .sort((a, b) => b.med - a.med);
+
+  if (!domains.length) return;
+
+  const PAD = { l: 118, r: 24, t: 18, b: 44 };
+  const { g, iW, iH } = makeSVG(container, PAD);
+
+  const allVals = domains.flatMap(d => d.vals);
+  const xMin = Math.floor(Math.min(...allVals));
+  const xMax = Math.ceil(Math.max(...allVals));
+  const xFn = linScale(xMin, xMax, 0, iW);
+
+  const rowH = iH / domains.length;
+  const maxHalfW = rowH * 0.44;
+  const KDE_N = 90;
+
+  // X axis gridlines + ticks every 2 orders of magnitude
+  for (let e = xMin; e <= xMax; e++) {
+    const px = xFn(e);
+    g.appendChild(el('line', { x1: px, y1: 0, x2: px, y2: iH,
+      stroke: 'rgba(255,255,255,0.04)', 'stroke-width': '0.5' }));
+    if ((e - xMin) % 2 === 0) {
+      const tx = el('text', { x: px, y: iH + 14, 'text-anchor': 'middle', class: 'axis-tick' });
+      tx.textContent = `10^${e}`;
+      g.appendChild(tx);
+    }
+  }
+  g.appendChild(el('line', { x1: 0, y1: iH, x2: iW, y2: iH,
+    stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
+
+  // X axis label
+  const xl = el('text', { x: iW / 2, y: iH + 34, 'text-anchor': 'middle', class: 'axis-label' });
+  xl.textContent = 'Training Compute (FLOP, log scale)';
+  g.appendChild(xl);
+
+  // Draw each violin
+  domains.forEach(({ domain, vals, sorted }, i) => {
+    const cy = (i + 0.5) * rowH;
+    const color = DOMAIN_COLORS[domain] || DOMAIN_COLORS['Other'];
+    const bw = silverman(vals);
+    const q1 = quantile(sorted, 0.25), med = quantile(sorted, 0.5), q3 = quantile(sorted, 0.75);
+
+    // KDE over eval grid
+    const evalXs = Array.from({ length: KDE_N }, (_, k) => xMin + (xMax - xMin) * k / (KDE_N - 1));
+    const dens = evalXs.map(x => vals.reduce((s, v) => s + gauss((x - v) / bw), 0) / (vals.length * bw));
+    const maxD = Math.max(...dens, 1e-9);
+
+    // Violin path — top half (left→right), bottom half (right→left)
+    const pts = evalXs.map((x, k) => [xFn(x), dens[k] / maxD * maxHalfW]);
+    const pathD =
+      pts.map((p, k) => `${k === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${(cy - p[1]).toFixed(1)}`).join(' ') + ' ' +
+      [...pts].reverse().map((p, k) => `${k === 0 ? 'L' : 'L'}${p[0].toFixed(1)},${(cy + p[1]).toFixed(1)}`).join(' ') + ' Z';
+
+    g.appendChild(el('path', { d: pathD,
+      fill: color + '33', stroke: color, 'stroke-width': '1.5', 'stroke-linejoin': 'round' }));
+
+    // IQR box
+    const boxH = Math.max(rowH * 0.14, 4);
+    const boxX = xFn(q1), boxW = Math.max(xFn(q3) - xFn(q1), 3);
+    g.appendChild(el('rect', { x: boxX, y: cy - boxH / 2, width: boxW, height: boxH,
+      fill: color + 'aa', stroke: color, 'stroke-width': '1', rx: '1' }));
+
+    // Median indicator (white tick)
+    const mx = xFn(med);
+    g.appendChild(el('line', { x1: mx, y1: cy - boxH / 2 - 1, x2: mx, y2: cy + boxH / 2 + 1,
+      stroke: '#fff', 'stroke-width': '2', 'stroke-linecap': 'round' }));
+
+    // Domain label (Y axis)
+    const lbl = el('text', { x: -10, y: cy - 4, 'text-anchor': 'end', class: 'axis-tick' });
+    lbl.style.fill = color;
+    lbl.style.fontWeight = '600';
+    lbl.textContent = domain;
+    g.appendChild(lbl);
+
+    // n= sub-label
+    const nlbl = el('text', { x: -10, y: cy + 9, 'text-anchor': 'end', class: 'axis-tick' });
+    nlbl.style.fontSize = '8px';
+    nlbl.style.fill = 'rgba(255,255,255,0.4)';
+    nlbl.textContent = `n=${vals.length}`;
+    g.appendChild(nlbl);
+
+    // Invisible hover row for tooltip
+    const overlay = el('rect', { x: 0, y: cy - rowH / 2, width: iW, height: rowH, fill: 'transparent', cursor: 'crosshair' });
+    overlay.addEventListener('mouseenter', ev => showTT(ev,
+      `<div class="tt-title">${domain}</div>
+       ${ttRow('Models with compute data', vals.length)}
+       ${ttRow('Median', `10^${med.toFixed(1)} FLOP`)}
+       ${ttRow('IQR (Q1–Q3)', `10^${q1.toFixed(1)} – 10^${q3.toFixed(1)}`)}
+       ${ttRow('Range', `10^${sorted[0].toFixed(1)} – 10^${sorted[sorted.length - 1].toFixed(1)} FLOP`)}`));
+    overlay.addEventListener('mousemove', moveTT);
+    overlay.addEventListener('mouseleave', hideTT);
+    g.appendChild(overlay);
+  });
+}
+
+// ═══════════════════════════════════════════════
 function renderComputeRace() {
   renderComputeScatter();
   renderDomainBar();
   renderDomainFilters();
+  renderComputeViolin();
   renderCostChart();
 }
 
@@ -1733,79 +1982,288 @@ function renderHWLine() {
 
 function renderHWPriceBar() {
   const container = document.getElementById('hw-price-bar');
-  if(!container) return;
-  const data = getFilteredHW().filter(h=>h.price>0&&h.releaseDate);
-  if(!data.length) {
-    container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No price data available</div>';
+  if (!container) return;
+  const data = getFilteredHW().filter(h => h.price > 0 && h.releaseDate);
+  if (!data.length) {
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No price data available</div>';
     return;
   }
 
-  const yearMin=2015, yearMax=Math.max(2025,new Date().getFullYear());
-  const GROUPS=['NVIDIA','Google','Others'];
-  const GC={'NVIDIA':'#f0a500','Google':'#00c8d4','Others':'#8892a4'};
-
-  const byYear={};
-  for(let y=yearMin;y<=yearMax;y++) byYear[y]={'NVIDIA':[],'Google':[],'Others':[]};
-  data.forEach(h=>{
-    if(!h.releaseDate||!h.price) return;
-    const y=h.releaseDate.getFullYear();
-    if(y<yearMin||y>yearMax) return;
-    const g=h.mfr==='NVIDIA'?'NVIDIA':h.mfr==='Google'?'Google':'Others';
-    byYear[y][g].push({price:h.price,name:h.name});
+  // Highest-priced chip per manufacturer per year
+  const mfrMap = {};
+  data.forEach(h => {
+    const yr = h.releaseDate.getFullYear();
+    const mfr = h.mfr || 'Other';
+    if (!mfrMap[mfr]) mfrMap[mfr] = {};
+    if (!mfrMap[mfr][yr] || h.price > mfrMap[mfr][yr].price) {
+      mfrMap[mfr][yr] = { price: h.price, name: h.name, year: yr };
+    }
   });
 
-  const years=Object.keys(byYear).map(Number).filter(y=>GROUPS.some(g=>byYear[y][g].length>0));
-  if(!years.length) return;
+  // Top 6 manufacturers by peak price
+  const mfrs = Object.entries(mfrMap)
+    .sort((a, b) => Math.max(...Object.values(b[1]).map(v => v.price)) - Math.max(...Object.values(a[1]).map(v => v.price)))
+    .slice(0, 6);
+  if (!mfrs.length) return;
 
-  const allPrices=data.map(h=>h.price);
-  const maxPrice=Math.max(...allPrices);
+  const allPts = mfrs.flatMap(([mfr, ym]) => Object.values(ym).map(v => ({ ...v, mfr })));
+  const allYears = allPts.map(p => p.year);
+  const yearMin = Math.min(...allYears), yearMax = Math.max(...allYears);
+  const allPrices = allPts.map(p => p.price);
+  const minPrice = Math.min(...allPrices);
+  const maxPrice = Math.max(...allPrices);
+  // Hug the data: y-axis spans only the actual price range with a small visual buffer.
+  // This makes the slope of the line steeper and the growth more obvious.
+  const pMin = minPrice * 0.7;
+  const pMax = maxPrice * 1.6;
 
-  const {g,iW,iH}=makeSVG(container,{l:75,r:16,t:20,b:44});
-  const xFn=linScale(0,years.length,0,iW);
-  const yFn=linScale(0,maxPrice*1.15,iH,0);
-  const slotW=iW/years.length;
-  const gBarW=Math.max(4,slotW*0.65/GROUPS.length);
-  const totalW=gBarW*GROUPS.length+(gBarW*0.2*(GROUPS.length-1));
+  const { g, iW, iH } = makeSVG(container, { l: 78, r: 72, t: 28, b: 48 });
+  // No left/right padding — first dot sits flush against the y-axis, last dot against the right edge
+  const xFn = linScale(yearMin, yearMax, 0, iW);
+  const yFn = logScale(pMin, pMax, iH, 0);
 
-  // Y axis
-  const maxK=Math.ceil(maxPrice/10000)*10;
-  const rawTicks=[0,5000,10000,20000,30000,40000,50000,75000,100000].filter(v=>v<=maxPrice*1.15);
-  drawYAxisLin(g,rawTicks.slice().reverse(),yFn,v=>{
-    if(v>=1000) return '$'+(v/1000).toFixed(0)+'K';
-    return '$'+v;
-  });
-  rawTicks.forEach(v=>{
-    g.appendChild(el('line',{x1:0,y1:yFn(v),x2:iW,y2:yFn(v),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-  });
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  // Axes
+  g.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: iH, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
+  g.appendChild(el('line', { x1: 0, y1: iH, x2: iW, y2: iH, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
 
-  years.forEach((yr,i)=>{
-    const xCenter=xFn(i+0.5);
-    const startX=xCenter-totalW/2;
-    GROUPS.forEach((grp,gi)=>{
-      const entries=byYear[yr][grp];
-      if(!entries.length) return;
-      const maxP=Math.max(...entries.map(e=>e.price));
-      const bestChip=entries.find(e=>e.price===maxP);
-      const x=startX+gi*(gBarW+(gBarW*0.2));
-      const barH=iH-yFn(maxP);
-      if(barH<1) return;
-      const rect=el('rect',{x,y:yFn(maxP),width:gBarW,height:barH,fill:GC[grp],opacity:'0.8',rx:'1'});
-      rect.addEventListener('mouseenter',ev=>showTT(ev,
-        `<div class="tt-title">${bestChip?bestChip.name:grp+' '+yr}</div>
-        ${ttRow('Year',yr)}${ttRow('Group',grp)}${ttRow('Price','$'+maxP.toLocaleString())}`));
-      rect.addEventListener('mousemove',moveTT);
-      rect.addEventListener('mouseleave',hideTT);
-      g.appendChild(rect);
+  // Y axis: log ticks at every $X, $3X, $5X, $X*10 within the actual data range so the
+  // axis shows ~5–7 well-spaced labels regardless of how tight the data range is.
+  const fmtPrice = v => v >= 1000 ? `$${(v / 1000) % 1 === 0 ? v / 1000 : (v / 1000).toFixed(1)}K` : `$${v}`;
+  const priceRefs = [];
+  const expLo = Math.floor(Math.log10(pMin));
+  const expHi = Math.ceil(Math.log10(pMax));
+  for (let exp = expLo; exp <= expHi; exp++) {
+    [1, 2, 3, 5].forEach(m => {
+      const v = m * Math.pow(10, exp);
+      if (v >= pMin && v <= pMax) priceRefs.push({ v, major: m === 1 });
     });
-    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=yr;
+  }
+  priceRefs.forEach(({ v, major }) => {
+    const py = yFn(v);
+    if (!isFinite(py) || py < -2 || py > iH + 2) return;
+    g.appendChild(el('line', { x1: 0, y1: py, x2: iW, y2: py,
+      stroke: major ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.04)', 'stroke-width': '0.5' }));
+    const tx = el('text', { x: -6, y: py + 3, 'text-anchor': 'end', class: 'axis-tick' });
+    tx.style.opacity = major ? '1' : '0.55';
+    tx.textContent = fmtPrice(v);
     g.appendChild(tx);
+    g.appendChild(el('line', { x1: -3, y1: py, x2: 0, y2: py, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
   });
+
+  // X axis: year tick per year with light gridline
+  for (let yr = yearMin; yr <= yearMax; yr++) {
+    const x = xFn(yr);
+    g.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: iH, stroke: 'rgba(255,255,255,0.03)', 'stroke-width': '0.5' }));
+    const tx = el('text', { x, y: iH + 15, 'text-anchor': 'middle', class: 'axis-tick' });
+    tx.textContent = yr;
+    g.appendChild(tx);
+  }
+
+  // Y axis label
+  const ylbl = el('text', { x: -(iH / 2), y: -62, 'text-anchor': 'middle', class: 'axis-label', transform: 'rotate(-90)' });
+  ylbl.textContent = 'Launch Price (USD, log scale)';
+  g.appendChild(ylbl);
+
+  // Clean chip name: strip redundant manufacturer + product-line prefixes so labels stay short
+  function cleanChip(name) {
+    let n = name
+      .replace(/^(nvidia|google|amd|intel|amazon\s*aws|amazon|huawei|cambricon|apple|meta|moore\s*threads|graphcore)\s+/i, '')
+      .replace(/^(radeon\s+instinct|radeon|geforce|quadro|titan|instinct)\s+/i, '')
+      .trim();
+    return n.length > 14 ? n.slice(0, 13) + '…' : n;
+  }
+
+  // Estimate SVG text pixel width (monospace ~5.5px per char at 8px font)
+  function estW(str) { return str.length * 5.5 + 6; }
+
+  // Collision resolver — dir='up' pushes upper labels up (used for labels above dots);
+  // dir='down' pushes lower labels down (used for labels placed below their dots).
+  function resolveY(labels, minGap, bounds, dir = 'up') {
+    labels.sort((a, b) => a.y - b.y);
+    for (let pass = 0; pass < 30; pass++) {
+      let moved = false;
+      for (let i = 1; i < labels.length; i++) {
+        const gap = labels[i].y - labels[i - 1].y;
+        if (gap < minGap) {
+          if (dir === 'up') labels[i - 1].y -= (minGap - gap);
+          else              labels[i].y     += (minGap - gap);
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+    labels.forEach(lb => { lb.y = Math.max(bounds[0], Math.min(bounds[1], lb.y)); });
+  }
+
+  // Draw manufacturers — non-NVIDIA first so NVIDIA renders on top
+  const sorted = [...mfrs].sort(([a]) => a === 'NVIDIA' ? 1 : -1);
+
+  // Pass 1: areas + lines (background layers only)
+  const aboveLabels    = [];  // NVIDIA chip names — placed above their dot
+  const belowLabels    = [];  // non-NVIDIA chip names — placed below their dot to avoid clashes
+  const endLabelSpecs  = [];  // manufacturer end-of-line names
+  const dotSpecs       = [];  // all dots, drawn last so always on top
+
+  sorted.forEach(([mfr, ym]) => {
+    const color = HW_COLORS[mfr] || HW_COLORS['Other'];
+    const isNV = mfr === 'NVIDIA';
+    const pts = Object.values(ym).sort((a, b) => a.year - b.year);
+
+    // NVIDIA subtle area fill
+    if (isNV && pts.length >= 2) {
+      const areaD = `M${xFn(pts[0].year).toFixed(1)},${iH} ` +
+        pts.map(p => `L${xFn(p.year).toFixed(1)},${yFn(p.price).toFixed(1)}`).join(' ') +
+        ` L${xFn(pts[pts.length-1].year).toFixed(1)},${iH} Z`;
+      g.appendChild(el('path', { d: areaD, fill: color + '12', stroke: 'none' }));
+    }
+
+    // Trend line
+    if (pts.length >= 2) {
+      const lineD = pts.map((p, i) => `${i===0?'M':'L'}${xFn(p.year).toFixed(1)},${yFn(p.price).toFixed(1)}`).join(' ');
+      g.appendChild(el('path', { d: lineD,
+        stroke: color, 'stroke-width': isNV ? '2.5' : '1.8', fill: 'none',
+        'stroke-linejoin': 'round', 'stroke-linecap': 'round',
+        opacity: isNV ? '0.9' : '0.65',
+        'stroke-dasharray': isNV ? 'none' : '5 3'
+      }));
+    }
+
+    pts.forEach(p => {
+      const x = xFn(p.year), y = yFn(p.price);
+      if (!isFinite(x) || !isFinite(y)) return;
+      // Collect dots — drawn in Pass 2, before labels, so labels render on top
+      dotSpecs.push({ x, y, r: isNV ? 5.5 : 4, color, name: p.name, year: p.year, mfr, price: p.price });
+      // Label every dot. NVIDIA labels go above the dot (where the eye expects them);
+      // every other manufacturer's labels go below so they can't collide with NVIDIA's.
+      const text = cleanChip(p.name);
+      if (isNV) aboveLabels.push({ dotX: x, dotY: y, y: y - 20, text, color, isNV: true });
+      else      belowLabels.push({ dotX: x, dotY: y, y: y + 18, text, color, isNV: false });
+    });
+
+    // Queue end-of-line manufacturer label
+    const last = pts[pts.length - 1];
+    if (last) {
+      const lx = xFn(last.year), ly = yFn(last.price);
+      if (isFinite(lx) && isFinite(ly))
+        endLabelSpecs.push({ x: lx, dotY: ly, y: ly, text: mfr, color, isNV });
+    }
+
+  });
+
+  // Pass 2: draw all dots before labels so label text renders on top of dots
+  dotSpecs.forEach(ds => {
+    const dot = el('circle', { cx: ds.x, cy: ds.y, r: ds.r,
+      fill: ds.color, stroke: 'var(--bg)', 'stroke-width': '1.5' });
+    dot.addEventListener('mouseenter', ev => showTT(ev,
+      `<div class="tt-title">${ds.name}</div>
+       ${ttRow('Year', ds.year)}${ttRow('Manufacturer', ds.mfr)}${ttRow('Launch price', '$' + ds.price.toLocaleString())}`));
+    dot.addEventListener('mousemove', moveTT);
+    dot.addEventListener('mouseleave', hideTT);
+    g.appendChild(dot);
+  });
+
+  // Pass 3: resolve + draw chip labels. Above-labels resolve upward, below-labels downward.
+  // Labels are pointer-events:none so dot tooltips stay interactive.
+  resolveY(aboveLabels, 14, [10, iH - 4], 'up');
+  resolveY(belowLabels, 14, [10, iH - 4], 'down');
+
+  // Push labels past any *other* dots they would cover. The label bg occupies
+  // [bgX, bgX+w+4] horizontally and [y-9, y+2] vertically; if any non-self dot
+  // sits inside that rect, slide the label further from its dot until clear.
+  function clearDotOverlap(lb, naturalOffset) {
+    const w = estW(lb.text);
+    const halfBg = w / 2 + 4;
+    const dirSign = naturalOffset < 0 ? -1 : 1;
+    for (let i = 0; i < 12; i++) {
+      let hit = false;
+      for (const d of dotSpecs) {
+        if (d.x === lb.dotX && d.y === lb.dotY) continue; // skip own dot
+        if (Math.abs(d.x - lb.dotX) > halfBg + d.r + 2) continue;
+        const top = lb.y - 10, bot = lb.y + 3;
+        if (d.y + d.r >= top && d.y - d.r <= bot) {
+          // Move label by enough to clear the offending dot
+          lb.y = dirSign > 0 ? d.y + d.r + 12 : d.y - d.r - 12;
+          hit = true;
+          break;
+        }
+      }
+      if (!hit) break;
+    }
+    // Re-clamp to plot bounds
+    lb.y = Math.max(10, Math.min(iH - 4, lb.y));
+  }
+  aboveLabels.forEach(lb => clearDotOverlap(lb, -20));
+  belowLabels.forEach(lb => clearDotOverlap(lb,  18));
+  function drawChipLabel(lb, naturalOffset) {
+    const w = estW(lb.text);
+    // Anchor based on horizontal position so labels don't collide with the y-axis (left)
+    // or run off the right edge of the plot.
+    let anchor = 'middle';
+    let tx = lb.dotX;
+    if (lb.dotX - w / 2 < 2) { anchor = 'start'; tx = lb.dotX - 2; }
+    else if (lb.dotX + w / 2 > iW - 2) { anchor = 'end'; tx = lb.dotX + 2; }
+    const bgX = anchor === 'start' ? tx - 2
+              : anchor === 'end'   ? tx - w - 2
+              :                      tx - w / 2 - 2;
+    // Leader line when label was pushed away from its natural offset (above or below the dot)
+    const naturalY = lb.dotY + naturalOffset;
+    if (Math.abs(lb.y - naturalY) > 2) {
+      const ly1 = naturalOffset < 0 ? lb.dotY - 8 : lb.dotY + 8;
+      const ly2 = naturalOffset < 0 ? lb.y + 2     : lb.y - 2;
+      const leader = el('line', { x1: lb.dotX, y1: ly1, x2: lb.dotX, y2: ly2,
+        stroke: lb.color, 'stroke-width': '0.7', opacity: '0.45', 'stroke-dasharray': '2 3' });
+      leader.style.pointerEvents = 'none';
+      g.appendChild(leader);
+    }
+    const bg = el('rect', { x: bgX, y: lb.y - 9, width: w + 4, height: 11,
+      fill: 'var(--bg)', opacity: '0.9', rx: '2' });
+    bg.style.pointerEvents = 'none';
+    g.appendChild(bg);
+    const txt = el('text', { x: tx, y: lb.y, 'text-anchor': anchor, class: 'axis-tick' });
+    txt.style.fill = lb.color;
+    txt.style.fontSize = lb.isNV ? '8px' : '7.5px';
+    txt.style.fontWeight = lb.isNV ? '600' : '500';
+    txt.style.pointerEvents = 'none';
+    txt.textContent = lb.text;
+    g.appendChild(txt);
+  }
+  aboveLabels.forEach(lb => drawChipLabel(lb, -20));
+  belowLabels.forEach(lb => drawChipLabel(lb,  18));
+
+  // Pass 4: resolve + draw end-of-line manufacturer labels — offset further from the dot
+  resolveY(endLabelSpecs, 14, [8, iH - 4]);
+  endLabelSpecs.forEach(lb => {
+    const lx = lb.x + 14;
+    const w = estW(lb.text);
+    // Leader line from dot to label when vertical push displaced it
+    if (Math.abs(lb.y - lb.dotY) > 2) {
+      const leader = el('line', { x1: lb.x + 6, y1: lb.dotY, x2: lx - 2, y2: lb.y,
+        stroke: lb.color, 'stroke-width': '0.7', opacity: '0.4' });
+      leader.style.pointerEvents = 'none';
+      g.appendChild(leader);
+    }
+    const bg = el('rect', { x: lx - 3, y: lb.y - 9, width: w + 4, height: 12,
+      fill: 'var(--bg)', opacity: '0.9', rx: '2' });
+    bg.style.pointerEvents = 'none';
+    g.appendChild(bg);
+    const txt = el('text', { x: lx, y: lb.y, 'text-anchor': 'start', class: 'axis-tick' });
+    txt.style.fill = lb.color;
+    txt.style.fontSize = '8.5px';
+    txt.style.fontWeight = lb.isNV ? '700' : '500';
+    txt.style.pointerEvents = 'none';
+    txt.textContent = lb.text;
+    g.appendChild(txt);
+  });
+
 
   // Legend
-  const leg=document.getElementById('hw-price-legend');
-  if(leg) leg.innerHTML=GROUPS.map(g=>`<div class="legend-item"><div class="legend-swatch" style="background:${GC[g]}"></div>${g}</div>`).join('');
+  const leg = document.getElementById('hw-price-legend');
+  if (leg) {
+    leg.innerHTML = mfrs.map(([mfr]) => {
+      const color = HW_COLORS[mfr] || HW_COLORS['Other'];
+      return `<div class="legend-item"><div class="legend-swatch" style="background:${color}"></div>${mfr}</div>`;
+    }).join('');
+  }
 }
 
 function renderTDPPerf() {
@@ -2044,59 +2502,142 @@ function renderNarrowingField() {
   }
 }
 
+function tmCellHTML(label, count, w, h) {
+  if (w < 14 || h < 10) return '';
+  const fs = Math.min(Math.max(Math.min(w / 5.5, h / 3.2), 6), 11);
+  const maxChars = Math.max(Math.floor(w / (fs * 0.58)), 2);
+  const text = label.length <= maxChars ? label : label.slice(0, maxChars - 1) + '…';
+  const showCount = h >= fs * 2.8;
+  return `<div class="tm-name" style="font-size:${fs.toFixed(1)}px">${text}</div>`
+    + (showCount ? `<div class="tm-count" style="font-size:${(fs * 0.85).toFixed(1)}px">${count}</div>` : '');
+}
+
 function renderTreemap() {
-  const container=document.getElementById('treemap-container');
-  const models=applyDateFilter(AppState.data.models,'date');
-  const orgCounts={}, orgCountry={};
-  models.forEach(m=>{
-    orgCounts[m.org]=(orgCounts[m.org]||0)+1;
-    orgCountry[m.org]=m.country;
+  const container = document.getElementById('treemap-container');
+  const models = applyDateFilter(AppState.data.models, 'date');
+
+  // Group models: normalizedCountry → { org → count }
+  const countryMap = {};
+  models.forEach(m => {
+    const c = normalizeCountry(m.country);
+    if (!countryMap[c]) countryMap[c] = {};
+    countryMap[c][m.org] = (countryMap[c][m.org] || 0) + 1;
   });
 
-  const items=Object.entries(orgCounts).map(([org,count])=>({org,count,country:orgCountry[org]||'Other'}))
-    .sort((a,b)=>b.count-a.count).slice(0,30);
+  const countryItems = Object.entries(countryMap)
+    .map(([country, orgs]) => ({
+      country,
+      orgs,
+      total: Object.values(orgs).reduce((s, n) => s + n, 0),
+      value: Object.values(orgs).reduce((s, n) => s + n, 0),
+    }))
+    .sort((a, b) => b.total - a.total);
 
-  const W=container.offsetWidth||600, H=container.offsetHeight||340;
-  const rects=squarify(items.map(d=>({...d,value:d.count})),{x:0,y:0,w:W,h:H});
+  const W = container.offsetWidth || 600;
+  const H = container.offsetHeight || 340;
+  const GAP = 3;
+  const HEADER_H = 18;
+  const ORG_ALPHAS = ['ee', 'cc', 'aa', '88', '77', '66', '55', '44'];
 
-  container.querySelectorAll('.tm-cell').forEach(el=>el.remove());
+  container.querySelectorAll('.tm-country-group,.tm-cell').forEach(el => el.remove());
 
-  rects.forEach(r=>{
-    const div=document.createElement('div');
-    div.className='tm-cell';
-    div.style.left=r.x+'px'; div.style.top=r.y+'px';
-    div.style.width=Math.max(r.w-1,0)+'px'; div.style.height=Math.max(r.h-1,0)+'px';
-    const baseColor=getCountryColor(r.country);
-    div.style.background=baseColor+'cc';
-    if(AppState.filters.selectedOrg&&AppState.filters.selectedOrg!==r.org) div.classList.add('dimmed');
-    if(r.w>40&&r.h>24) {
-      div.innerHTML=`<div class="tm-name">${r.org}</div><div class="tm-count">${r.count}</div>`;
-    } else if(r.w>20&&r.h>14) {
-      div.innerHTML=`<div class="tm-name" style="font-size:0.5rem">${r.org.slice(0,12)}</div>`;
+  const countryRects = squarify(countryItems, { x: 0, y: 0, w: W, h: H });
+
+  countryRects.forEach(cr => {
+    const baseColor = COUNTRY_COLORS[cr.country] || COUNTRY_COLORS['Other'];
+    const gw = Math.max(cr.w - GAP * 2, 0);
+    const gh = Math.max(cr.h - GAP * 2, 0);
+    const showHeader = gh > HEADER_H + 8;
+    const innerH = showHeader ? gh - HEADER_H : gh;
+
+    // Country group container
+    const group = document.createElement('div');
+    group.className = 'tm-country-group';
+    group.style.left   = (cr.x + GAP) + 'px';
+    group.style.top    = (cr.y + GAP) + 'px';
+    group.style.width  = gw + 'px';
+    group.style.height = gh + 'px';
+    group.style.border = `2px solid ${baseColor}`;
+
+    // Country header strip
+    if (showHeader) {
+      const hdr = document.createElement('div');
+      hdr.className = 'tm-country-header';
+      hdr.style.background = baseColor;
+      hdr.style.height = HEADER_H + 'px';
+      if (gw > 28) {
+        const hfs = Math.min(Math.max(Math.floor(gw / 16), 6), 9);
+        const maxHdrChars = Math.max(Math.floor((gw - 28) / (hfs * 0.58)), 2);
+        const hdrLabel = cr.country.length <= maxHdrChars ? cr.country : cr.country.slice(0, maxHdrChars - 1) + '…';
+        hdr.innerHTML = `<span class="tm-country-name" style="font-size:${hfs}px">${hdrLabel}</span><span class="tm-country-total" style="font-size:${hfs}px">${cr.total}</span>`;
+      }
+      group.appendChild(hdr);
     }
-    div.addEventListener('click',()=>{
-      if(AppState.filters.selectedOrg===r.org) AppState.filters.selectedOrg=null;
-      else AppState.filters.selectedOrg=r.org;
-      renderTreemap();
-      renderOrgBar();
-    });
-    div.addEventListener('mouseenter',ev=>{
-      showTT(ev,`<div class="tt-title">${r.org}</div>
-        ${ttRow('Models',r.count)}
-        ${ttRow('Country',r.country)}`);
-    });
-    div.addEventListener('mousemove',moveTT);
-    div.addEventListener('mouseleave',hideTT);
-    container.appendChild(div);
+
+    // Inner area for org sub-tiles
+    const inner = document.createElement('div');
+    inner.className = 'tm-inner';
+    inner.style.height = innerH + 'px';
+    group.appendChild(inner);
+
+    // Layout org sub-tiles within inner area
+    const orgItems = Object.entries(cr.orgs)
+      .map(([org, count]) => ({ org, count, value: count }))
+      .sort((a, b) => b.count - a.count);
+
+    if (orgItems.length && gw > 2 && innerH > 2) {
+      const orgRects = squarify(orgItems, { x: 0, y: 0, w: gw, h: innerH });
+      orgRects.forEach((or, idx) => {
+        const alpha = ORG_ALPHAS[Math.min(idx, ORG_ALPHAS.length - 1)];
+        const cell = document.createElement('div');
+        cell.className = 'tm-cell';
+        cell.style.left   = or.x + 'px';
+        cell.style.top    = or.y + 'px';
+        cell.style.width  = Math.max(or.w - 1, 0) + 'px';
+        cell.style.height = Math.max(or.h - 1, 0) + 'px';
+        cell.style.background = baseColor + alpha;
+
+        if (AppState.filters.selectedOrg && AppState.filters.selectedOrg !== or.org) {
+          cell.classList.add('dimmed');
+        }
+        cell.innerHTML = tmCellHTML(or.org, or.count, or.w, or.h);
+        cell.addEventListener('click', e => {
+          e.stopPropagation();
+          AppState.filters.selectedOrg = AppState.filters.selectedOrg === or.org ? null : or.org;
+          renderTreemap();
+          renderOrgBar();
+        });
+        cell.addEventListener('mouseenter', ev => {
+          showTT(ev, `<div class="tt-title">${or.org}</div>
+            ${ttRow('Models', or.count)}
+            ${ttRow('Country', cr.country)}`);
+        });
+        cell.addEventListener('mousemove', moveTT);
+        cell.addEventListener('mouseleave', hideTT);
+        inner.appendChild(cell);
+      });
+    }
+
+    container.appendChild(group);
   });
+
+  renderTreemapLegend(countryItems);
+}
+
+function renderTreemapLegend(countryItems) {
+  const legend = document.getElementById('treemap-legend');
+  if (!legend) return;
+  legend.innerHTML = countryItems.map(c => {
+    const color = COUNTRY_COLORS[c.country] || COUNTRY_COLORS['Other'];
+    return `<div class="tl-item">
+      <div class="tl-swatch" style="background:${color}"></div>
+      <span class="tl-label">${c.country} (${c.total})</span>
+    </div>`;
+  }).join('');
 }
 
 function getCountryColor(country) {
-  if(!country) return COUNTRY_COLORS['Other'];
-  for(const[k,v] of Object.entries(COUNTRY_COLORS)) {
-    if(country.toLowerCase().includes(k.toLowerCase().slice(0,6))) return v;
-  }
-  return COUNTRY_COLORS['Other'];
+  return COUNTRY_COLORS[normalizeCountry(country)] || COUNTRY_COLORS['Other'];
 }
 
 function squarify(items,rect) {
@@ -2182,10 +2723,23 @@ function renderOrgBar() {
     g.appendChild(tx);
   }
 
+  // Build org→country mapping so bar colors match the treemap country colors
+  const orgCountry={};
+  models.forEach(m=>{
+    if(!orgCountry[m.org]) orgCountry[m.org]={};
+    const c=normalizeCountry(m.country);
+    orgCountry[m.org][c]=(orgCountry[m.org][c]||0)+1;
+  });
+  const orgToCountryColor={};
+  Object.entries(orgCountry).forEach(([org,cMap])=>{
+    const top=Object.entries(cMap).sort((a,b)=>b[1]-a[1])[0];
+    orgToCountryColor[org]=COUNTRY_COLORS[top[0]]||COUNTRY_COLORS['Other'];
+  });
+
   sorted.forEach(([org,val],i)=>{
     const y=i*(iH/sorted.length);
     const bw=xFn(val);
-    const color=AppState.orgColors[org]||'#4b5568';
+    const color=orgToCountryColor[org]||COUNTRY_COLORS['Other']||'#4b5568';
     const rect=el('rect',{x:0,y:y+(iH/sorted.length-barH)/2,width:Math.max(bw,2),height:barH,
       fill:color,opacity:'0.8',rx:'2'});
     rect.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${org}</div>${ttRow('Max FLOP',formatFLOP(val))}`));
@@ -2286,51 +2840,56 @@ function renderGapBarChart() {
   const maxRatio=Math.max(...ratios);
   const minRatio=Math.min(...ratios);
 
-  const {g,iW,iH}=makeSVG(container,{l:90,r:110,t:32,b:40});
+  const {g,iW,iH}=makeSVG(container,{l:90,r:110,t:48,b:40});
   const xFn=linScale(0,years.length,0,iW);
-  const yLoE=Math.max(0,Math.floor(Math.log10(minRatio))-1);
-  const yHiE=Math.ceil(Math.log10(maxRatio))+1;
-  const yLo=Math.pow(10,yLoE), yHi=Math.pow(10,yHiE);
-  const yFn=logScale(yLo,yHi,iH,0);
 
-  // Y axis — log scale with × labels
-  const ratioLabel=(e)=>{
-    const labels={
-      0:'1×', 1:'10×', 2:'100×', 3:'1,000×', 4:'10,000×', 5:'100,000×',
-      6:'1,000,000×', 7:'10M×', 8:'100M×',
-      9:'1B×', 10:'10B×', 11:'100B×',
-      12:'1,000B×', 13:'10,000B×', 14:'100,000B×', 15:'1,000,000B×'
-    };
-    return labels[e] || `10^${e}×`;
+  // Power scale (cube root) — middle ground between log (too flat) and linear (too crushed).
+  // Tallest bar still dominates, but smallest bar stays visible.
+  const POW=1/3;
+  // Extra headroom on a cube-root scale so the tallest bar's value label clears the top
+  const yHi=Math.pow(Math.pow(maxRatio,POW)*1.15,1/POW);
+  const powFn=v=>Math.pow(Math.max(0,v),POW);
+  const yMaxP=powFn(yHi);
+  const yFn=v=>iH-(powFn(v)/yMaxP)*iH;
+
+  // × label formatter (handles small + large values)
+  const fmtRatio=(v)=>{
+    if(v===0) return '0×';
+    if(v>=1e9) return (v/1e9).toLocaleString(undefined,{maximumFractionDigits:1})+'B×';
+    if(v>=1e6) return (v/1e6).toLocaleString(undefined,{maximumFractionDigits:1})+'M×';
+    if(v>=1e3) return (v/1e3).toLocaleString(undefined,{maximumFractionDigits:1})+'K×';
+    if(v>=10)  return Math.round(v).toLocaleString()+'×';
+    return v.toLocaleString(undefined,{maximumFractionDigits:1})+'×';
   };
-  for(let e=yLoE;e<=yHiE;e++) {
+
+  // Y axis ticks — pick round powers-of-10 within the data range, plus 0 baseline
+  const tickVals=[0];
+  const loE=Math.max(0,Math.floor(Math.log10(Math.max(1,minRatio))));
+  const hiE=Math.ceil(Math.log10(maxRatio));
+  for(let e=loE;e<=hiE;e++) {
     const v=Math.pow(10,e);
+    if(v<=yHi) tickVals.push(v);
+  }
+  tickVals.push(yHi);
+  // De-dupe & sort
+  const seen=new Set();
+  const ticks=tickVals.filter(v=>{const k=v.toFixed(2);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>a-b);
+
+  ticks.forEach(v=>{
     const y=yFn(v);
-    if(!isFinite(y)||y<0||y>iH) continue;
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
+    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.06)','stroke-width':'0.5'}));
     const tx=el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
-    tx.textContent=ratioLabel(e);
+    tx.textContent=fmtRatio(v);
     g.appendChild(tx);
     g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  }
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
+  });
+  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.25)','stroke-width':'0.5'}));
 
   // Y axis title
   const yTitle=el('text',{x:-72,y:iH/2,'text-anchor':'middle',class:'axis-label',
     transform:`rotate(-90,-72,${iH/2})`});
   yTitle.textContent='Chips needed to match demand';
   g.appendChild(yTitle);
-
-  // Reference line at 1× (hardware matches demand)
-  const refY1=yFn(1);
-  if(isFinite(refY1)&&refY1>=0&&refY1<=iH) {
-    g.appendChild(el('line',{x1:0,y1:refY1,x2:iW,y2:refY1,
-      stroke:'rgba(255,255,255,0.3)','stroke-width':'1','stroke-dasharray':'6 4'}));
-    const rt=el('text',{x:iW-4,y:refY1-4,'text-anchor':'end',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(255,255,255,0.6)'});
-    rt.textContent='Hardware matches demand';
-    g.appendChild(rt);
-  }
 
   // Bars
   const barW=(iW/years.length)*0.6;
@@ -2341,10 +2900,10 @@ function renderGapBarChart() {
     if(!ratio) return;
     const xCenter=xFn(i+0.5);
     const barTop=yFn(ratio);
-    const barH=iH-barTop;
-    if(barH<1) return;
+    const barH=Math.max(1,iH-barTop);
+    const isTallest=(y===tallestYear);
     const rect=el('rect',{x:xCenter-barW/2,y:barTop,width:barW,height:barH,
-      fill:'#f0a500',opacity:'0.85',rx:'2'});
+      fill:'#f0a500',opacity:isTallest?'1':'0.85',rx:'2'});
     rect.addEventListener('mouseenter',ev=>showTT(ev,
       `<div class="tt-title">${y}</div>
       ${ttRow('Gap ratio',Math.round(ratio).toLocaleString()+'×')}
@@ -2358,14 +2917,17 @@ function renderGapBarChart() {
     tx.textContent=y;
     g.appendChild(tx);
 
-    // Annotation on tallest bar
-    if(y===tallestYear) {
-      const fmt=ratio>=1e9?Math.round(ratio/1e9).toLocaleString()+'B×':
-                ratio>=1e6?Math.round(ratio/1e6).toLocaleString()+'M×':
-                ratio>=1e3?Math.round(ratio/1e3).toLocaleString()+'K×':Math.round(ratio).toLocaleString()+'×';
-      const at=el('text',{x:xCenter,y:barTop-8,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
-      at.textContent=`Today: frontier models need ${fmt} more compute`;
+    // Value label above every bar — keeps early years readable on linear scale
+    const vlbl=el('text',{x:xCenter,y:Math.max(barTop-5,10),'text-anchor':'middle',
+      style:`font-family:DM Mono,monospace;font-size:9px;fill:${isTallest?'#f0a500':'rgba(255,255,255,0.55)'};font-weight:${isTallest?'600':'400'}`});
+    vlbl.textContent=fmtRatio(ratio);
+    g.appendChild(vlbl);
+
+    // Headline annotation on tallest bar
+    if(isTallest) {
+      const at=el('text',{x:xCenter,y:Math.max(barTop-20,-2),'text-anchor':'end',
+        style:'font-family:DM Mono,monospace;font-size:10px;fill:rgba(240,165,0,0.95);font-weight:600'});
+      at.textContent=`Today: frontier models need ${fmtRatio(ratio)} more compute than the best single chip`;
       g.appendChild(at);
     }
   });
@@ -2496,7 +3058,9 @@ function renderArmsRace() {
   hLbl2.textContent='100 TFLOP/s';
   g.appendChild(hLbl2);
 
-  // Landmark annotations
+  // Landmark annotations — place in upper-left (or lower-right) quadrant of the point.
+  // The rolling-max curve is monotonically non-decreasing, so up-and-left of any point
+  // is guaranteed to be above the amber line, and down-and-right is guaranteed below it.
   LANDMARKS.forEach(lm=>{
     const m=AppState.data.models.find(md=>md.name.toLowerCase().includes(lm.name.toLowerCase())&&md.date&&md.date.getFullYear()>=minY);
     if(!m||!m.flop) return;
@@ -2504,12 +3068,36 @@ function renderArmsRace() {
     const x=xFn(yr);
     const y=yFnM(m.flop);
     if(!isFinite(x)||!isFinite(y)||y<0||y>iH) return;
-    g.appendChild(el('line',{x1:x,y1:y-20,x2:x,y2:y-6,
-      stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'3 2'}));
     const lines=lm.label.split('\n');
+    const lineH=11, padX=4, padY=3;
+    const charW=4.6;
+    const boxW=Math.max(...lines.map(s=>s.length))*charW + padX*2;
+    const boxH=lines.length*lineH + padY*2 - 2;
+    const dx=14, dy=14;
+    // Prefer upper-left (box sits above-and-left of point). Fall back to lower-right if no room.
+    let upperLeft = (x - dx - boxW) >= 2 && (y - dy - boxH) >= 2;
+    let boxX, boxY, leaderX2, leaderY2;
+    if(upperLeft) {
+      boxX = x - dx - boxW;
+      boxY = y - dy - boxH;
+      leaderX2 = boxX + boxW;     // top-right corner of box
+      leaderY2 = boxY + boxH;
+    } else {
+      // lower-right
+      boxX = Math.min(x + dx, iW - 2 - boxW);
+      boxY = Math.min(y + dy, iH - 2 - boxH);
+      leaderX2 = boxX;            // top-left corner of box
+      leaderY2 = boxY;
+    }
+    // Diagonal dashed leader from point to nearest box corner
+    g.appendChild(el('line',{x1:x,y1:y,x2:leaderX2,y2:leaderY2,
+      stroke:'rgba(240,165,0,0.45)','stroke-width':'1','stroke-dasharray':'3 2'}));
+    // Background panel for readability
+    g.appendChild(el('rect',{x:boxX,y:boxY,width:boxW,height:boxH,rx:2,ry:2,
+      fill:'rgba(12,18,28,0.88)',stroke:'rgba(240,165,0,0.35)','stroke-width':'0.5'}));
     lines.forEach((line,li)=>{
-      const tx=el('text',{x:x,y:y-24-li*11,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:8px;fill:rgba(240,165,0,0.75)'});
+      const tx=el('text',{x:boxX+boxW/2,y:boxY+padY+lineH-3+li*lineH,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:8px;fill:rgba(240,165,0,0.95)'});
       tx.textContent=line;
       g.appendChild(tx);
     });
