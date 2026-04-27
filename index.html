@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Observatory — The Hardware & Frontier Model Race</title>
+<title>AI Observatory — Frontier AI Compute & Cost Tracker</title>
+<meta name="description" content="AI Observatory — an interactive tracker of frontier AI training compute, cost, and hardware from 2012 to 2025, built on the Epoch AI Notable Models and ML Hardware datasets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -661,6 +662,86 @@ tr:hover td{background:var(--surface2)}
 }
 .insight-callout p strong{color:var(--text);font-weight:600}
 
+/* ── CYAN VARIANT — INFERENCE ECONOMICS COUNTERPOINT ──
+   Additive only; reuses every other .insight-callout style.
+   Swaps amber accent (border + label) for cyan, and uses a very
+   subtle cyan tint instead of the amber tint. */
+.insight-callout.cyan{
+  border-left-color:var(--cyan);
+  background:rgba(0,200,212,0.04);
+}
+.insight-callout.cyan .callout-label{color:var(--cyan)}
+.insight-callout .callout-source{
+  display:block;
+  margin-top:12px;
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  letter-spacing:.04em;
+  line-height:1.6;
+  color:var(--muted2);
+}
+.callout-sparkline{
+  display:block;
+  width:100%;
+  max-width:480px;
+  height:auto;
+  margin:14px 0 6px;
+}
+
+/* ── WHAT TO WATCH PANEL ─────────────────────────────── */
+/* Forward-looking implication panel placed at the bottom of each tab.
+   Mirrors .overview-desc surface treatment (dark surface + thin border)
+   so it reads as the analyst's closing notes, not another chart card. */
+.watch-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 22px;
+  margin-top:24px;
+}
+.watch-panel-header{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.watch-panel-header::before{
+  content:'\25BA';   /* ► — matches the bullet glyph used inside the list */
+  color:var(--amber);
+  font-size:0.7rem;
+  line-height:1;
+}
+.watch-panel-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.watch-panel-list li{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  line-height:1.7;
+  color:var(--muted);
+  padding-left:20px;
+  position:relative;
+}
+.watch-panel-list li::before{
+  content:'\25BA';
+  color:var(--amber);
+  font-size:0.7rem;
+  position:absolute;
+  left:0;
+  top:4px;
+}
+.watch-panel-list li strong{color:var(--text);font-weight:600}
+
 /* ── INTRO BANNER ────────────────────────────────────── */
 .tab5-banner{
   background:linear-gradient(135deg,rgba(240,165,0,0.06),rgba(0,200,212,0.06));
@@ -754,11 +835,447 @@ tr:hover td{background:var(--surface2)}
   color:rgba(255,255,255,0.72);line-height:1.75;
 }
 .capex-hero-sub .av{color:#f0a500;font-weight:700}
+.capex-hero-sub em{font-style:italic;color:rgba(255,255,255,0.92)}
+/* Inline confidence dot — Speculative (red), per existing palette */
+.conf-dot-inline{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#ff5f5f;
+  margin:0 4px 1px 4px;
+  vertical-align:middle;
+  box-shadow:0 0 0 2px rgba(255,95,95,0.18);
+}
+/* Methodology trigger link */
+.capex-hero-method{
+  margin-top:18px;
+  display:inline-block;
+  background:none;border:none;padding:0;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  letter-spacing:.04em;
+  color:var(--muted);
+  cursor:pointer;
+  text-decoration:none;
+  transition:color 0.18s;
+}
+.capex-hero-method:hover,
+.capex-hero-method:focus-visible{
+  color:var(--cyan);
+  outline:none;
+}
+.capex-hero-method:focus-visible{
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+/* ── METHODOLOGY MODAL ───────────────────────────── */
+#methodology-overlay{
+  position:fixed;inset:0;
+  background:rgba(2,4,9,0.72);
+  backdrop-filter:blur(4px);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.18s ease;
+}
+/* When the [hidden] attribute is set, fully remove from layout & a11y tree.
+   The selector specificity here (1,1,0) beats the bare ID rule above. */
+#methodology-overlay[hidden]{display:none}
+#methodology-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+#methodology-modal{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  width:100%;
+  max-width:600px;
+  max-height:calc(100vh - 48px);
+  overflow-y:auto;
+  position:relative;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55);
+  transform:translateY(8px) scale(0.985);
+  transition:transform 0.22s ease;
+}
+#methodology-overlay.open #methodology-modal{
+  transform:translateY(0) scale(1);
+}
+.method-modal-head{
+  padding:20px 56px 16px 24px;
+  border-bottom:1px solid var(--border);
+}
+.method-modal-eyebrow{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--amber);
+  display:block;
+  margin-bottom:8px;
+}
+.method-modal-title{
+  font-family:var(--font-body);
+  font-size:1.1rem;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.35;
+}
+.method-modal-close{
+  position:absolute;
+  top:14px;right:14px;
+  width:30px;height:30px;
+  border-radius:4px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  cursor:pointer;
+  font-size:1.05rem;
+  line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  transition:color 0.15s,border-color 0.15s,background 0.15s;
+}
+.method-modal-close:hover,
+.method-modal-close:focus-visible{
+  color:var(--text);
+  border-color:var(--border2);
+  background:var(--surface2);
+  outline:none;
+}
+.method-modal-body{padding:6px 24px 4px}
+.method-section{
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+}
+.method-section:last-child{border-bottom:none}
+.method-section h4{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:8px;
+  font-weight:500;
+}
+.method-section p{
+  font-family:var(--font-body);
+  font-size:0.78rem;
+  line-height:1.7;
+  color:var(--muted);
+}
+.method-section p strong{color:var(--text);font-weight:600}
+.method-section p em{color:rgba(232,234,240,0.92);font-style:italic}
+.method-section a{color:var(--cyan);text-decoration:none}
+.method-section a:hover{text-decoration:underline}
+.method-modal-foot{
+  padding:14px 24px 18px;
+  border-top:1px solid var(--border);
+  background:var(--surface2);
+  border-radius:0 0 var(--radius) var(--radius);
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.04em;
+  color:var(--muted2);
+  line-height:1.6;
+}
+@media (max-width:600px){
+  #methodology-overlay{padding:14px}
+  .method-modal-head{padding:18px 50px 14px 18px}
+  .method-modal-body{padding:4px 18px 2px}
+  .method-modal-foot{padding:12px 18px 14px}
+}
 
 /* ── COST CHART ──────────────────────────────────── */
 .chart-area.xtall{height:340px}
+.cost-projection-legend{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 12px;
+  padding:9px 16px 11px;
+  border-top:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+.cpl-item{display:inline-flex;align-items:center;gap:7px}
+.cpl-swatch{display:inline-block;flex-shrink:0}
+.cpl-solid{
+  width:22px;height:2px;
+  background:#f0a500;
+  border-radius:1px;
+}
+.cpl-band{
+  width:22px;height:9px;
+  background:rgba(240,165,0,0.18);
+  border:1px dashed rgba(240,165,0,0.65);
+  border-radius:1px;
+  box-sizing:border-box;
+}
+.cpl-sep{color:var(--muted2)}
+.cost-projection-callout{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px 11px;
+  font-family:var(--font-mono);
+  font-size:0.66rem;
+  letter-spacing:.02em;
+  color:#f0a500;
+  border-top:1px solid var(--border);
+  background:rgba(240,165,0,0.04);
+}
+.cost-projection-callout[hidden]{display:none}
+.cpl-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:rgba(240,165,0,0.18);
+  border:1px solid #f0a500;
+  font-family:var(--font-mono);
+  font-size:0.62rem;font-weight:700;
+  color:#f0a500;
+  flex-shrink:0;
+  line-height:1;
+}
 /* Arms race gets extra height for dual-axis breathing room */
 #arms-race{height:420px}
+
+/* ── ABOUT-THIS-DATA BANNER ──────────────────────── */
+#about-banner{
+  position:sticky;
+  top:var(--nav-h);
+  z-index:90;
+  margin-top:var(--nav-h);
+  background:rgba(14,18,32,0.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+[data-theme="light"] #about-banner{background:rgba(248,249,252,0.96)}
+#about-banner + main{margin-top:0}
+.about-head{
+  display:flex;align-items:center;gap:10px;
+  width:100%;
+  padding:7px 20px;
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  text-align:left;
+  transition:color 0.2s;
+}
+.about-head:hover{color:var(--text)}
+.about-head:focus-visible{outline:1px solid var(--amber);outline-offset:-2px}
+.about-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;
+  border-radius:50%;
+  background:var(--amber-dim);
+  color:var(--amber);
+  font-size:0.7rem;font-style:normal;font-weight:400;
+  flex-shrink:0;
+  letter-spacing:0;
+}
+.about-label{
+  color:var(--text);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:500;
+  flex-shrink:0;
+}
+.about-meta{
+  color:var(--muted);
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  letter-spacing:.04em;
+}
+.about-chev{
+  color:var(--muted2);
+  font-size:0.85rem;
+  transition:transform 0.25s ease;
+  flex-shrink:0;
+  display:inline-block;
+  line-height:1;
+}
+.about-head[aria-expanded="true"] .about-chev{transform:rotate(180deg)}
+.about-panel{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:28px;
+  padding:20px 24px 24px;
+  border-top:1px solid var(--border);
+  background:var(--surface);
+  max-height:calc(100vh - var(--nav-h) - 40px);
+  overflow-y:auto;
+}
+.about-panel[hidden]{display:none}
+.about-col h4{
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:10px;
+  font-weight:500;
+}
+.about-col p,
+.about-col li{
+  font-family:var(--font-body);
+  font-size:0.73rem;
+  line-height:1.7;
+  color:var(--muted);
+}
+.about-col p{margin-bottom:6px}
+.about-col p strong{color:var(--text);font-weight:600}
+.about-col a{color:var(--cyan);text-decoration:none}
+.about-col a:hover{text-decoration:underline}
+.about-col ul{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin:0;padding:0;
+}
+.about-col .caveat-list li{
+  position:relative;
+  padding-left:14px;
+}
+.about-col .caveat-list li::before{
+  content:'•';
+  position:absolute;
+  left:2px;top:0;
+  color:var(--amber);
+  font-weight:700;
+}
+.conf-list li{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.conf-list strong{color:var(--text);font-weight:500;margin-right:2px}
+.conf-dot{
+  width:9px;height:9px;
+  border-radius:50%;
+  flex-shrink:0;
+  display:inline-block;
+}
+
+/* ── CONFIDENCE COLOR SYSTEM ─────────────────────
+   Single source of truth — used by:
+   · About-panel confidence legend
+   · Rising Cost chart (dots, tooltip, legend strip)
+   · Compute Race scatter (estimate-quality rings, tooltip)
+   · Recent Models table (badges)
+   · Methodology modal (dynamic breakdown)
+   Don't introduce parallel hex literals elsewhere. */
+:root{
+  --conf-confident:   #34d399;
+  --conf-likely:      #f0a500;
+  --conf-speculative: #ff5f5f;
+  --conf-unknown:     #8892a4;
+}
+.conf-confident   { background:var(--conf-confident) }
+.conf-likely      { background:var(--conf-likely) }
+.conf-speculative { background:var(--conf-speculative) }
+.conf-unknown     { background:var(--conf-unknown) }
+
+/* Translucent badge variant (for tables) — overrides the plain .conf-* fill */
+.badge.conf-confident   { background:rgba(52,211,153,0.15);  color:var(--conf-confident) }
+.badge.conf-likely      { background:rgba(240,165,0,0.15);   color:var(--conf-likely) }
+.badge.conf-speculative { background:rgba(255,95,95,0.15);   color:var(--conf-speculative) }
+.badge.conf-unknown     { background:rgba(136,146,164,0.15); color:var(--conf-unknown) }
+
+/* Inline tooltip dot — sized to sit next to text in #tooltip rows */
+.conf-tt-dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  margin-right:5px;
+  vertical-align:baseline;
+  flex-shrink:0;
+}
+
+/* Confidence legend strip beneath the Rising Cost chart */
+.cost-confidence-legend{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 14px;
+  padding:8px 16px 10px;
+  border-top:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+.ccl-item{display:inline-flex;align-items:center;gap:6px}
+.ccl-item .conf-dot{width:8px;height:8px}
+.ccl-label{color:var(--muted)}
+
+/* Compute-scatter ring legend item — preview a sample ring */
+.scatter-ring-sample{
+  display:inline-block;
+  width:11px;height:11px;
+  border-radius:50%;
+  border:1.6px solid var(--conf-speculative);
+  background:var(--muted2);
+  margin-right:5px;
+  flex-shrink:0;
+}
+@media (max-width:900px){
+  .about-panel{grid-template-columns:repeat(2,1fr);gap:20px;padding:18px 16px 20px}
+  .about-head{padding:7px 16px}
+}
+@media (max-width:600px){
+  .about-panel{grid-template-columns:1fr;gap:16px}
+  .about-meta{font-size:0.62rem}
+  .about-label{font-size:0.65rem}
+}
+
+/* ── SITE FOOTER ─────────────────────────────────── */
+#site-footer{
+  margin:48px auto 0;
+  padding:22px 20px 28px;
+  max-width:1400px;
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.footer-row-1{
+  font-family:var(--font-mono);
+  font-size:0.68rem;
+  color:var(--muted);
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  letter-spacing:.03em;
+}
+.footer-row-1 a{color:var(--cyan);text-decoration:none}
+.footer-row-1 a:hover{text-decoration:underline}
+.footer-sep{color:var(--muted2)}
+.footer-row-2{
+  font-family:var(--font-body);
+  font-style:italic;
+  font-size:0.68rem;
+  color:var(--muted2);
+  line-height:1.7;
+}
+@media (max-width:600px){
+  #site-footer{padding:18px 14px 22px}
+  .footer-row-1{gap:6px;font-size:0.62rem}
+  .footer-sep{display:none}
+}
 </style>
 </head>
 <body>
@@ -766,7 +1283,7 @@ tr:hover td{background:var(--surface2)}
 <!-- Loading overlay -->
 <div id="loading">
   <div class="spinner"></div>
-  <p>Initializing Observatory</p>
+  <p>Loading Epoch AI dataset…</p>
 </div>
 
 <!-- Navbar -->
@@ -782,14 +1299,58 @@ tr:hover td{background:var(--surface2)}
   <button id="theme-btn" title="Toggle theme">◑</button>
 </nav>
 
+<!-- About this data — sticky data-provenance banner -->
+<section id="about-banner" aria-label="About this data">
+  <button class="about-head" type="button" aria-expanded="false" aria-controls="about-panel" id="about-toggle">
+    <span class="about-icon" aria-hidden="true">i</span>
+    <span class="about-label">About this data</span>
+    <span class="about-meta" id="about-meta">Epoch AI · <span id="dbt-model-count">—</span> models · <span id="dbt-hw-count">—</span> chips in selected range · updated <span id="dbt-updated">—</span></span>
+    <span class="about-chev" aria-hidden="true">▾</span>
+  </button>
+  <div class="about-panel" id="about-panel" hidden>
+    <div class="about-col">
+      <h4>Sources</h4>
+      <ul>
+        <li><a href="https://epoch.ai/data/notable-ai-models" target="_blank" rel="noopener">Epoch AI — Notable AI Models</a></li>
+        <li><a href="https://epoch.ai/data/machine-learning-hardware" target="_blank" rel="noopener">Epoch AI — ML Hardware</a></li>
+        <li style="color:var(--muted2);font-size:0.68rem;margin-top:4px">Both databases are maintained and curated by Epoch AI.</li>
+      </ul>
+    </div>
+    <div class="about-col">
+      <h4>Cost methodology</h4>
+      <p>Training-cost estimates follow an <strong>amortized hardware + energy</strong> approach: GPU-hours are derived from training FLOP ÷ (peak chip throughput × utilization), priced as amortized hardware capital plus power (per <a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">Cottier et al. 2024</a>).</p>
+      <p style="color:var(--muted2)">Estimates carry uncertainty bands of roughly <strong>±0.5 orders of magnitude</strong> (90% CI).</p>
+    </div>
+    <div class="about-col">
+      <h4>Confidence labels</h4>
+      <ul class="conf-list">
+        <li><span class="conf-dot conf-confident"></span><strong>Confident</strong> — disclosed or strongly supported</li>
+        <li><span class="conf-dot conf-likely"></span><strong>Likely</strong> — inferred from multiple signals</li>
+        <li><span class="conf-dot conf-speculative"></span><strong>Speculative</strong> — limited evidence</li>
+        <li><span class="conf-dot conf-unknown"></span><strong>Unknown</strong> — no rating assigned</li>
+      </ul>
+    </div>
+    <div class="about-col">
+      <h4>Important caveats</h4>
+      <ul class="caveat-list">
+        <li>The 'Frontier model' filter is pre-applied by Epoch — this dataset contains only models judged frontier-relevant at their time of release.</li>
+        <li>Inference costs are not shown in most charts; training cost is one slice of total economics.</li>
+        <li>API price field is populated for fewer than 15% of models; 'open weights' status is missing for nearly 50%.</li>
+        <li>Cost estimates are amortized hardware + energy, not full development cost (which includes R&amp;D staff, failed experiments, etc.).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <main>
   <!-- TAB 1: OVERVIEW -->
   <div id="tab-overview" class="tab-panel active">
     <div class="kpi-grid" id="kpi-grid"></div>
     <div class="capex-hero" id="capex-hero">
       <span class="capex-hero-label">THE CAPEX WALL OF AI</span>
-      <div class="capex-hero-headline" id="capex-headline">Training a frontier AI model today costs over <span class="av">$1 BILLION</span>.</div>
-      <div class="capex-hero-sub" id="capex-sub">In 2020, it cost <span class="av">$5 million</span>. That is a <span class="av">200×</span> increase in 4 years.<br>Only a handful of organizations on Earth can still afford to compete.</div>
+      <div class="capex-hero-headline" id="capex-headline">Frontier AI training cost has grown <span class="av">2.4×</span> per year since 2016.</div>
+      <div class="capex-hero-sub" id="capex-sub">The most expensive <em>disclosed</em> training run is on the order of <span class="av">$190M</span> (Gemini Ultra, 2023). Industry estimates for undisclosed frontier models in 2025 reach <span class="av">$300–400M</span><span class="conf-dot-inline" title="Speculative — limited public evidence" aria-label="Speculative confidence"></span> (GPT-4.5, Grok 4 — Speculative). At current trajectory, the first <span class="av">$1 billion</span> training run is projected for <span class="av">2027</span>.<br>Only a handful of organizations on Earth can still afford to compete.</div>
+      <button class="capex-hero-method" id="capex-method-btn" type="button" aria-haspopup="dialog" aria-controls="methodology-modal">How is this calculated? &rarr;</button>
     </div>
     <div class="scrubber-wrap">
       <div class="scrubber-header">
@@ -810,11 +1371,20 @@ tr:hover td{background:var(--surface2)}
       <table id="recent-table">
         <thead><tr>
           <th>Model</th><th>Organization</th><th>Date</th>
-          <th>Domain</th><th>Compute (FLOP)</th><th>Frontier</th>
+          <th>Domain</th><th>Compute (FLOP)</th><th>Confidence</th><th>Frontier</th>
         </tr></thead>
         <tbody></tbody>
       </table>
     </div>
+    <!-- Forward-looking signals — converts the data above into "what to watch next". -->
+    <aside class="watch-panel" aria-label="What to watch — Overview">
+      <div class="watch-panel-header">What to watch</div>
+      <ul class="watch-panel-list">
+        <li><strong>The $1B training run</strong> &mdash; Anthropic, OpenAI, and Google have each hinted at $500M+ runs in 2025. The first publicly confirmed $1B run will be a symbolic threshold that triggers a new round of sovereign AI investment globally.</li>
+        <li><strong>Inference commoditization</strong> &mdash; API prices have fallen 10&times; per year. Watch for the point where frontier inference becomes cheaper than human labor for any cognitive task &mdash; that's the demand inflection.</li>
+        <li><strong>Open-weight parity</strong> &mdash; If Meta's next Llama generation matches closed-model performance at open weights, the closed-model business model faces structural pressure.</li>
+      </ul>
+    </aside>
   </div>
 
   <!-- TAB 2: COMPUTE RACE -->
@@ -847,10 +1417,64 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="section-title">The Rising Cost of Frontier AI</div>
     <div class="chart-card">
-      <div class="chart-title">The Rising Cost of Staying Competitive <span class="info-icon" data-tip="The price tag of the most expensive model trained each year. Shows how quickly costs are escalating.">ⓘ</span></div>
-      <div class="chart-insight">Each new generation of frontier AI costs 10× more than the last</div>
+      <div class="chart-title">The Rising Cost of Staying Competitive <span class="info-icon" data-tip="The price tag of the most expensive model trained each year. Solid line = disclosed/estimated; shaded band = projection at 2.4×/yr (Cottier et al. 2024, 90% CI).">ⓘ</span></div>
+      <div class="chart-insight">Each new generation of frontier AI costs roughly 10× more than the last — and the trajectory points to $1B by 2027</div>
       <div class="chart-area xtall" id="cost-chart"></div>
+      <div class="cost-projection-legend" id="cost-projection-legend">
+        <span class="cpl-item"><span class="cpl-swatch cpl-solid"></span>Solid line = disclosed/estimated costs</span>
+        <span class="cpl-sep">·</span>
+        <span class="cpl-item"><span class="cpl-swatch cpl-band"></span>Shaded band = projection at 2.4×/yr (90% CI: 2.0×–2.9×)</span>
+      </div>
+      <div class="cost-confidence-legend" id="cost-confidence-legend" aria-label="Per-point confidence color key">
+        <span class="ccl-label">Dot color = confidence in this year's estimate:</span>
+        <span class="ccl-item"><span class="conf-dot conf-confident"></span>Confident</span>
+        <span class="ccl-item"><span class="conf-dot conf-likely"></span>Likely</span>
+        <span class="ccl-item"><span class="conf-dot conf-speculative"></span>Speculative</span>
+        <span class="ccl-item"><span class="conf-dot conf-unknown"></span>Unknown</span>
+      </div>
+      <div class="controls-bar" id="cost-confidence-controls">
+        <span class="ctrl-label">Show max cost from</span>
+        <button class="ctrl-toggle active" data-cost-mode="all" type="button">All confidences</button>
+        <button class="ctrl-toggle" data-cost-mode="confident" type="button">Confident only</button>
+      </div>
+      <div class="cost-projection-callout" id="cost-projection-callout" hidden>
+        <span class="cpl-badge">1</span>
+        <span>Projected $1B run · 2027 (Cottier et al.)</span>
+      </div>
     </div>
+    <!-- Inference Economics counterpoint — additive cyan variant of .insight-callout. -->
+    <div class="insight-callout cyan" style="margin-top:20px">
+      <span class="callout-label">INFERENCE ECONOMICS — THE OTHER CURVE</span>
+      <p>While training costs have grown <strong>2.4× per year</strong>, deploying frontier AI has become <strong>100–150× cheaper</strong> since 2023. GPT-4 cost ~$30 per million tokens at launch; by 2025, comparable models run at <strong>~$0.20–1.60</strong>. The capex wall concentrates model creation in 3–5 labs. The inference floor is falling toward commodity — enabling broad deployment regardless of who trains the models.</p>
+      <svg class="callout-sparkline" viewBox="0 0 480 84" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontier output token price decline on a log scale: GPT-4 in 2023 was $30 per million tokens, GPT-4o in 2024 was $5 per million tokens, GPT-4o-mini in 2024 was $0.20 per million tokens.">
+        <title>Inference output price history (log scale, $ per million tokens)</title>
+        <g transform="translate(0,18)">
+          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4 · 2023</text>
+          <rect x="152" y="-7" width="260" height="14" rx="2" fill="#00c8d4"/>
+          <text x="416" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$30/M</text>
+        </g>
+        <g transform="translate(0,42)">
+          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4o · 2024</text>
+          <rect x="152" y="-7" width="178" height="14" rx="2" fill="#00c8d4"/>
+          <text x="334" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$5/M</text>
+        </g>
+        <g transform="translate(0,66)">
+          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4o-mini · 2024</text>
+          <rect x="152" y="-7" width="32" height="14" rx="2" fill="#00c8d4"/>
+          <text x="188" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$0.20/M</text>
+        </g>
+      </svg>
+      <span class="callout-source">Sources: OpenAI pricing history · Artificial Analysis · Epoch AI inference benchmarks</span>
+    </div>
+    <!-- Forward-looking signals — Compute Race tab. -->
+    <aside class="watch-panel" aria-label="What to watch — Compute Race">
+      <div class="watch-panel-header">What to watch</div>
+      <ul class="watch-panel-list">
+        <li><strong>Cost per capability</strong> &mdash; Training cost is rising but so is model capability. Watch cost-per-benchmark-point, not absolute cost, to assess whether the investment is efficient.</li>
+        <li><strong>Efficient frontier models</strong> &mdash; DeepSeek R1 and similar showed that algorithmic improvements can close a 10&times; compute gap. Watch for the next efficiency breakthrough that resets the cost curve.</li>
+        <li><strong>Reasoning-time compute</strong> &mdash; The next cost frontier isn't training, it's inference-time compute (chain-of-thought, o-series models). This cost doesn't appear in training charts but is growing fast.</li>
+      </ul>
+    </aside>
   </div>
 
   <!-- TAB 3: HARDWARE EVOLUTION -->
@@ -865,7 +1489,8 @@ tr:hover td{background:var(--surface2)}
     <div class="section-title">Who Builds The Fastest Chips</div>
     <div class="chart-card" style="margin-bottom:16px">
       <div class="chart-title">Who Builds the Fastest Chips? <span class="info-icon" data-tip="Peak speed of the fastest chip each manufacturer had available, tracked over time.">ⓘ</span></div>
-      <div class="chart-insight">NVIDIA leads raw speed; Google competes on efficiency — everyone else is years behind</div>
+      <div class="chart-insight">NVIDIA leads peak throughput; Google TPUs lead on efficiency per watt. AMD MI300X and Cerebras WSE-3 are closing the gap on specific workloads — but NVIDIA holds <strong>~80% of frontier training deployments as of 2025</strong>.</div>
+      <div style="padding:0 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Source: SemiAnalysis GPU market share estimates, 2025</div>
       <div class="chart-area tall" id="hw-line"></div>
     </div>
     <div class="chart-grid full" style="margin-top:16px">
@@ -877,6 +1502,15 @@ tr:hover td{background:var(--surface2)}
         <div class="legend" id="hw-price-legend"></div>
       </div>
     </div>
+    <!-- Forward-looking signals — Hardware tab. -->
+    <aside class="watch-panel" aria-label="What to watch — Hardware">
+      <div class="watch-panel-header">What to watch</div>
+      <ul class="watch-panel-list">
+        <li><strong>Blackwell and beyond</strong> &mdash; NVIDIA's B200/GB200 clusters reach ~1 ExaFLOP/s per rack. Watch for the first model trained entirely on next-gen hardware &mdash; it will reset the arms race chart.</li>
+        <li><strong>AMD's competitive window</strong> &mdash; MI300X has closed the gap on inference workloads. Watch whether AMD can capture training market share before NVIDIA's Blackwell dominance locks in.</li>
+        <li><strong>Custom silicon inflection</strong> &mdash; Apple, Amazon, Google, and Meta all run custom inference chips. If any of these reaches frontier training scale, NVIDIA's ~80% share faces its first real structural threat.</li>
+      </ul>
+    </aside>
   </div>
 
   <!-- TAB 4: ORG LANDSCAPE -->
@@ -910,46 +1544,131 @@ tr:hover td{background:var(--surface2)}
         </div>
       </div>
     </div>
+    <!-- Inference Economics counterpoint — access vs creation. -->
+    <div class="insight-callout cyan" style="margin-top:20px">
+      <span class="callout-label">INFERENCE ECONOMICS — ACCESS VS. CREATION</span>
+      <p>Fewer organizations can train frontier models — but more can deploy them. Inference APIs democratize access even as training consolidates. The open/closed split above reflects who publishes weights; it doesn't capture the <strong>thousands of companies now building on top of closed APIs</strong> at commodity prices. Consolidation at the training layer does not equal consolidation at the application layer.</p>
+      <span class="callout-source">Sources: OpenAI pricing history · a16z AI infrastructure reports · Epoch AI</span>
+    </div>
     <div class="section-title" style="margin-top:16px">The Narrowing Field</div>
     <div class="chart-grid full">
       <div class="chart-card">
         <div class="chart-title">Who Can Still Afford to Play? <span class="info-icon" data-tip="Number of unique organizations that published at least one frontier AI model each year. Fewer orgs = more consolidation.">ⓘ</span></div>
-        <div class="chart-insight">Since costs crossed $100M in 2020, the number of competing organizations has fallen from 10 to 4</div>
+        <div class="chart-insight" id="narrowing-insight"></div>
         <div class="chart-area" id="narrowing-field"></div>
+        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Note: counts reflect organizations publishing models judged frontier-relevant by Epoch AI at time of release. Org count fluctuates year-to-year as labs enter and exit the frontier tier — not all downward movement represents permanent exits.</div>
       </div>
     </div>
+    <!-- Forward-looking signals — Org Landscape tab. -->
+    <aside class="watch-panel" aria-label="What to watch — Org Landscape">
+      <div class="watch-panel-header">What to watch</div>
+      <ul class="watch-panel-list">
+        <li><strong>Next consolidation event</strong> &mdash; When the next $500M+ model is announced, watch which organizations disappear from the frontier tier within 12 months. Consolidation follows cost jumps with a lag.</li>
+        <li><strong>Chinese lab trajectory</strong> &mdash; Despite export controls, Chinese labs are scaling compute domestically. Watch Zhipu AI, Baidu, and Z.ai's model quality relative to western frontier in 2026.</li>
+        <li><strong>Academic frontier exit</strong> &mdash; Universities have largely exited frontier model training. Watch whether any academic consortium (national labs, EU initiatives) re-enters with public funding.</li>
+      </ul>
+    </aside>
   </div>
 
   <!-- TAB 5: CROSS-DATASET -->
   <div id="tab-cross" class="tab-panel">
     <div class="tab5-banner">
-      <strong>The Arms Race:</strong> Each point plots a frontier model's training compute against the
-      <span class="accent">best available hardware</span> at the time of its release.
-      The gap between model demand and hardware supply defines the frontier of possibility.
+      Each chart plots frontier model training compute against <strong>single-chip peak throughput</strong> — the theoretical maximum from one accelerator.
+      In practice, frontier training always runs on multi-chip clusters of <span class="accent">1,000–100,000+ chips</span>.
+      The gap shown here measures how many chips-worth of compute each model required — it is a measure of <strong>SCALE, not impossibility.</strong>
     </div>
     <div class="insight-callout">
       <span class="callout-label">KEY INSIGHT</span>
-      <p>Frontier models consistently require <strong>more compute than any single chip can deliver</strong> — meaning every major AI breakthrough has depended on massive multi-chip clusters. The gap between model demand and hardware supply is <strong>widening, not closing</strong>.</p>
+      <p>Frontier models consistently require <strong>more compute than any single chip can deliver</strong> — this has been true since 2016. The gap shown here measures <strong>cluster scale</strong>: how many H100-equivalents a model needed. What IS widening is the <strong>minimum cluster size required</strong> to reach the frontier — from hundreds of chips in 2018 to tens of thousands today. That scale barrier, not the existence of the gap itself, is what narrows the competitive field.</p>
+    </div>
+    <!-- Inference Economics counterpoint — sits adjacent to the amber KEY INSIGHT
+         to deliberately pair the training-side and inference-side narratives. -->
+    <div class="insight-callout cyan">
+      <span class="callout-label">INFERENCE ECONOMICS — WHY THE GAP ISN'T THE WHOLE STORY</span>
+      <p>The widening gap between model training demand and single-chip supply tells one story: training is concentrating. But inference runs on a very different curve. Optimized inference chips (H100, TPU v5), quantized models, and speculative decoding have pushed inference cost down <strong>~150× since 2023</strong>. The compute gap above measures who can <em>train</em>. The inference floor measures who can <em>deploy</em>. <strong>Both curves matter.</strong></p>
+      <span class="callout-source">Sources: Artificial Analysis · OpenAI pricing history · NVIDIA inference benchmarks</span>
     </div>
     <div class="section-title">Model Compute vs Best Available Hardware at Time of Release</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">The Widening Gap — Model Demand vs Best Available Chip <span class="info-icon" data-tip="Each bar shows how many times more compute frontier models required versus the best available single chip that year. The bars grow taller every year.">ⓘ</span></div>
-      <div class="chart-insight">The gap between what models need and what chips provide grows every year</div>
+      <div class="chart-title">The Widening Gap — Model Demand vs Best Available Chip <span class="info-icon" data-tip="Each bar shows the cluster scale required that year — how many of the best available single chips would be needed to match the most demanding frontier model. The taller the bar, the larger the training cluster.">ⓘ</span></div>
+      <div class="chart-insight">The gap measures cluster scale required — from ~100s of chips in 2018 to ~10,000s today. This scale barrier defines who can compete.</div>
       <div class="chart-area tall" id="cross-scatter" style="position:relative"></div>
       <div class="legend" id="cross-legend"></div>
     </div>
     <div class="section-title">The Compute Arms Race — Rolling Maximums Over Time</div>
     <div class="chart-card">
       <div class="chart-title">The Compute Arms Race <span class="info-icon" data-tip="Two exponential curves: how fast models are demanding compute (amber) vs how fast chips supply it (cyan). The gap between them is growing.">ⓘ</span></div>
-      <div class="chart-insight">Both curves follow exponential growth; hardware improvements are necessary but not sufficient</div>
+      <div class="chart-insight">Model compute grows faster than single-chip throughput — the difference is filled by larger clusters. The cluster size multiplier has grown from <strong>~100×</strong> to <strong>~10,000×</strong> since 2016.</div>
       <div class="chart-area tall" id="arms-race"></div>
       <div class="legend">
         <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div>Rolling Max Training FLOP (models)</div>
         <div class="legend-item"><div class="legend-swatch" style="background:var(--cyan)"></div>Rolling Max FP16 FLOP/s (hardware)</div>
       </div>
     </div>
+    <!-- Cluster scale callout — translates the gap ratio above into real-world deployment sizes. -->
+    <div class="insight-callout" style="margin-top:20px">
+      <span class="callout-label">CLUSTER SCALE — KNOWN DEPLOYMENTS</span>
+      <p>The gap ratio above translates directly to cluster size. Known large-scale training deployments: <strong>Meta's 49,000-GPU H100 cluster</strong> (Llama 3, 2024); <strong>Microsoft/OpenAI's ~22,000-GPU cluster</strong> (GPT-4, est.); <strong>Google's TPU v4 pods</strong> (Gemini Ultra, 2023); <strong>xAI's 100,000-GPU Colossus cluster</strong> (Grok 3/4, 2025). These are the organizations whose infrastructure appears in the Org Landscape tab.</p>
+      <span class="callout-source">Sources: Meta AI blog · SemiAnalysis · The Information · public infrastructure announcements</span>
+    </div>
+    <!-- Forward-looking signals — Cross-Dataset tab. -->
+    <aside class="watch-panel" aria-label="What to watch — Cross-Dataset">
+      <div class="watch-panel-header">What to watch</div>
+      <ul class="watch-panel-list">
+        <li><strong>Inference chip specialization</strong> &mdash; As inference becomes the primary revenue driver, watch for chip architectures optimized for inference (low latency, high throughput) to diverge from training chips. The arms race chart may fork into two separate curves.</li>
+        <li><strong>Cluster efficiency vs. cluster size</strong> &mdash; The next meaningful signal isn't the largest cluster but the most efficient. Watch MFU (model FLOPs utilization) disclosures &mdash; Google's 57% MFU on TPUs vs. typical 35&ndash;45% on GPU clusters is the real competitive moat.</li>
+        <li><strong>Geopolitical compute ceiling</strong> &mdash; US export controls cap accessible compute for ~40% of global GDP. Watch whether this produces a bifurcated frontier (US/allied vs. China/restricted) or drives domestic semiconductor investment that eventually closes the gap.</li>
+      </ul>
+    </aside>
   </div>
 </main>
+
+<!-- Persistent site-wide footer — data provenance & disclaimer -->
+<footer id="site-footer">
+  <div class="footer-row footer-row-1">
+    <span>Data: <a href="https://epoch.ai/data/notable-ai-models" target="_blank" rel="noopener">Epoch AI (Notable AI Models</a> + <a href="https://epoch.ai/data/machine-learning-hardware" target="_blank" rel="noopener">ML Hardware)</a></span>
+    <span class="footer-sep">·</span>
+    <span>Methodology: <a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">Cottier et al. 2024</a></span>
+    <span class="footer-sep">·</span>
+    <span>Last updated: <span id="df-updated-date">—</span></span>
+  </div>
+  <div class="footer-row footer-row-2">
+    Cost estimates are amortized hardware + energy, not full development cost. Confidence labels reflect Epoch AI's own assessment. This dashboard is an analytical tool, not investment advice.
+  </div>
+</footer>
+
+<!-- Methodology modal — opened from the Overview hero "How is this calculated?" link -->
+<div id="methodology-overlay" role="presentation" hidden>
+  <div id="methodology-modal" role="dialog" aria-modal="true" aria-labelledby="methodology-title" tabindex="-1">
+    <button class="method-modal-close" id="methodology-close" type="button" aria-label="Close methodology dialog">×</button>
+    <div class="method-modal-head">
+      <span class="method-modal-eyebrow">Methodology</span>
+      <h2 class="method-modal-title" id="methodology-title">How we estimate frontier training costs</h2>
+    </div>
+    <div class="method-modal-body">
+      <section class="method-section">
+        <h4>What we count</h4>
+        <p>Cost estimates follow Cottier et al. 2024 (<a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">arXiv:2405.21015</a>): amortized hardware acquisition + energy consumption for the final training run. This excludes R&amp;D staff costs (which add 30–50%), failed experiments, and data acquisition.</p>
+      </section>
+      <section class="method-section">
+        <h4>What the data shows</h4>
+        <p>The Epoch AI Notable Models database contains training cost estimates for 66 of 137 frontier models. The most expensive <em>Confident</em> estimate is Llama 3.1-405B at ~<strong>$53M</strong> (Meta, 2024). The most expensive estimate of any confidence level is Grok 4 at ~<strong>$388M</strong> (xAI, 2025, Speculative).</p>
+        <p id="method-conf-breakdown" style="margin-top:8px"></p>
+      </section>
+      <section class="method-section">
+        <h4>The 2.4× growth rate</h4>
+        <p>Cottier et al. find amortized training cost has grown <strong>2.4× per year</strong> since 2016 (90% CI: 2.0× to 2.9×). Extrapolating from GPT-4 (~$78M, 2023) at this rate yields the first <strong>$1B training run around early 2027</strong> — sooner if undisclosed runs are already at the high end of industry estimates.</p>
+      </section>
+      <section class="method-section">
+        <h4>Why no $1B model in our data yet</h4>
+        <p>Anthropic CEO Dario Amodei stated in 2024 that frontier developers were already spending close to $1B on single training runs, but neither OpenAI, Anthropic, nor Google publicly discloses costs. Public estimates lag actual spending by 12–18 months. The dashboard reflects what is publicly known, not what is privately spent.</p>
+      </section>
+    </div>
+    <div class="method-modal-foot">
+      Sources: Cottier et al. 2024 · Stanford AI Index 2025 · Epoch AI · Public statements from Anthropic, OpenAI, Meta.
+    </div>
+  </div>
+</div>
 
 <div id="tooltip"></div>
 
@@ -1023,6 +1742,14 @@ const COUNTRY_ALIASES = {
 
 function normalizeCountry(country) {
   if (!country || country === 'Other') return 'Other';
+  // Dedupe step: some rows store the same country twice as a comma-joined
+  // string (e.g. "United States of America,United States of America").
+  // Split on comma, take the first non-empty trimmed token, then run the
+  // existing alias/color logic on that single token. Handles any number of
+  // duplications cleanly.
+  const tokens = String(country).split(',').map(t => t.trim()).filter(Boolean);
+  country = tokens[0] || 'Other';
+  if (!country || country === 'Other') return 'Other';
   if (COUNTRY_ALIASES[country]) return COUNTRY_ALIASES[country];
   for (const [alias, canonical] of Object.entries(COUNTRY_ALIASES)) {
     if (country.toLowerCase().includes(alias.toLowerCase())) return canonical;
@@ -1058,6 +1785,29 @@ const LANDMARKS = [
   { name:'Claude 3 Opus',label:'Claude 3\n2024' },
 ];
 
+// ── Confidence palette — mirrors the CSS custom properties so SVG fills,
+//    tooltip dots, and DOM badges all reference the SAME hex values. ──
+const CONF_COLORS = {
+  'Confident':   '#34d399',
+  'Likely':      '#f0a500',
+  'Speculative': '#ff5f5f',
+  'Unknown':     '#8892a4',
+};
+function normalizeConfidence(level) {
+  return CONF_COLORS[level] ? level : 'Unknown';
+}
+function confColor(level) {
+  return CONF_COLORS[normalizeConfidence(level)];
+}
+function confClass(level) {
+  // Maps confidence label → CSS class suffix used by .conf-confident etc.
+  return 'conf-' + normalizeConfidence(level).toLowerCase();
+}
+function confTTDot(level) {
+  // Inline tooltip dot fragment — used in tt rows so the color reads at a glance.
+  return `<span class="conf-tt-dot ${confClass(level)}"></span>`;
+}
+
 // ═══════════════════════════════════════════════
 //  APP STATE
 // ═══════════════════════════════════════════════
@@ -1070,6 +1820,10 @@ const AppState = {
     hwTypes: new Set(['GPU','TPU','Other']),
     selectedOrg: null,
     showTrend: true,
+    // Rising Cost chart mode: 'all' (max regardless of confidence — default,
+    // preserves prior visual) or 'confident' (only confidence==='Confident').
+    // Stakeholder-defense toggle, not a behavior change.
+    costConfidenceMode: 'all',
   },
   data: { models: [], hardware: [] },
   orgColors: {},
@@ -1119,8 +1873,16 @@ function formatCost(v) {
 
 function getPrimaryDomain(domainStr) {
   if (!domainStr) return 'Other';
-  const first = domainStr.split(',')[0].trim();
-  return DOMAIN_COLORS[first] ? first : 'Other';
+  // Some rows list domains in arbitrary order, e.g. "Unknown,Language" or
+  // "Multimodal,Language,Vision" vs "Language,Vision,Multimodal". Walk the
+  // tokens in order and return the first one that maps to a known domain
+  // color key, so an unrecognized leading token doesn't bury the model in
+  // 'Other' when a valid domain follows.
+  const tokens = String(domainStr).split(',').map(t => t.trim()).filter(Boolean);
+  for (const tok of tokens) {
+    if (DOMAIN_COLORS[tok]) return tok;
+  }
+  return 'Other';
 }
 
 function isFrontier(row) {
@@ -1129,8 +1891,16 @@ function isFrontier(row) {
 }
 
 function isOpenWeights(row) {
+  // Returns one of three category strings: 'open', 'partial', or 'closed'.
+  // The CSV's "Open model weights?" column contains mixed values
+  // (Yes/No/yes/no/Partially/blank/null). Lowercasing with String() guards
+  // against null/undefined and gives case-insensitive matching. Anything
+  // that isn't explicitly Yes or Partially falls into 'closed' — same
+  // conservative default as the original boolean form.
   const v = String(row['Open model weights?'] || '').trim().toLowerCase();
-  return v === 'yes';
+  if (v === 'yes') return 'open';
+  if (v === 'partially' || v === 'partial') return 'partial';
+  return 'closed';
 }
 
 function applyDateFilter(arr, dateKey) {
@@ -1358,18 +2128,13 @@ function ttRow(k,v) { return `<div class="tt-row"><span class="tt-key">${k}</spa
 function renderOverview() {
   const { models, hardware } = AppState.data;
 
-  // CapEx Hero — compute dynamically, fall back to hard-coded strings
-  const models2024 = models.filter(m=>m.date&&m.date.getFullYear()>=2024&&m.cost>0);
-  const models2020 = models.filter(m=>m.date&&m.date.getFullYear()===2020&&m.cost>0);
-  const maxCost24 = models2024.length ? Math.max(...models2024.map(m=>m.cost)) : null;
-  const maxCost20 = models2020.length ? Math.max(...models2020.map(m=>m.cost)) : null;
-  const costNow = maxCost24 ? formatDollars(maxCost24) : '$1 billion';
-  const cost20  = maxCost20 ? formatDollars(maxCost20) : '$5 million';
-  const mult    = (maxCost24&&maxCost20) ? Math.round(maxCost24/maxCost20)+'×' : '200×';
-  document.getElementById('capex-headline').innerHTML =
-    `Training a frontier AI model today costs over <span class="av">${costNow}</span>.`;
-  document.getElementById('capex-sub').innerHTML =
-    `In 2020, it cost <span class="av">${cost20}</span>. That is a <span class="av">${mult}</span> increase in 4 years.<br>Only a handful of organizations on Earth can still afford to compete.`;
+  // CapEx Hero copy is hardcoded in markup (research-backed framing).
+  // Previously, this function recomputed headline/subhead figures from the
+  // CSV — but the loaded data does not contain $1B-class training runs and
+  // 2020 cost coverage is sparse, so the dynamic version produced
+  // unsupported claims. Hero now reflects Cottier et al. 2024 + Epoch AI
+  // and is intentionally not derived from the dataset. See the "How is
+  // this calculated?" methodology modal for full sourcing.
 
   const fm = applyDateFilter(models, 'date');
   const fh = applyDateFilter(hardware, 'releaseDate');
@@ -1397,14 +2162,22 @@ function renderOverview() {
   // Recent table
   const recent = [...fm].filter(m=>m.date).sort((a,b)=>b.date-a.date).slice(0,5);
   const tbody = document.querySelector('#recent-table tbody');
-  tbody.innerHTML = recent.map(m=>`<tr>
-    <td>${m.name}</td>
-    <td><span class="badge org">${m.org}</span></td>
-    <td style="font-family:var(--font-mono);font-size:0.7rem">${m.date ? fmtDate(m.date) : '—'}</td>
-    <td>${m.domain}</td>
-    <td style="font-family:var(--font-mono);font-size:0.68rem">${m.flop?fmtFLOPTooltip(m.flop):'—'}</td>
-    <td>${m.frontier ? '<span class="badge frontier">Yes</span>' : '<span class="badge closed">No</span>'}</td>
-  </tr>`).join('');
+  if (!recent.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:0.72rem;padding:18px 12px">No models in selected date range</td></tr>`;
+  } else {
+    tbody.innerHTML = recent.map(m=>{
+      const conf = normalizeConfidence(m.confidence);
+      return `<tr>
+        <td>${m.name}</td>
+        <td><span class="badge org">${m.org}</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.7rem">${m.date ? fmtDate(m.date) : '—'}</td>
+        <td>${m.domain}</td>
+        <td style="font-family:var(--font-mono);font-size:0.68rem">${m.flop?fmtFLOPTooltip(m.flop):'—'}</td>
+        <td><span class="badge ${confClass(conf)}">${conf}</span></td>
+        <td>${m.frontier ? '<span class="badge frontier">Yes</span>' : '<span class="badge closed">No</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 function isFrontierModel(m) { return m.frontier; }
@@ -1442,6 +2215,9 @@ function initScrubber() {
     document.getElementById('range-fill').style.left=pct0+'%';
     document.getElementById('range-fill').style.right=(100-pct1)+'%';
     renderCurrentTab();
+    // Keep the About-this-data banner counts/date in lockstep with the scrubber
+    // so the banner and Overview KPIs never disagree.
+    updateAboutBannerMeta();
   }
   rMin.addEventListener('input', update);
   rMax.addEventListener('input', update);
@@ -1598,89 +2374,257 @@ function renderComputeRace() {
 function renderCostChart() {
   const container = document.getElementById('cost-chart');
   if(!container) return;
-  const allModels = AppState.data.models.filter(m=>m.cost>0&&m.date);
+  let allModels = AppState.data.models.filter(m=>m.cost>0&&m.date);
   if(!allModels.length) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No cost data available</div>'; return; }
 
-  // Max cost model per year
+  // ── Confidence-mode filter — stakeholder-defense toggle ──
+  // Default 'all' preserves the original max-cost-per-year visual.
+  // 'confident' restricts the per-year max to disclosed/strongly-supported
+  // estimates only; the line gets shorter and may show year-gaps where
+  // a year had only Speculative/Likely data.
+  const costMode = AppState.filters.costConfidenceMode || 'all';
+  if(costMode === 'confident') {
+    allModels = allModels.filter(m => normalizeConfidence(m.confidence) === 'Confident');
+  }
+  if(!allModels.length) {
+    const msg = costMode === 'confident'
+      ? 'No Confident-rated cost estimates in selected range'
+      : 'No cost data available';
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">${msg}</div>`;
+    // Hide projection legend callout — no anchor exists in this case.
+    const callout = document.getElementById('cost-projection-callout');
+    if(callout) callout.hidden = true;
+    return;
+  }
+
+  // Max cost model per year (within the active confidence-mode subset)
   const yearMap = {};
   allModels.forEach(m=>{
     const y=m.date.getFullYear();
     if(!yearMap[y]||m.cost>yearMap[y].cost) yearMap[y]=m;
   });
   const series=Object.entries(yearMap).map(([y,m])=>({year:+y,cost:m.cost,model:m})).sort((a,b)=>a.year-b.year);
-  if(series.length<2) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">Insufficient cost data</div>'; return; }
+  if(series.length<2) {
+    const msg = costMode === 'confident'
+      ? 'Insufficient Confident-rated cost data — try "All confidences"'
+      : 'Insufficient cost data';
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">${msg}</div>`;
+    const callout = document.getElementById('cost-projection-callout');
+    if(callout) callout.hidden = true;
+    return;
+  }
+
+  // ── Cottier et al. 2024 projection: 2.4× / yr (90% CI 2.0×–2.9×) ──
+  // Anchored on the most recent year with data; projected through 2027.
+  const PROJ_END = 2027;
+  const RATE_LO = 2.0, RATE_MID = 2.4, RATE_HI = 2.9;
+  const anchor = series[series.length-1];
+  const projHorizon = Math.max(PROJ_END - anchor.year, 0);
+  const projHi = anchor.cost * Math.pow(RATE_HI, projHorizon);
 
   const {g,iW,iH}=makeSVG(container,{l:80,r:24,t:28,b:36});
-  const xFn=linScale(series[0].year-0.5,series[series.length-1].year+0.5,0,iW);
-  const costs=series.map(p=>p.cost);
-  const minC=Math.min(...costs), maxC=Math.max(...costs);
-  const yFn=logScale(minC*0.2,maxC*5,iH,0);
 
-  // X grid + ticks
-  series.forEach(p=>{
-    const x=xFn(p.year);
+  // X axis extended to include projection horizon (e.g. 2026, 2027)
+  const xStart = series[0].year - 0.5;
+  const xEnd   = Math.max(anchor.year, PROJ_END) + 0.5;
+  const xFn    = linScale(xStart, xEnd, 0, iW);
+
+  // Y range — must accommodate projection upper bound and the $1B reference
+  const costs = series.map(p=>p.cost);
+  const minC  = Math.min(...costs);
+  const maxC  = Math.max(...costs);
+  const yMin  = minC * 0.2;
+  const yMax  = Math.max(maxC * 5, projHi * 1.5, 5e9);
+  const yFn   = logScale(yMin, yMax, iH, 0);
+
+  // X grid + ticks (data years AND projection years)
+  const yearsToShow = new Set(series.map(p=>p.year));
+  for(let y = anchor.year + 1; y <= PROJ_END; y++) yearsToShow.add(y);
+  const yearsSorted = Array.from(yearsToShow).sort((a,b)=>a-b);
+  yearsSorted.forEach(y=>{
+    const x=xFn(y);
     g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.03)','stroke-width':'0.5'}));
     const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=p.year;
+    tx.textContent=y;
+    if(y > anchor.year) {
+      // Future-year ticks: dim amber, italicized to telegraph "projection"
+      tx.style.fill = 'rgba(240,165,0,0.6)';
+      tx.style.fontStyle = 'italic';
+    }
     g.appendChild(tx);
   });
   g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
 
   // Y axis with dollar labels
-  drawYAxisLog(g,[minC*0.2,maxC*5],yFn,null,costLabel,2);
+  drawYAxisLog(g,[yMin,yMax],yFn,null,costLabel,2);
 
-  // $1B reference line
-  if(maxC>=1e9) {
-    const refY=yFn(1e9);
-    if(isFinite(refY)&&refY>=0&&refY<=iH) {
-      g.appendChild(el('line',{x1:0,y1:refY,x2:iW,y2:refY,
-        stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'6 4'}));
-      const rt=el('text',{x:iW-4,y:refY-4,'text-anchor':'end',
-        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.75)'});
-      rt.textContent='The Billion Dollar Threshold';
-      g.appendChild(rt);
+  // ── PROJECTION WEDGE ─────────────────────────────────
+  // Translucent amber fill bounded by 2.0× (lower) and 2.9× (upper) growth.
+  // Wedge widens toward 2027 → eye reads "this is uncertain, not measured".
+  if(projHorizon > 0) {
+    const projYears = [];
+    for(let y = anchor.year; y <= PROJ_END; y++) projYears.push(y);
+
+    const upperPts = projYears.map(y => {
+      const c = anchor.cost * Math.pow(RATE_HI, y - anchor.year);
+      return [xFn(y), yFn(c)];
+    });
+    const lowerPts = projYears.map(y => {
+      const c = anchor.cost * Math.pow(RATE_LO, y - anchor.year);
+      return [xFn(y), yFn(c)];
+    });
+
+    // Polygon path — upper edge forward, lower edge reversed, closed
+    const wedgeD =
+      upperPts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ') +
+      ' ' +
+      [...lowerPts].reverse().map(p=>`L${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ') +
+      ' Z';
+
+    g.appendChild(el('path',{
+      d: wedgeD,
+      fill: 'rgba(240,165,0,0.13)',
+      stroke: 'rgba(240,165,0,0.55)',
+      'stroke-width': '1',
+      'stroke-dasharray': '5 4',
+      'stroke-linejoin': 'round'
+    }));
+
+    // Center projection — dashed thin line along the 2.4× / yr trajectory
+    const midD = projYears.map((y,i)=>{
+      const c = anchor.cost * Math.pow(RATE_MID, y - anchor.year);
+      return `${i?'L':'M'}${xFn(y).toFixed(1)},${yFn(c).toFixed(1)}`;
+    }).join(' ');
+    g.appendChild(el('path',{
+      d: midD,
+      stroke: 'rgba(240,165,0,0.7)',
+      'stroke-width': '1.2',
+      'stroke-dasharray': '4 4',
+      fill: 'none'
+    }));
+  }
+
+  // ── $1B reference line — label parked on the LEFT so the right side
+  //    is free for the projection-crossing annotation (which lives at the
+  //    same y level on the opposite end of the line).
+  const oneBY = yFn(1e9);
+  if(isFinite(oneBY) && oneBY >= 0 && oneBY <= iH) {
+    g.appendChild(el('line',{x1:0,y1:oneBY,x2:iW,y2:oneBY,
+      stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'6 4'}));
+    const rt=el('text',{x:4,y:oneBY-4,'text-anchor':'start',
+      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.78)'});
+    rt.textContent='$1B threshold (projected ~2027)';
+    g.appendChild(rt);
+  }
+
+  // ── Crossing-point callout — numbered marker only.
+  // The upper-right corner of the chart is too crowded (anchor dot + its labels
+  // + Llama landmark + $1B line) for the full-length annotation to fit without
+  // collisions. We render a small numbered badge in-chart and move the textual
+  // annotation into the legend strip below, where there is clear horizontal
+  // space. The legend-side callout uses the SAME numeric badge for binding.
+  let crossInfo = null;
+  if(anchor.cost < 1e9 && projHorizon > 0) {
+    const tCross = Math.log(1e9 / anchor.cost) / Math.log(RATE_MID);
+    if(tCross > 0 && tCross <= projHorizon + 0.4) {
+      const crossYear = anchor.year + tCross;
+      const cx = xFn(crossYear);
+      const cy = yFn(1e9);
+      // Halo + numbered badge
+      g.appendChild(el('circle',{cx,cy,r:8,
+        fill:'rgba(240,165,0,0.18)',stroke:'#f0a500','stroke-width':'1.5'}));
+      const badge = el('text',{x:cx,y:cy+3,'text-anchor':'middle',
+        style:'font-family:DM Mono,monospace;font-size:9px;font-weight:700;fill:#f0a500'});
+      badge.textContent = '1';
+      g.appendChild(badge);
+      crossInfo = { crossYear };
     }
   }
-
-  // Amber line connecting max-cost per year
-  if(series.length>1) {
-    const ld=series.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.cost).toFixed(1)}`).join(' ');
-    const lp=el('path',{d:ld,stroke:'#f0a500','stroke-width':'2',fill:'none'});
-    g.appendChild(lp);
-    animateLine(lp);
+  // Update the legend callout (DOM element below the chart) — renders only when
+  // a valid crossing exists for the current data anchor.
+  const legendCallout = document.getElementById('cost-projection-callout');
+  if(legendCallout) {
+    legendCallout.hidden = !crossInfo;
   }
 
-  // Landmark annotation years — with anti-collision spacing
+  // ── Historical solid amber line (max-cost per year) ──
+  // Segmented so that year-gaps (e.g. when "Confident only" mode skips a
+  // year because only Speculative data existed) actually break the line
+  // visually instead of interpolating through the gap.
+  if(series.length>1) {
+    const segments = [];
+    let current = [series[0]];
+    for(let i=1; i<series.length; i++) {
+      if(series[i].year - series[i-1].year > 1) {
+        if(current.length) segments.push(current);
+        current = [];
+      }
+      current.push(series[i]);
+    }
+    if(current.length) segments.push(current);
+
+    segments.forEach(seg=>{
+      if(seg.length < 2) return; // single-point segments render as just the dot
+      const ld = seg.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.cost).toFixed(1)}`).join(' ');
+      const lp = el('path',{d:ld,stroke:'#f0a500','stroke-width':'2',fill:'none'});
+      g.appendChild(lp);
+      animateLine(lp);
+    });
+  }
+
+  // Landmark annotation years — with anti-collision spacing.
+  // For the anchor (last data point) we flip labels BELOW the dot, since the
+  // projection wedge extends UP and would collide with above-dot labels.
   const landmarkYears=new Set([2020,2022,2023,2024,2025]);
   let lastNameLabelY = Infinity;
-  series.forEach(p=>{
+  series.forEach((p, idx)=>{
     const x=xFn(p.year), y=yFn(p.cost);
     if(!isFinite(x)||!isFinite(y)) return;
     const isLandmark=landmarkYears.has(p.year)||p.year>=2024;
+    const isAnchor = (idx === series.length - 1) && projHorizon > 0;
     const r=isLandmark?7:4;
-    const c=el('circle',{cx:x,cy:y,r,fill:'#f0a500',stroke:'var(--bg)','stroke-width':'1.5'});
+    // Fill encodes the underlying model's confidence. Confident=green,
+    // Likely=amber (matches the original visual default), Speculative=red,
+    // Unknown=grey. Stroke stays neutral so the dot reads against the bg.
+    const conf = normalizeConfidence(p.model.confidence);
+    const fill = confColor(conf);
+    const c=el('circle',{cx:x,cy:y,r,fill,stroke:'var(--bg)','stroke-width':'1.5'});
     c.addEventListener('mouseenter',ev=>{
       c.setAttribute('r',r+2);
       showTT(ev,`<div class="tt-title">${p.model.name}</div>
         ${ttRow('Year',p.year)}
-        ${ttRow('Est. Cost',formatCost(p.cost))}`);
+        ${ttRow('Est. Cost',formatCost(p.cost))}
+        ${ttRow('Confidence', confTTDot(conf) + conf)}`);
     });
     c.addEventListener('mousemove',moveTT);
     c.addEventListener('mouseleave',()=>{ c.setAttribute('r',r); hideTT(); });
     g.appendChild(c);
     if(isLandmark) {
-      // Anti-collision: nudge up if too close to previous label
-      let nameLabelY = y - 14;
-      if(lastNameLabelY - nameLabelY < 16) nameLabelY = lastNameLabelY - 16;
-      lastNameLabelY = nameLabelY;
-      const name=el('text',{x,y:nameLabelY,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
-      name.textContent=p.model.name.replace(/\s*\(.*?\)\s*/g,'').trim().slice(0,16);
-      g.appendChild(name);
-      const cost=el('text',{x,y:y+20,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
-      cost.textContent=formatCost(p.cost);
-      g.appendChild(cost);
+      const trimmedName = p.model.name.replace(/\s*\(.*?\)\s*/g,'').trim().slice(0,16);
+      if(isAnchor) {
+        // Stack BOTH labels below the dot to clear the projection wedge.
+        const name=el('text',{x,y:y+16,'text-anchor':'middle',
+          style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.95);font-weight:500'});
+        name.textContent=trimmedName;
+        g.appendChild(name);
+        const cost=el('text',{x,y:y+28,'text-anchor':'middle',
+          style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
+        cost.textContent=formatCost(p.cost);
+        g.appendChild(cost);
+      } else {
+        // Default: name above, cost below; nudge name up if it crowds neighbor.
+        let nameLabelY = y - 14;
+        if(lastNameLabelY - nameLabelY < 16) nameLabelY = lastNameLabelY - 16;
+        lastNameLabelY = nameLabelY;
+        const name=el('text',{x,y:nameLabelY,'text-anchor':'middle',
+          style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
+        name.textContent=trimmedName;
+        g.appendChild(name);
+        const cost=el('text',{x,y:y+20,'text-anchor':'middle',
+          style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
+        cost.textContent=formatCost(p.cost);
+        g.appendChild(cost);
+      }
     }
   });
 }
@@ -1767,18 +2711,43 @@ function renderComputeScatter() {
     }
   }
 
-  // Points
+  // Points — primary fill is org color; a thin secondary ring encodes
+  // confidence in the underlying compute estimate (Confident → no ring,
+  // Likely/Speculative/Unknown → colored ring, Unknown is dashed).
   const orgMap = AppState.orgColors;
   data.forEach((m, i) => {
     const x = xFn(m.date), y = yFn(m.flop);
     if(!isFinite(x)||!isFinite(y)) return;
+    const baseR = m.frontier ? 5 : 3.5;
+    const conf = normalizeConfidence(m.confidence);
+    const fadeDelay = Math.min(i*8,600);
+
+    // ── Confidence halo (drawn BEFORE the dot so the dot sits on top).
+    //    Skipped for Confident — keeps clean dots clean.
+    if(conf !== 'Confident') {
+      const ringR = baseR + 2.2;
+      const ringStroke = confColor(conf);
+      const ring = el('circle', {
+        cx:x, cy:y, r: ringR,
+        fill: 'none',
+        stroke: ringStroke,
+        'stroke-width': '1.4',
+        opacity: '0',
+        'pointer-events': 'none',
+        style: `transition:opacity 0.4s ${fadeDelay}ms`,
+      });
+      if(conf === 'Unknown') ring.setAttribute('stroke-dasharray','2 2');
+      g.appendChild(ring);
+      requestAnimationFrame(()=>{ ring.setAttribute('opacity','0.75'); });
+    }
+
     const c = el('circle',{
-      cx:x, cy:y, r: m.frontier?5:3.5,
+      cx:x, cy:y, r: baseR,
       fill: m.frontier ? (orgMap[m.org]||'#4b5568') : 'none',
       stroke: orgMap[m.org]||'#4b5568',
       'stroke-width': m.frontier?0:1.5,
       opacity: '0',
-      style:`transition:opacity 0.4s ${Math.min(i*8,600)}ms,r 0.15s`,
+      style:`transition:opacity 0.4s ${fadeDelay}ms,r 0.15s`,
       class:'chart-point'
     });
     c.addEventListener('mouseenter', ev => {
@@ -1787,10 +2756,11 @@ function renderComputeScatter() {
         ${ttRow('Org',m.org)}
         ${ttRow('Date',fmtDate(m.date))}
         ${ttRow('Compute',fmtFLOPTooltip(m.flop))}
-        ${ttRow('Domain',m.domain)}`);
+        ${ttRow('Domain',m.domain)}
+        ${ttRow('Confidence', confTTDot(conf) + conf)}`);
     });
     c.addEventListener('mousemove', moveTT);
-    c.addEventListener('mouseleave', ev => { c.setAttribute('r',m.frontier?5:3.5); hideTT(); });
+    c.addEventListener('mouseleave', ev => { c.setAttribute('r',baseR); hideTT(); });
     g.appendChild(c);
     requestAnimationFrame(()=>{ c.setAttribute('opacity','0.85'); });
   });
@@ -1803,6 +2773,8 @@ function renderComputeScatter() {
   leg.innerHTML = top10.map(o=>`<div class="legend-item"><div class="legend-swatch" style="background:${orgMap[o]||'#4b5568'}"></div>${o}</div>`).join('');
   leg.innerHTML += '<div class="legend-item" style="margin-left:16px"><div style="width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted2);margin-right:5px;flex-shrink:0"></div>Non-frontier</div>';
   leg.innerHTML += '<div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:var(--muted2);margin-right:5px;flex-shrink:0"></div>Frontier</div>';
+  // Confidence-ring legend item — explains the secondary visual encoding
+  leg.innerHTML += '<div class="legend-item" style="margin-left:16px;color:var(--muted2);font-style:italic"><span class="scatter-ring-sample"></span>Ringed dots = estimated compute (Likely / Speculative / Unknown)</div>';
 }
 
 function renderDomainBar() {
@@ -2484,6 +3456,15 @@ function renderNarrowingField() {
   // Peak + latest annotations
   const peak=series.reduce((a,b)=>b.count>a.count?b:a);
   const curr=series[series.length-1];
+
+  // Dynamic insight text — uses the SAME peak/curr values as the chart
+  // annotations below, so the number above the chart and the "Peak: N orgs"
+  // label rendered onto the chart can never drift apart.
+  const insightEl=document.getElementById('narrowing-insight');
+  if(insightEl) {
+    insightEl.textContent=`${peak.count} organizations published frontier models at peak (${peak.year}). By ${curr.year}, ${curr.count} remain active — among labs with sufficient compute to reach the frontier.`;
+  }
+
   const px=xFn(peak.year),py=yFn(peak.count);
   if(isFinite(px)&&isFinite(py)) {
     const pt=el('text',{x:px,y:py-10,'text-anchor':'middle',
@@ -2757,11 +3738,20 @@ function renderDonut() {
   const svg=document.getElementById('donut-svg');
   const leg=document.getElementById('donut-legend');
   const models=applyDateFilter(AppState.data.models,'date');
-  const yes=models.filter(m=>m.openWeights).length;
-  const no=models.filter(m=>!m.openWeights).length;
+  // openWeights is a 3-state category string ('open' | 'partial' | 'closed').
+  // Bucket counts by exact match so each segment reflects only its own state.
+  const open=models.filter(m=>m.openWeights==='open').length;
+  const partial=models.filter(m=>m.openWeights==='partial').length;
+  const closed=models.filter(m=>m.openWeights==='closed').length;
   const total=models.length||1;
 
-  const cats=[{label:'Open',val:yes,color:'#00c8d4'},{label:'Closed',val:no,color:'#ff5f5f'}];
+  // Cyan = open, amber = partial, red = closed. Amber matches the existing
+  // "midway" semantic used by .insight-callout accents.
+  const cats=[
+    {label:'Open',   val:open,    color:'#00c8d4'},
+    {label:'Partial',val:partial, color:'#f0a500'},
+    {label:'Closed', val:closed,  color:'#ff5f5f'},
+  ];
   svg.innerHTML='';
   const cx=90,cy=90,R=72,r=42;
   let angle=-Math.PI/2;
@@ -3212,6 +4202,84 @@ function wireControls() {
     AppState.filters.selectedOrg=null;
     renderTreemap(); renderOrgBar();
   });
+
+  // Rising Cost — confidence-mode toggle. Default is 'all' so first-load
+  // visual is unchanged; switching to 'confident' redraws the line with
+  // only Confident-rated per-year maxes (and re-anchors the projection
+  // wedge accordingly via renderCostChart's anchor=series[last]).
+  document.querySelectorAll('#cost-confidence-controls [data-cost-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.costMode;
+      if(AppState.filters.costConfidenceMode === mode) return;
+      AppState.filters.costConfidenceMode = mode;
+      document.querySelectorAll('#cost-confidence-controls [data-cost-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.costMode === mode);
+      });
+      renderCostChart();
+    });
+  });
+
+  // Methodology modal — open from hero, close via × / backdrop / Escape, focus-trapped
+  wireMethodologyModal();
+}
+
+// ── METHODOLOGY MODAL ────────────────────────────────
+function wireMethodologyModal() {
+  const trigger = document.getElementById('capex-method-btn');
+  const overlay = document.getElementById('methodology-overlay');
+  const modal   = document.getElementById('methodology-modal');
+  const closeBtn= document.getElementById('methodology-close');
+  if(!trigger||!overlay||!modal||!closeBtn) return;
+
+  let lastFocus = null;
+
+  function focusableEls() {
+    return Array.from(modal.querySelectorAll(
+      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
+  }
+
+  function onKeydown(ev) {
+    if(ev.key === 'Escape') { ev.preventDefault(); closeModal(); return; }
+    if(ev.key !== 'Tab') return;
+    const items = focusableEls();
+    if(!items.length) { ev.preventDefault(); modal.focus(); return; }
+    // If focus has escaped the modal, pull it back in
+    if(!modal.contains(document.activeElement)) {
+      ev.preventDefault();
+      items[0].focus();
+      return;
+    }
+    const first = items[0], last = items[items.length-1];
+    if(ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+    else if(!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+  }
+
+  function openModal() {
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    // next frame so transition runs
+    requestAnimationFrame(()=>overlay.classList.add('open'));
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKeydown);
+    // Focus first interactive element (close button) for keyboard users
+    setTimeout(()=>{ closeBtn.focus(); }, 30);
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.removeEventListener('keydown', onKeydown);
+    document.body.style.overflow = '';
+    // Wait for fade-out before hiding
+    setTimeout(()=>{ overlay.hidden = true; }, 200);
+    if(lastFocus && typeof lastFocus.focus === 'function') {
+      try { lastFocus.focus(); } catch(_){}
+    }
+  }
+
+  trigger.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', ev => { if(ev.target === overlay) closeModal(); });
 }
 
 // ═══════════════════════════════════════════════
@@ -3232,19 +4300,40 @@ async function loadCSV(path) {
 }
 
 function processModels(rows) {
-  return rows.map(r=>({
-    name:         r['Model']||'',
-    date:         parseDate(r['Publication date']),
-    org:          r['Organization']||'Unknown',
-    flop:         parseNum(r['Training compute (FLOP)']),
-    domain:       getPrimaryDomain(r['Domain']),
-    params:       parseNum(r['Parameters']),
-    accessibility:r['Model accessibility']||'',
-    cost:         parseNum(r['Training compute cost (2023 USD)']),
-    country:      r['Country (of organization)']||'Other',
-    openWeights:  isOpenWeights(r),
-    frontier:     isFrontier(r),
-  })).filter(r=>r.name);
+  return rows.map(r=>{
+    // ── Data provenance fields (Epoch AI Notable AI Models schema) ──
+    // Confidence: blank/missing → 'Unknown' so downstream prompts can rely on a value.
+    const confRaw = (r['Confidence']||'').trim();
+    const confidence = confRaw || 'Unknown';
+    // Training compute estimation method: e.g. "Operation counting", "Benchmarks",
+    // "Comparison with other models". Pass through trimmed (null when blank).
+    const cemRaw = (r['Training compute estimation method']||'').trim();
+    const computeEstimationMethod = cemRaw || null;
+    // Estimated over 1e25 FLOP: Epoch's own flag for very-large-compute training runs.
+    // Stored as raw trimmed string ("True" / "False" / null).
+    const overRaw = (r['Estimated over 1e25 FLOP']||'').trim();
+    const estimatedOver1e25 = overRaw || null;
+    return {
+      name:         r['Model']||'',
+      date:         parseDate(r['Publication date']),
+      org:          r['Organization']||'Unknown',
+      flop:         parseNum(r['Training compute (FLOP)']),
+      domain:       getPrimaryDomain(r['Domain']),
+      params:       parseNum(r['Parameters']),
+      accessibility:r['Model accessibility']||'',
+      cost:         parseNum(r['Training compute cost (2023 USD)']),
+      country:      r['Country (of organization)']||'Other',
+      // openWeights is now a 3-state category string ('open' | 'partial' |
+      // 'closed') so renderDonut can split into three segments. Truthiness
+      // checks elsewhere should not rely on it being a boolean.
+      openWeights:  isOpenWeights(r),
+      frontier:     isFrontier(r),
+      // ── New provenance/methodology fields ───────────────────────
+      confidence,
+      computeEstimationMethod,
+      estimatedOver1e25,
+    };
+  }).filter(r=>r.name);
 }
 
 function processHardware(rows) {
@@ -3261,6 +4350,93 @@ function processHardware(rows) {
     effic:      parseNum(r['Energy efficiency']),
     process:    parseNum(r['Process size (nm)']),
   })).filter(r=>r.name);
+}
+
+// ═══════════════════════════════════════════════
+//  ABOUT-THIS-DATA BANNER + FOOTER
+// ═══════════════════════════════════════════════
+// updateAboutBannerMeta — recomputes the banner's live counts and
+// "last updated" date against the CURRENTLY-FILTERED date range
+// (AppState.dateRange via applyDateFilter). This is the single source
+// of truth used both at init time and on every scrubber drag, so the
+// banner numbers always match what the Overview KPI cards display.
+//
+// Empty-set safe: if the user drags the scrubber to a window with no
+// data the banner shows "0 models · 0 chips" and "—" for the date.
+function updateAboutBannerMeta() {
+  const { models, hardware } = AppState.data;
+
+  // Same filter the Overview KPIs use — keys are 'date' for models
+  // and 'releaseDate' for hardware. Identical inputs ⇒ identical counts.
+  const fm = applyDateFilter(models,  'date');
+  const fh = applyDateFilter(hardware,'releaseDate');
+
+  // Latest publication / release date across the FILTERED sets.
+  const allDates = [
+    ...fm.map(m=>m.date),
+    ...fh.map(h=>h.releaseDate),
+  ].filter(d => d instanceof Date && !isNaN(d));
+
+  let updatedLabel = '—';
+  if (allDates.length) {
+    // Math.max([])===-Infinity, so we guard above. Convert ms→Date→label.
+    const maxMs = Math.max(...allDates.map(d=>d.getTime()));
+    updatedLabel = new Date(maxMs).toLocaleDateString('en-US', { month:'short', year:'numeric' });
+  }
+
+  // ── Per-field spans inside the collapsed banner row ──
+  const elModel = document.getElementById('dbt-model-count');
+  const elHw    = document.getElementById('dbt-hw-count');
+  const elDate  = document.getElementById('dbt-updated');
+  if (elModel) elModel.textContent = fm.length;
+  if (elHw)    elHw.textContent    = fh.length;
+  if (elDate)  elDate.textContent  = updatedLabel;
+
+  // ── Footer "Last updated" mirrors the same filtered date ──
+  const elFooter = document.getElementById('df-updated-date');
+  if (elFooter) elFooter.textContent = updatedLabel;
+}
+
+// updateMethodologyConfidenceBreakdown — populates the dynamic
+// "Of the N frontier models, X have Confident estimates, ..." line at
+// the end of the methodology modal's "What the data shows" section.
+// Counts are derived from AppState.data.models (already pre-filtered to
+// frontier per the source CSV), so the message stays consistent with
+// the rest of the dashboard.
+function updateMethodologyConfidenceBreakdown() {
+  const target = document.getElementById('method-conf-breakdown');
+  if(!target) return;
+  const models = AppState.data.models || [];
+  const counts = { Confident:0, Likely:0, Speculative:0, Unknown:0 };
+  models.forEach(m => { counts[normalizeConfidence(m.confidence)]++; });
+  const total = models.length;
+  if(!total) { target.textContent = ''; return; }
+
+  const fmt = (level, n) =>
+    `<strong>${n}</strong> <span class="conf-tt-dot ${confClass(level)}"></span>${level}`;
+
+  target.innerHTML =
+    `Of the <strong>${total}</strong> frontier models in the dataset, ` +
+    `${fmt('Confident',   counts.Confident)} estimates, ` +
+    `${fmt('Likely',      counts.Likely)}, ` +
+    `${fmt('Speculative', counts.Speculative)}, ` +
+    `and ${fmt('Unknown', counts.Unknown)}.`;
+}
+
+// initAboutBanner — one-time setup: wires the click-to-expand toggle.
+// Count/date population is delegated to updateAboutBannerMeta().
+function initAboutBanner() {
+  const toggle = document.getElementById('about-toggle');
+  const panel  = document.getElementById('about-panel');
+  if (toggle && panel && !toggle.dataset.wired) {
+    toggle.dataset.wired = '1';
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      if (isOpen) panel.setAttribute('hidden','');
+      else panel.removeAttribute('hidden');
+    });
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -3282,6 +4458,13 @@ async function init() {
 
     wireControls();
     initScrubber();
+    initAboutBanner();
+    // Single source of truth for banner counts: same code path used on every
+    // scrubber drag, ensuring the initial values match the Overview KPIs.
+    updateAboutBannerMeta();
+    // Populate the methodology modal's dynamic confidence breakdown.
+    // Data is static after load, so one call here is sufficient.
+    updateMethodologyConfidenceBreakdown();
 
     // Domain filter auto-populated by renderDomainFilters to only domains with data
     AppState.filters.domain = [];
