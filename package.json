@@ -1,0 +1,13 @@
+{
+  "name": "ai-observatory",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check app.js",
+    "test": "node scripts/audit-test.cjs",
+    "test:browser": "node scripts/browser-test.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.61.1"
+  }
+}

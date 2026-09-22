@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Observatory — Frontier AI Compute & Cost Tracker</title>
-<meta name="description" content="AI Observatory — an interactive tracker of frontier AI training compute, cost, and hardware from 2012 to 2025, built on the Epoch AI Notable Models and ML Hardware datasets.">
+<title>AI Observatory: Frontier AI Compute & Cost Tracker</title>
+<meta name="description" content="AI Observatory: an interactive tracker of frontier AI training compute, cost, and hardware with separate model and hardware coverage, built on the Epoch AI Notable Models and ML Hardware datasets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -395,9 +395,11 @@ tr:hover td{background:var(--surface2)}
 }
 .chart-insight{
   padding:4px 16px 10px;
+  font-family:var(--font-body);
   font-size:0.72rem;
   color:var(--text);
   font-weight:500;
+  line-height:1.7;
 }
 .chart-area{
   width:100%;
@@ -460,6 +462,9 @@ tr:hover td{background:var(--surface2)}
   gap:12px;
   padding:8px 16px;
   border-top:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:0.62rem;
+  color:var(--muted);
 }
 .legend-item{
   display:flex;align-items:center;gap:5px;
@@ -662,7 +667,7 @@ tr:hover td{background:var(--surface2)}
 }
 .insight-callout p strong{color:var(--text);font-weight:600}
 
-/* ── CYAN VARIANT — INFERENCE ECONOMICS COUNTERPOINT ──
+/* ── CYAN VARIANT: INFERENCE ECONOMICS COUNTERPOINT ──
    Additive only; reuses every other .insight-callout style.
    Swaps amber accent (border + label) for cyan, and uses a very
    subtle cyan tint instead of the amber tint. */
@@ -711,7 +716,7 @@ tr:hover td{background:var(--surface2)}
   gap:8px;
 }
 .watch-panel-header::before{
-  content:'\25BA';   /* ► — matches the bullet glyph used inside the list */
+  content:'\25BA';   /* ►: matches the bullet glyph used inside the list */
   color:var(--amber);
   font-size:0.7rem;
   line-height:1;
@@ -836,7 +841,7 @@ tr:hover td{background:var(--surface2)}
 }
 .capex-hero-sub .av{color:#f0a500;font-weight:700}
 .capex-hero-sub em{font-style:italic;color:rgba(255,255,255,0.92)}
-/* Inline confidence dot — Speculative (red), per existing palette */
+/* Inline confidence dot: Speculative (red), per existing palette */
 .conf-dot-inline{
   display:inline-block;
   width:8px;height:8px;
@@ -1044,6 +1049,7 @@ tr:hover td{background:var(--surface2)}
 }
 /* Arms race gets extra height for dual-axis breathing room */
 #arms-race{height:420px}
+.cross-chart-area{height:420px}
 
 /* ── ABOUT-THIS-DATA BANNER ──────────────────────── */
 #about-banner{
@@ -1170,7 +1176,7 @@ tr:hover td{background:var(--surface2)}
 }
 
 /* ── CONFIDENCE COLOR SYSTEM ─────────────────────
-   Single source of truth — used by:
+   Single source of truth: used by:
    · About-panel confidence legend
    · Rising Cost chart (dots, tooltip, legend strip)
    · Compute Race scatter (estimate-quality rings, tooltip)
@@ -1188,13 +1194,13 @@ tr:hover td{background:var(--surface2)}
 .conf-speculative { background:var(--conf-speculative) }
 .conf-unknown     { background:var(--conf-unknown) }
 
-/* Translucent badge variant (for tables) — overrides the plain .conf-* fill */
+/* Translucent badge variant (for tables): overrides the plain .conf-* fill */
 .badge.conf-confident   { background:rgba(52,211,153,0.15);  color:var(--conf-confident) }
 .badge.conf-likely      { background:rgba(240,165,0,0.15);   color:var(--conf-likely) }
 .badge.conf-speculative { background:rgba(255,95,95,0.15);   color:var(--conf-speculative) }
 .badge.conf-unknown     { background:rgba(136,146,164,0.15); color:var(--conf-unknown) }
 
-/* Inline tooltip dot — sized to sit next to text in #tooltip rows */
+/* Inline tooltip dot: sized to sit next to text in #tooltip rows */
 .conf-tt-dot{
   display:inline-block;
   width:8px;height:8px;
@@ -1221,7 +1227,7 @@ tr:hover td{background:var(--surface2)}
 .ccl-item .conf-dot{width:8px;height:8px}
 .ccl-label{color:var(--muted)}
 
-/* Compute-scatter ring legend item — preview a sample ring */
+/* Compute-scatter ring legend item: preview a sample ring */
 .scatter-ring-sample{
   display:inline-block;
   width:11px;height:11px;
@@ -1276,6 +1282,30 @@ tr:hover td{background:var(--surface2)}
   .footer-row-1{gap:6px;font-size:0.62rem}
   .footer-sep{display:none}
 }
+
+.coverage-note{font-size:.72rem;line-height:1.7;color:var(--muted);margin-bottom:16px}
+a{color:var(--cyan)}
+.card:has(#recent-table){overflow-x:auto}
+.chart-grid>*{min-width:0}
+.chart-area{overflow:hidden}
+.chart-area svg{display:block;max-width:100%}
+.chart-area svg text{font-family:var(--font-mono),monospace}
+.chart-area svg .axis-label,.chart-area svg .axis-tick{font-family:var(--font-mono),monospace}
+.chart-area svg.can-pan{cursor:grab;touch-action:none;user-select:none}
+.chart-area svg.is-dragging{cursor:grabbing}
+.chart-navigation{position:absolute;top:2px;right:12px;display:flex;align-items:center;gap:4px;z-index:1}
+.chart-navigation{opacity:.18;transition:opacity .15s ease}
+.chart-area:hover .chart-navigation,.chart-area:focus-within .chart-navigation{opacity:1}
+.chart-navigation button{background:var(--surface2);color:var(--muted);border:1px solid var(--border2);border-radius:3px;min-width:26px;height:25px;padding:0 7px;font:11px var(--font-mono);cursor:pointer}
+.chart-navigation button:disabled{opacity:.35;cursor:default}
+.chart-navigation button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.chart-drag-hint{font:10px var(--font-mono);color:var(--muted);margin-right:5px}
+.nav-tabs{min-width:0}
+.tab-btn{flex-shrink:0}
+.axis-tick,.axis-label{fill:var(--muted)}
+@media(max-width:600px){.nav-tabs{justify-content:flex-start}}
+.about-meta{white-space:normal}
+@media(max-width:600px){.donut-wrap{flex-direction:column;gap:8px;padding:10px}.donut-wrap svg{width:150px;height:150px;flex-shrink:0}.capex-hero{padding:20px}.capex-hero-headline{font-size:19px}#navbar{gap:6px;padding:0 8px}.tab-btn{padding:6px 8px}.nav-logo{font-size:.7rem}.tab-sub{display:none}}
 </style>
 </head>
 <body>
@@ -1293,49 +1323,49 @@ tr:hover td{background:var(--surface2)}
     <button class="tab-btn active" data-tab="overview">Overview<span class="tab-sub">The scale of the race</span></button>
     <button class="tab-btn" data-tab="compute">Compute Race<span class="tab-sub">Compute is the new capital</span></button>
     <button class="tab-btn" data-tab="hardware">Hardware<span class="tab-sub">The machines behind the models</span></button>
-    <button class="tab-btn" data-tab="orgs">Org Landscape<span class="tab-sub">Who can afford to play</span></button>
-    <button class="tab-btn" data-tab="cross">Cross-Dataset<span class="tab-sub">Demand is outpacing supply</span></button>
+    <button class="tab-btn" data-tab="orgs">Org Landscape<span class="tab-sub">Recorded research output</span></button>
+    <button class="tab-btn" data-tab="cross">Cross-Dataset<span class="tab-sub">Scale and relative growth</span></button>
   </div>
   <button id="theme-btn" title="Toggle theme">◑</button>
 </nav>
 
-<!-- About this data — sticky data-provenance banner -->
+<!-- About this data: sticky data-provenance banner -->
 <section id="about-banner" aria-label="About this data">
   <button class="about-head" type="button" aria-expanded="false" aria-controls="about-panel" id="about-toggle">
     <span class="about-icon" aria-hidden="true">i</span>
     <span class="about-label">About this data</span>
-    <span class="about-meta" id="about-meta">Epoch AI · <span id="dbt-model-count">—</span> models · <span id="dbt-hw-count">—</span> chips in selected range · updated <span id="dbt-updated">—</span></span>
+    <span class="about-meta" id="about-meta">Epoch AI · <span id="dbt-model-count">...</span> models · <span id="dbt-hw-count">...</span> hardware records in selected range · coverage: <span id="dbt-updated">...</span></span>
     <span class="about-chev" aria-hidden="true">▾</span>
   </button>
   <div class="about-panel" id="about-panel" hidden>
     <div class="about-col">
       <h4>Sources</h4>
       <ul>
-        <li><a href="https://epoch.ai/data/notable-ai-models" target="_blank" rel="noopener">Epoch AI — Notable AI Models</a></li>
-        <li><a href="https://epoch.ai/data/machine-learning-hardware" target="_blank" rel="noopener">Epoch AI — ML Hardware</a></li>
+        <li><a href="https://epoch.ai/data/notable-ai-models" target="_blank" rel="noopener">Epoch AI: Notable AI Models</a></li>
+        <li><a href="https://epoch.ai/data/machine-learning-hardware" target="_blank" rel="noopener">Epoch AI: ML Hardware</a></li>
         <li style="color:var(--muted2);font-size:0.68rem;margin-top:4px">Both databases are maintained and curated by Epoch AI.</li>
       </ul>
     </div>
     <div class="about-col">
       <h4>Cost methodology</h4>
-      <p>Training-cost estimates follow an <strong>amortized hardware + energy</strong> approach: GPU-hours are derived from training FLOP ÷ (peak chip throughput × utilization), priced as amortized hardware capital plus power (per <a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">Cottier et al. 2024</a>).</p>
-      <p style="color:var(--muted2)">Estimates carry uncertainty bands of roughly <strong>±0.5 orders of magnitude</strong> (90% CI).</p>
+      <p>Charts read Epoch’s <strong>Training compute cost (2023 USD)</strong> field directly. These are final-run compute estimates, not a dashboard cost model. Cloud-rental and upfront-capital fields are not combined with this series.</p>
+      <p style="color:var(--muted2)">Costs exclude full R&amp;D, researcher compensation, failed experiments, and other non-final-run costs. Confidence labels are source assessments, not per-point confidence intervals.</p>
     </div>
     <div class="about-col">
       <h4>Confidence labels</h4>
       <ul class="conf-list">
-        <li><span class="conf-dot conf-confident"></span><strong>Confident</strong> — disclosed or strongly supported</li>
-        <li><span class="conf-dot conf-likely"></span><strong>Likely</strong> — inferred from multiple signals</li>
-        <li><span class="conf-dot conf-speculative"></span><strong>Speculative</strong> — limited evidence</li>
-        <li><span class="conf-dot conf-unknown"></span><strong>Unknown</strong> — no rating assigned</li>
+        <li><span class="conf-dot conf-confident"></span><strong>Confident</strong>: disclosed or strongly supported</li>
+        <li><span class="conf-dot conf-likely"></span><strong>Likely</strong>: inferred from multiple signals</li>
+        <li><span class="conf-dot conf-speculative"></span><strong>Speculative</strong>: limited evidence</li>
+        <li><span class="conf-dot conf-unknown"></span><strong>Unknown</strong>: no rating assigned</li>
       </ul>
     </div>
     <div class="about-col">
       <h4>Important caveats</h4>
       <ul class="caveat-list">
-        <li>The 'Frontier model' filter is pre-applied by Epoch — this dataset contains only models judged frontier-relevant at their time of release.</li>
-        <li>Inference costs are not shown in most charts; training cost is one slice of total economics.</li>
-        <li>API price field is populated for fewer than 15% of models; 'open weights' status is missing for nearly 50%.</li>
+        <li>Charts load all supplied model rows. Explicit frontier-only charts are labeled. <span id="frontier-coverage"></span> This is a selected snapshot, not the full Notable Models database.</li>
+        <li>Inference costs are not plotted; training cost is one slice of total economics.</li>
+        <li id="weights-coverage">Open-weight coverage is calculated after loading.</li>
         <li>Cost estimates are amortized hardware + energy, not full development cost (which includes R&amp;D staff, failed experiments, etc.).</li>
       </ul>
     </div>
@@ -1343,19 +1373,20 @@ tr:hover td{background:var(--surface2)}
 </section>
 
 <main>
+  <p class="coverage-note" id="dataset-coverage"></p>
   <!-- TAB 1: OVERVIEW -->
   <div id="tab-overview" class="tab-panel active">
     <div class="kpi-grid" id="kpi-grid"></div>
     <div class="capex-hero" id="capex-hero">
       <span class="capex-hero-label">THE CAPEX WALL OF AI</span>
-      <div class="capex-hero-headline" id="capex-headline">Frontier AI training cost has grown <span class="av">2.4×</span> per year since 2016.</div>
-      <div class="capex-hero-sub" id="capex-sub">The most expensive <em>disclosed</em> training run is on the order of <span class="av">$190M</span> (Gemini Ultra, 2023). Industry estimates for undisclosed frontier models in 2025 reach <span class="av">$300–400M</span><span class="conf-dot-inline" title="Speculative — limited public evidence" aria-label="Speculative confidence"></span> (GPT-4.5, Grok 4 — Speculative). At current trajectory, the first <span class="av">$1 billion</span> training run is projected for <span class="av">2027</span>.<br>Only a handful of organizations on Earth can still afford to compete.</div>
+      <div class="capex-hero-headline" id="capex-headline">Published research: frontier training cost grew <span class="av">2.4× per year</span> since 2016.</div>
+      <div class="capex-hero-sub" id="capex-sub"><a href="https://arxiv.org/abs/2405.21015v2">Cottier et al. 2024 (revised 2025)</a>: 90% CI: 2.0× to 2.9×. The authors projected costs above <span class="av">$1B around 2027</span> if the historical trend continued. This is published context, not a forecast fitted to these CSVs.<br><span id="hero-local-estimates"></span><br>External context: Stanford’s <a href="https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development">2024 AI Index</a> estimated Gemini Ultra’s training cost at roughly <span class="av">$190M</span>. This separate estimate is not used in the cost chart.</div>
       <button class="capex-hero-method" id="capex-method-btn" type="button" aria-haspopup="dialog" aria-controls="methodology-modal">How is this calculated? &rarr;</button>
     </div>
     <div class="scrubber-wrap">
       <div class="scrubber-header">
         <span class="scrubber-label">Global Date Filter</span>
-        <span class="scrubber-range" id="scrubber-display">2012 – 2025</span>
+        <span class="scrubber-range" id="scrubber-display">Loading coverage…</span>
       </div>
       <div style="position:relative;height:20px;margin:4px 0">
         <div class="range-track" style="position:absolute;top:8px;left:0;right:0"></div>
@@ -1367,7 +1398,7 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="section-title">Recently Published Models</div>
     <div class="card">
-      <div class="card-header"><div class="dot"></div>Top 5 Most Recent by Publication Date</div>
+      <div class="card-header"><div class="dot"></div>Top 5 Most Recent Supplied Models in Selected Window (Epoch AI)</div>
       <table id="recent-table">
         <thead><tr>
           <th>Model</th><th>Organization</th><th>Date</th>
@@ -1376,14 +1407,11 @@ tr:hover td{background:var(--surface2)}
         <tbody></tbody>
       </table>
     </div>
-    <!-- Forward-looking signals — converts the data above into "what to watch next". -->
-    <aside class="watch-panel" aria-label="What to watch — Overview">
-      <div class="watch-panel-header">What to watch</div>
+    <!-- Forward-looking signals: converts the data above into "what to watch next". -->
+    <aside class="watch-panel" aria-label="Interpretation limits: Overview">
+      <div class="watch-panel-header">Interpretation limits</div>
       <ul class="watch-panel-list">
-        <li><strong>The $1B training run</strong> &mdash; Anthropic, OpenAI, and Google have each hinted at $500M+ runs in 2025. The first publicly confirmed $1B run will be a symbolic threshold that triggers a new round of sovereign AI investment globally.</li>
-        <li><strong>Inference commoditization</strong> &mdash; API prices have fallen 10&times; per year. Watch for the point where frontier inference becomes cheaper than human labor for any cognitive task &mdash; that's the demand inflection.</li>
-        <li><strong>Open-weight parity</strong> &mdash; If Meta's next Llama generation matches closed-model performance at open weights, the closed-model business model faces structural pressure.</li>
-      </ul>
+<li>Coverage: The latest year may be incomplete. Publication dates do not identify when training occurred.</li><li>Cost comparability: Review source methods and confidence before comparing estimates.</li><li>Access: Missing weight status is unknown; availability alone does not measure capability.</li></ul>
     </aside>
   </div>
 
@@ -1391,8 +1419,8 @@ tr:hover td{background:var(--surface2)}
   <div id="tab-compute" class="tab-panel">
     <div class="section-title">Training Compute Over Time</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">Compute Race <span class="info-icon" data-tip="Each dot is one AI model. Higher up = more compute used to train it = more expensive and generally more capable.">ⓘ</span></div>
-      <div class="chart-insight">Training compute grows ~4× per year — doubling time shorter than Moore's Law</div>
+      <div class="chart-title">Compute Race <span class="info-icon" data-tip="Each dot is a supplied model with positive training FLOP. Compute alone does not measure cost or capability.">ⓘ</span></div>
+      <div class="chart-insight">All supplied models with positive FLOP in the selected window. Dashed line: log-linear fit to displayed observations. Source: Epoch AI.</div>
       <div class="chart-area tall" id="compute-scatter"></div>
       <div class="legend" id="compute-legend"></div>
       <div class="controls-bar">
@@ -1404,27 +1432,23 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="section-title">Models Published by Year & Domain</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">Annual Output <span class="info-icon" data-tip="How many new frontier AI models were published each year, broken down by type.">ⓘ</span></div>
-      <div class="chart-insight">AI research output accelerates dramatically post-2019</div>
+      <div class="chart-title">Annual Output of Supplied Models <span class="info-icon" data-tip="Counts all supplied model records by publication year and primary domain, not the full population of AI models.">ⓘ</span></div>
+      <div class="chart-insight">All supplied model records in the selected window. Latest year is incomplete. Source: Epoch AI. Milestone: <a href="https://openai.com/index/chatgpt/">ChatGPT launch, November 2022</a>.</div>
       <div class="chart-area" id="domain-bar"></div>
       <div class="legend" id="domain-legend"></div>
     </div>
     <div class="section-title">Compute Distribution by Domain</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">How Much Compute Does Each Domain Use? <span class="info-icon" data-tip="Each violin shows the distribution of training compute across all models in that domain. Wider = more models at that compute level. The box shows Q1–Q3; the white line is the median.">ⓘ</span></div>
-      <div class="chart-insight">Language &amp; Multimodal models push the frontier; specialized domains cluster lower</div>
+      <div class="chart-title">How Much Compute Does Each Domain Use? <span class="info-icon" data-tip="Distribution of log10 training FLOP in each domain, normalized to equal maximum width. Wider means higher within-domain density. The box shows Q1–Q3; the white line is the median.">ⓘ</span></div>
+      <div class="chart-insight">All supplied models with positive FLOP; domains need at least four observations. Mixed source confidence. Width shows relative density within each domain, not total model count. Source: Epoch AI.</div>
       <div class="chart-area" id="compute-violin" style="height:300px"></div>
     </div>
-    <div class="section-title">The Rising Cost of Frontier AI</div>
+    <div class="section-title">Annual Maximum Training-Cost Estimates</div>
     <div class="chart-card">
-      <div class="chart-title">The Rising Cost of Staying Competitive <span class="info-icon" data-tip="The price tag of the most expensive model trained each year. Solid line = disclosed/estimated; shaded band = projection at 2.4×/yr (Cottier et al. 2024, 90% CI).">ⓘ</span></div>
-      <div class="chart-insight">Each new generation of frontier AI costs roughly 10× more than the last — and the trajectory points to $1B by 2027</div>
+      <div class="chart-title">Annual Maximum Estimated Training Cost (2023 USD)</div>
+      <div class="chart-insight">All supplied models with a positive Epoch cost estimate in the selected window, subject to the confidence filter. No future projection is plotted.</div>
       <div class="chart-area xtall" id="cost-chart"></div>
-      <div class="cost-projection-legend" id="cost-projection-legend">
-        <span class="cpl-item"><span class="cpl-swatch cpl-solid"></span>Solid line = disclosed/estimated costs</span>
-        <span class="cpl-sep">·</span>
-        <span class="cpl-item"><span class="cpl-swatch cpl-band"></span>Shaded band = projection at 2.4×/yr (90% CI: 2.0×–2.9×)</span>
-      </div>
+      <div class="cost-projection-legend" id="cost-projection-legend">Source: Epoch AI, Training compute cost (2023 USD). Dots are annual maxima; lines join consecutive years only.</div>
       <div class="cost-confidence-legend" id="cost-confidence-legend" aria-label="Per-point confidence color key">
         <span class="ccl-label">Dot color = confidence in this year's estimate:</span>
         <span class="ccl-item"><span class="conf-dot conf-confident"></span>Confident</span>
@@ -1437,43 +1461,15 @@ tr:hover td{background:var(--surface2)}
         <button class="ctrl-toggle active" data-cost-mode="all" type="button">All confidences</button>
         <button class="ctrl-toggle" data-cost-mode="confident" type="button">Confident only</button>
       </div>
-      <div class="cost-projection-callout" id="cost-projection-callout" hidden>
-        <span class="cpl-badge">1</span>
-        <span>Projected $1B run · 2027 (Cottier et al.)</span>
-      </div>
+
     </div>
-    <!-- Inference Economics counterpoint — additive cyan variant of .insight-callout. -->
-    <div class="insight-callout cyan" style="margin-top:20px">
-      <span class="callout-label">INFERENCE ECONOMICS — THE OTHER CURVE</span>
-      <p>While training costs have grown <strong>2.4× per year</strong>, deploying frontier AI has become <strong>100–150× cheaper</strong> since 2023. GPT-4 cost ~$30 per million tokens at launch; by 2025, comparable models run at <strong>~$0.20–1.60</strong>. The capex wall concentrates model creation in 3–5 labs. The inference floor is falling toward commodity — enabling broad deployment regardless of who trains the models.</p>
-      <svg class="callout-sparkline" viewBox="0 0 480 84" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontier output token price decline on a log scale: GPT-4 in 2023 was $30 per million tokens, GPT-4o in 2024 was $5 per million tokens, GPT-4o-mini in 2024 was $0.20 per million tokens.">
-        <title>Inference output price history (log scale, $ per million tokens)</title>
-        <g transform="translate(0,18)">
-          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4 · 2023</text>
-          <rect x="152" y="-7" width="260" height="14" rx="2" fill="#00c8d4"/>
-          <text x="416" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$30/M</text>
-        </g>
-        <g transform="translate(0,42)">
-          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4o · 2024</text>
-          <rect x="152" y="-7" width="178" height="14" rx="2" fill="#00c8d4"/>
-          <text x="334" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$5/M</text>
-        </g>
-        <g transform="translate(0,66)">
-          <text x="140" y="0" text-anchor="end" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">GPT-4o-mini · 2024</text>
-          <rect x="152" y="-7" width="32" height="14" rx="2" fill="#00c8d4"/>
-          <text x="188" y="0" dominant-baseline="central" font-family="DM Mono, monospace" font-size="11" fill="#f0a500">$0.20/M</text>
-        </g>
-      </svg>
-      <span class="callout-source">Sources: OpenAI pricing history · Artificial Analysis · Epoch AI inference benchmarks</span>
-    </div>
-    <!-- Forward-looking signals — Compute Race tab. -->
-    <aside class="watch-panel" aria-label="What to watch — Compute Race">
-      <div class="watch-panel-header">What to watch</div>
+    <!-- Inference Economics counterpoint: additive cyan variant of .insight-callout. -->
+    <div class="insight-callout cyan"><span class="callout-label">TRAINING AND DEPLOYMENT</span><p>Training compute, final-run cost, and inference pricing measure different things. These CSVs do not support a matched-quality inference price trend or a count of organizations able to afford training.</p><span class="callout-source">Scope note from the visualization layer; no inference-price series is calculated.</span></div>
+    <!-- Forward-looking signals: Compute Race tab. -->
+    <aside class="watch-panel" aria-label="Interpretation limits: Compute Race">
+      <div class="watch-panel-header">Interpretation limits</div>
       <ul class="watch-panel-list">
-        <li><strong>Cost per capability</strong> &mdash; Training cost is rising but so is model capability. Watch cost-per-benchmark-point, not absolute cost, to assess whether the investment is efficient.</li>
-        <li><strong>Efficient frontier models</strong> &mdash; DeepSeek R1 and similar showed that algorithmic improvements can close a 10&times; compute gap. Watch for the next efficiency breakthrough that resets the cost curve.</li>
-        <li><strong>Reasoning-time compute</strong> &mdash; The next cost frontier isn't training, it's inference-time compute (chain-of-thought, o-series models). This cost doesn't appear in training charts but is growing fast.</li>
-      </ul>
+<li>Training compute is a workload measure, not a model quality score.</li><li>The fitted compute trend describes the selected observations; it is not a causal model or forecast.</li><li>Inference prices and deployment costs require a separate dataset with matched tasks and quality.</li></ul>
     </aside>
   </div>
 
@@ -1484,32 +1480,29 @@ tr:hover td{background:var(--surface2)}
       <button class="hw-filter-btn active" data-hw="all">All Chips</button>
       <button class="hw-filter-btn" data-hw="GPU">GPU</button>
       <button class="hw-filter-btn" data-hw="TPU">TPU</button>
-      <button class="hw-filter-btn" data-hw="Other">Other</button>
+      <button class="hw-filter-btn" data-hw="Other">Other / Unknown</button>
     </div>
     <div class="section-title">Who Builds The Fastest Chips</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">Who Builds the Fastest Chips? <span class="info-icon" data-tip="Peak speed of the fastest chip each manufacturer had available, tracked over time.">ⓘ</span></div>
-      <div class="chart-insight">NVIDIA leads peak throughput; Google TPUs lead on efficiency per watt. AMD MI300X and Cerebras WSE-3 are closing the gap on specific workloads — but NVIDIA holds <strong>~80% of frontier training deployments as of 2025</strong>.</div>
-      <div style="padding:0 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Source: SemiAnalysis GPU market share estimates, 2025</div>
+      <div class="chart-title">Record Peak Tensor FP16/BF16 Throughput by Supplier Group</div>
+      <div class="chart-insight">Running records within the selected date and chip-type window: NVIDIA, Google, and all other suppliers combined. Peak specifications are not achieved training performance.</div>
+      <div style="padding:0 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Source: Epoch AI ML Hardware, tensor FP16/BF16 field only. Missing tensor specifications are omitted.</div>
       <div class="chart-area tall" id="hw-line"></div>
     </div>
     <div class="chart-grid full" style="margin-top:16px">
       <div class="chart-card">
-        <div class="chart-title">Hardware Investment Arms Race <span class="info-icon" data-tip="Launch price of each manufacturer's flagship AI accelerator by year, log scale. Each dot is a chip release. Hover for details.">ⓘ</span></div>
-        <div class="chart-insight">Each GPU generation costs 3–10× more than the last — exponential on a log scale means straight lines</div>
+        <div class="chart-title">Highest Listed Accelerator Launch Price by Manufacturer and Year</div>
+        <div class="chart-insight">Annual maximum listed price; up to six manufacturers with the highest peak prices in the selected window. Sparse coverage does not establish a generational price trend.</div>
         <div class="chart-area tall" id="hw-price-bar"></div>
-        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">These are single-chip launch prices. Training a frontier model requires thousands of chips.</div>
+        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Source: Epoch AI ML Hardware, Release price (USD). Nominal listed prices; product configurations may differ. Lines connect available observations, including gaps.</div>
         <div class="legend" id="hw-price-legend"></div>
       </div>
     </div>
-    <!-- Forward-looking signals — Hardware tab. -->
-    <aside class="watch-panel" aria-label="What to watch — Hardware">
-      <div class="watch-panel-header">What to watch</div>
+    <!-- Forward-looking signals: Hardware tab. -->
+    <aside class="watch-panel" aria-label="Interpretation limits: Hardware">
+      <div class="watch-panel-header">Interpretation limits</div>
       <ul class="watch-panel-list">
-        <li><strong>Blackwell and beyond</strong> &mdash; NVIDIA's B200/GB200 clusters reach ~1 ExaFLOP/s per rack. Watch for the first model trained entirely on next-gen hardware &mdash; it will reset the arms race chart.</li>
-        <li><strong>AMD's competitive window</strong> &mdash; MI300X has closed the gap on inference workloads. Watch whether AMD can capture training market share before NVIDIA's Blackwell dominance locks in.</li>
-        <li><strong>Custom silicon inflection</strong> &mdash; Apple, Amazon, Google, and Meta all run custom inference chips. If any of these reaches frontier training scale, NVIDIA's ~80% share faces its first real structural threat.</li>
-      </ul>
+<li>Peak throughput is a specification, not achieved training performance.</li><li>Listed release prices are sparse and are not current transaction prices.</li><li>A chip release date does not establish commercial availability at scale.</li></ul>
     </aside>
   </div>
 
@@ -1518,8 +1511,8 @@ tr:hover td{background:var(--surface2)}
     <div class="section-title">Research Output by Organization</div>
     <div class="chart-grid">
       <div class="chart-card" style="grid-column:1/-1">
-        <div class="card-header"><div class="dot"></div>Model Count by Country &amp; Organization</div>
-        <div id="treemap-container"></div>
+        <div class="card-header"><div class="dot"></div>Model Count by Recorded Country &amp; Organization</div>
+        <p class="chart-insight">All supplied model records in the selected window. Tile area is model count, not compute capacity. Multi-country records remain a separate group. Source: Epoch AI.</p><div id="treemap-container"></div>
         <div id="treemap-legend"></div>
         <div class="controls-bar">
           <span class="ctrl-label">Click org to filter · grouped by country</span>
@@ -1530,12 +1523,12 @@ tr:hover td{background:var(--surface2)}
     <div class="chart-grid">
       <div class="chart-card">
         <div class="chart-title">Top 15 Orgs by Max Training Compute</div>
-        <div class="chart-insight">US labs dominate compute frontier; Chinese labs scaling fast</div>
+        <div class="chart-insight">All supplied models with positive FLOP in the selected window; optional organization filter. Maximum is a single-model estimate, not total capacity. Source: Epoch AI.</div>
         <div class="chart-area tall" id="org-bar"></div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Open vs Closed Model Weights</div>
-        <div class="chart-insight">Open weights democratize access but closed models lead capabilities</div>
+        <div class="chart-title">Model Weight Availability</div>
+        <div class="chart-insight">All supplied model records in the selected window. Source: Epoch AI.<span id="weights-caveat"></span></div>
         <div style="height:320px;display:flex;align-items:center;justify-content:center">
           <div class="donut-wrap" id="donut-wrap">
             <svg id="donut-svg" width="180" height="180" viewBox="0 0 180 180"></svg>
@@ -1544,2951 +1537,108 @@ tr:hover td{background:var(--surface2)}
         </div>
       </div>
     </div>
-    <!-- Inference Economics counterpoint — access vs creation. -->
-    <div class="insight-callout cyan" style="margin-top:20px">
-      <span class="callout-label">INFERENCE ECONOMICS — ACCESS VS. CREATION</span>
-      <p>Fewer organizations can train frontier models — but more can deploy them. Inference APIs democratize access even as training consolidates. The open/closed split above reflects who publishes weights; it doesn't capture the <strong>thousands of companies now building on top of closed APIs</strong> at commodity prices. Consolidation at the training layer does not equal consolidation at the application layer.</p>
-      <span class="callout-source">Sources: OpenAI pricing history · a16z AI infrastructure reports · Epoch AI</span>
-    </div>
-    <div class="section-title" style="margin-top:16px">The Narrowing Field</div>
+    <!-- Inference Economics counterpoint: access vs creation. -->
+    <div class="insight-callout cyan"><span class="callout-label">TRAINING AND DEPLOYMENT</span><p>Training compute, final-run cost, and inference pricing measure different things. These CSVs do not support a matched-quality inference price trend or a count of organizations able to afford training.</p><span class="callout-source">Scope note from the visualization layer; no inference-price series is calculated.</span></div>
+    <div class="section-title" style="margin-top:16px">Frontier Publication Participation</div>
     <div class="chart-grid full">
       <div class="chart-card">
-        <div class="chart-title">Who Can Still Afford to Play? <span class="info-icon" data-tip="Number of unique organizations that published at least one frontier AI model each year. Fewer orgs = more consolidation.">ⓘ</span></div>
+        <div class="chart-title">Organizations Publishing Frontier Models <span class="info-icon" data-tip="Unique recorded organization strings per year, explicitly filtered to Frontier model = TRUE. This does not measure affordability.">ⓘ</span></div>
         <div class="chart-insight" id="narrowing-insight"></div>
         <div class="chart-area" id="narrowing-field"></div>
-        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Note: counts reflect organizations publishing models judged frontier-relevant by Epoch AI at time of release. Org count fluctuates year-to-year as labs enter and exit the frontier tier — not all downward movement represents permanent exits.</div>
+        <div style="padding:6px 16px 10px;font-family:var(--font-mono);font-size:0.6rem;color:var(--muted2)">Source: Epoch AI. Explicit Frontier model = TRUE filter. Joint organization strings count as one recorded group; counts do not measure budgets or permanent exits. Latest year is incomplete.</div>
       </div>
     </div>
-    <!-- Forward-looking signals — Org Landscape tab. -->
-    <aside class="watch-panel" aria-label="What to watch — Org Landscape">
-      <div class="watch-panel-header">What to watch</div>
+    <!-- Forward-looking signals: Org Landscape tab. -->
+    <aside class="watch-panel" aria-label="Interpretation limits: Org Landscape">
+      <div class="watch-panel-header">Interpretation limits</div>
       <ul class="watch-panel-list">
-        <li><strong>Next consolidation event</strong> &mdash; When the next $500M+ model is announced, watch which organizations disappear from the frontier tier within 12 months. Consolidation follows cost jumps with a lag.</li>
-        <li><strong>Chinese lab trajectory</strong> &mdash; Despite export controls, Chinese labs are scaling compute domestically. Watch Zhipu AI, Baidu, and Z.ai's model quality relative to western frontier in 2026.</li>
-        <li><strong>Academic frontier exit</strong> &mdash; Universities have largely exited frontier model training. Watch whether any academic consortium (national labs, EU initiatives) re-enters with public funding.</li>
-      </ul>
+<li>Publication counts reflect this selected dataset, not all research activity.</li><li>Organization names and joint organization strings are retained as recorded.</li><li>Publication counts cannot establish affordability, market share, or national compute capacity.</li></ul>
     </aside>
   </div>
 
   <!-- TAB 5: CROSS-DATASET -->
   <div id="tab-cross" class="tab-panel">
-    <div class="tab5-banner">
-      Each chart plots frontier model training compute against <strong>single-chip peak throughput</strong> — the theoretical maximum from one accelerator.
-      In practice, frontier training always runs on multi-chip clusters of <span class="accent">1,000–100,000+ chips</span>.
-      The gap shown here measures how many chips-worth of compute each model required — it is a measure of <strong>SCALE, not impossibility.</strong>
-    </div>
-    <div class="insight-callout">
-      <span class="callout-label">KEY INSIGHT</span>
-      <p>Frontier models consistently require <strong>more compute than any single chip can deliver</strong> — this has been true since 2016. The gap shown here measures <strong>cluster scale</strong>: how many H100-equivalents a model needed. What IS widening is the <strong>minimum cluster size required</strong> to reach the frontier — from hundreds of chips in 2018 to tens of thousands today. That scale barrier, not the existence of the gap itself, is what narrows the competitive field.</p>
-    </div>
-    <!-- Inference Economics counterpoint — sits adjacent to the amber KEY INSIGHT
-         to deliberately pair the training-side and inference-side narratives. -->
-    <div class="insight-callout cyan">
-      <span class="callout-label">INFERENCE ECONOMICS — WHY THE GAP ISN'T THE WHOLE STORY</span>
-      <p>The widening gap between model training demand and single-chip supply tells one story: training is concentrating. But inference runs on a very different curve. Optimized inference chips (H100, TPU v5), quantized models, and speculative decoding have pushed inference cost down <strong>~150× since 2023</strong>. The compute gap above measures who can <em>train</em>. The inference floor measures who can <em>deploy</em>. <strong>Both curves matter.</strong></p>
-      <span class="callout-source">Sources: Artificial Analysis · OpenAI pricing history · NVIDIA inference benchmarks</span>
-    </div>
-    <div class="section-title">Model Compute vs Best Available Hardware at Time of Release</div>
+    <div class="tab5-banner">The Cross-Dataset view keeps two comparisons separate: reported accelerator quantities and indexed growth in training workload versus single-chip peak throughput. Training FLOP divided by FLOP/s is time, not a chip count. Only explicitly labeled charts apply the Frontier model flag.</div>
+    <div class="insight-callout cyan"><span class="callout-label">TRAINING AND DEPLOYMENT</span><p>Training compute, final-run cost, and inference pricing measure different things. These CSVs do not support a matched-quality inference price trend or a count of organizations able to afford training.</p><span class="callout-source">Scope note from the visualization layer; no inference-price series is calculated.</span></div>
+    <div class="section-title">Model Compute vs Best Available Hardware Context</div>
     <div class="chart-card" style="margin-bottom:16px">
-      <div class="chart-title">The Widening Gap — Model Demand vs Best Available Chip <span class="info-icon" data-tip="Each bar shows the cluster scale required that year — how many of the best available single chips would be needed to match the most demanding frontier model. The taller the bar, the larger the training cluster.">ⓘ</span></div>
-      <div class="chart-insight">The gap measures cluster scale required — from ~100s of chips in 2018 to ~10,000s today. This scale barrier defines who can compete.</div>
-      <div class="chart-area tall" id="cross-scatter" style="position:relative"></div>
+      <div class="chart-title">Observed Frontier Training Cluster Scale by Year</div>
+      <div class="chart-insight">Frontier-only records with explicit positive Hardware quantity and identifiable accelerator units. Reported or estimated deployed quantity, not H100-equivalent compute. Counts are not performance-normalized across chip generations. Source: Epoch AI. <span id="cross-latest-note"></span></div>
+      <div class="chart-area tall cross-chart-area" id="cross-scatter" style="position:relative"></div>
       <div class="legend" id="cross-legend"></div>
     </div>
-    <div class="section-title">The Compute Arms Race — Rolling Maximums Over Time</div>
+    <div class="section-title">The Compute Arms Race: Model Demand vs Best Chip</div>
     <div class="chart-card">
-      <div class="chart-title">The Compute Arms Race <span class="info-icon" data-tip="Two exponential curves: how fast models are demanding compute (amber) vs how fast chips supply it (cyan). The gap between them is growing.">ⓘ</span></div>
-      <div class="chart-insight">Model compute grows faster than single-chip throughput — the difference is filled by larger clusters. The cluster size multiplier has grown from <strong>~100×</strong> to <strong>~10,000×</strong> since 2016.</div>
-      <div class="chart-area tall" id="arms-race"></div>
+      <div class="chart-title">Model Demand vs Best Available Chip, Indexed Growth</div>
+      <div class="chart-insight">Annual maxima indexed to a common base year. Indexed growth compares workload scale and single-chip peak throughput; it does not estimate required cluster size. <span id="index-base-note"></span></div>
+      <div class="chart-area tall cross-chart-area" id="arms-race"></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div>Rolling Max Training FLOP (models)</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:var(--cyan)"></div>Rolling Max FP16 FLOP/s (hardware)</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div>Model demand index: annual max training FLOP</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--cyan)"></div>Best chip index: annual max tensor throughput</div>
       </div>
     </div>
-    <!-- Cluster scale callout — translates the gap ratio above into real-world deployment sizes. -->
+    <!-- Source context for distinct training-stage quantities. -->
     <div class="insight-callout" style="margin-top:20px">
-      <span class="callout-label">CLUSTER SCALE — KNOWN DEPLOYMENTS</span>
-      <p>The gap ratio above translates directly to cluster size. Known large-scale training deployments: <strong>Meta's 49,000-GPU H100 cluster</strong> (Llama 3, 2024); <strong>Microsoft/OpenAI's ~22,000-GPU cluster</strong> (GPT-4, est.); <strong>Google's TPU v4 pods</strong> (Gemini Ultra, 2023); <strong>xAI's 100,000-GPU Colossus cluster</strong> (Grok 3/4, 2025). These are the organizations whose infrastructure appears in the Org Landscape tab.</p>
-      <span class="callout-source">Sources: Meta AI blog · SemiAnalysis · The Information · public infrastructure announcements</span>
+      <span class="callout-label">CLUSTER SOURCE CONTEXT</span><p id="cluster-context"></p><span class="callout-source">Source: Epoch model rows, Hardware quantity, Training hardware, Training compute notes, and Training data center. Model-level confidence is not a separate verification of every hardware field.</span>
     </div>
-    <!-- Forward-looking signals — Cross-Dataset tab. -->
-    <aside class="watch-panel" aria-label="What to watch — Cross-Dataset">
-      <div class="watch-panel-header">What to watch</div>
+    <!-- Forward-looking signals: Cross-Dataset tab. -->
+    <aside class="watch-panel" aria-label="Interpretation limits: Cross-Dataset">
+      <div class="watch-panel-header">Interpretation limits</div>
       <ul class="watch-panel-list">
-        <li><strong>Inference chip specialization</strong> &mdash; As inference becomes the primary revenue driver, watch for chip architectures optimized for inference (low latency, high throughput) to diverge from training chips. The arms race chart may fork into two separate curves.</li>
-        <li><strong>Cluster efficiency vs. cluster size</strong> &mdash; The next meaningful signal isn't the largest cluster but the most efficient. Watch MFU (model FLOPs utilization) disclosures &mdash; Google's 57% MFU on TPUs vs. typical 35&ndash;45% on GPU clusters is the real competitive moat.</li>
-        <li><strong>Geopolitical compute ceiling</strong> &mdash; US export controls cap accessible compute for ~40% of global GDP. Watch whether this produces a bifurcated frontier (US/allied vs. China/restricted) or drives domestic semiconductor investment that eventually closes the gap.</li>
-      </ul>
+<li>Accelerator counts omit records without an explicit positive quantity and identifiable accelerator units.</li><li>Training stages and hardware generations differ across cluster observations.</li><li>Indexed growth compares rates of change, not required cluster sizes or a compute deficit.</li></ul>
     </aside>
   </div>
 </main>
 
-<!-- Persistent site-wide footer — data provenance & disclaimer -->
+<!-- Persistent site-wide footer: data provenance & disclaimer -->
 <footer id="site-footer">
   <div class="footer-row footer-row-1">
     <span>Data: <a href="https://epoch.ai/data/notable-ai-models" target="_blank" rel="noopener">Epoch AI (Notable AI Models</a> + <a href="https://epoch.ai/data/machine-learning-hardware" target="_blank" rel="noopener">ML Hardware)</a></span>
     <span class="footer-sep">·</span>
-    <span>Methodology: <a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">Cottier et al. 2024</a></span>
+    <span>External research: <a href="https://arxiv.org/abs/2405.21015v2" target="_blank" rel="noopener">Cottier et al. 2024 (revised 2025)</a></span>
     <span class="footer-sep">·</span>
-    <span>Last updated: <span id="df-updated-date">—</span></span>
+    <span>Dataset coverage: <span id="df-updated-date">...</span></span>
   </div>
   <div class="footer-row footer-row-2">
     Cost estimates are amortized hardware + energy, not full development cost. Confidence labels reflect Epoch AI's own assessment. This dashboard is an analytical tool, not investment advice.
   </div>
 </footer>
 
-<!-- Methodology modal — opened from the Overview hero "How is this calculated?" link -->
+<!-- Methodology modal: opened from the Overview hero "How is this calculated?" link -->
 <div id="methodology-overlay" role="presentation" hidden>
   <div id="methodology-modal" role="dialog" aria-modal="true" aria-labelledby="methodology-title" tabindex="-1">
     <button class="method-modal-close" id="methodology-close" type="button" aria-label="Close methodology dialog">×</button>
     <div class="method-modal-head">
       <span class="method-modal-eyebrow">Methodology</span>
-      <h2 class="method-modal-title" id="methodology-title">How we estimate frontier training costs</h2>
+      <h2 class="method-modal-title" id="methodology-title">Sources, calculations, and limitations</h2>
     </div>
     <div class="method-modal-body">
       <section class="method-section">
         <h4>What we count</h4>
-        <p>Cost estimates follow Cottier et al. 2024 (<a href="https://arxiv.org/abs/2405.21015" target="_blank" rel="noopener">arXiv:2405.21015</a>): amortized hardware acquisition + energy consumption for the final training run. This excludes R&amp;D staff costs (which add 30–50%), failed experiments, and data acquisition.</p>
+        <p>Historical chart values come directly from Epoch’s Training compute cost (2023 USD) field, interpreted as amortized final-run compute costs. They exclude full R&amp;D, researcher compensation, failed experiments, data acquisition, and other non-final-run costs. The dashboard does not recompute these costs or combine cloud and upfront costs.</p>
       </section>
       <section class="method-section">
         <h4>What the data shows</h4>
-        <p>The Epoch AI Notable Models database contains training cost estimates for 66 of 137 frontier models. The most expensive <em>Confident</em> estimate is Llama 3.1-405B at ~<strong>$53M</strong> (Meta, 2024). The most expensive estimate of any confidence level is Grok 4 at ~<strong>$388M</strong> (xAI, 2025, Speculative).</p>
+        <p id="method-cost-summary"></p><p>General model charts use all supplied records within their stated filters. Cluster scale, indexed model growth, and frontier organization participation explicitly require Frontier model = TRUE. <span id="method-coverage"></span></p>
         <p id="method-conf-breakdown" style="margin-top:8px"></p>
       </section>
       <section class="method-section">
         <h4>The 2.4× growth rate</h4>
-        <p>Cottier et al. find amortized training cost has grown <strong>2.4× per year</strong> since 2016 (90% CI: 2.0× to 2.9×). Extrapolating from GPT-4 (~$78M, 2023) at this rate yields the first <strong>$1B training run around early 2027</strong> — sooner if undisclosed runs are already at the high end of industry estimates.</p>
+        <p><a href="https://arxiv.org/abs/2405.21015v2">Cottier et al. 2024, revised 2025</a> report 2.4× annual growth since 2016 (90% CI: 2.0× to 2.9×). Their published extrapolation places costs above $1B around 2027 if the trend continues. This is external context, not a fit or forecast calculated here.</p>
       </section>
       <section class="method-section">
-        <h4>Why no $1B model in our data yet</h4>
-        <p>Anthropic CEO Dario Amodei stated in 2024 that frontier developers were already spending close to $1B on single training runs, but neither OpenAI, Anthropic, nor Google publicly discloses costs. Public estimates lag actual spending by 12–18 months. The dashboard reflects what is publicly known, not what is privately spent.</p>
+        <h4>Different sources, different estimates</h4>
+        <p>The external Stanford AI Index estimate of roughly $190M for Gemini Ultra differs from the local Epoch cost field. It is an estimate, not a company-disclosed final bill, and is not plotted. Missing records and uncertain estimates cannot establish actual private spending.</p>
       </section>
     </div>
     <div class="method-modal-foot">
-      Sources: Cottier et al. 2024 · Stanford AI Index 2025 · Epoch AI · Public statements from Anthropic, OpenAI, Meta.
+      Sources: Epoch AI CSV snapshots; Cottier et al. 2024 (revised 2025); Stanford AI Index 2024. This site is the visualization and analysis layer.
     </div>
   </div>
 </div>
 
 <div id="tooltip"></div>
 
-<script>
-'use strict';
-
-// ═══════════════════════════════════════════════
-//  CONSTANTS & PALETTE
-// ═══════════════════════════════════════════════
-const NS = 'http://www.w3.org/2000/svg';
-
-const DOMAIN_COLORS = {
-  'Language':              '#00c8d4',
-  'Multimodal':            '#f0a500',
-  'Vision':                '#a78bfa',
-  'Audio':                 '#34d399',
-  'Reinforcement Learning':'#fb923c',
-  'Code':                  '#38bdf8',
-  'Biology':               '#f472b6',
-  'Robotics':              '#fbbf24',
-  'Other':                 '#4b5568',
-};
-
-const HW_COLORS = {
-  'NVIDIA':      '#76b900',
-  'Google':      '#f0a500',
-  'AMD':         '#ef4444',
-  'Meta':        '#4895ef',
-  'Amazon AWS':  '#fb923c',
-  'Apple':       '#94a3b8',
-  'Intel':       '#14b8a6',
-  'Huawei':      '#ffd60a',
-  'Microsoft':   '#38bdf8',
-  'Other':       '#4b5568',
-};
-
-const COUNTRY_COLORS = {
-  'United States of America': '#00c8d4',
-  'China':                    '#f0a500',
-  'United Kingdom':           '#a78bfa',
-  'France':                   '#818cf8',
-  'Canada':                   '#34d399',
-  'Germany':                  '#e879f9',
-  'Israel':                   '#38bdf8',
-  'UAE':                      '#fbbf24',
-  'Japan':                    '#fb923c',
-  'South Korea':              '#f472b6',
-  'Switzerland':              '#4ade80',
-  'Russia':                   '#f87171',
-  'India':                    '#c084fc',
-  'Australia':                '#67e8f9',
-  'Netherlands':              '#86efac',
-  'Other':                    '#4b5568',
-};
-
-// Normalize territory/alternate names to canonical country key in COUNTRY_COLORS
-const COUNTRY_ALIASES = {
-  'Hong Kong':               'China',
-  'Hong Kong SAR':           'China',
-  'Macau':                   'China',
-  'United States':           'United States of America',
-  'USA':                     'United States of America',
-  'US':                      'United States of America',
-  'UK':                      'United Kingdom',
-  'Great Britain':           'United Kingdom',
-  'Korea':                   'South Korea',
-  'Republic of Korea':       'South Korea',
-  'United Arab Emirates':    'UAE',
-  'Emirates':                'UAE',
-};
-
-function normalizeCountry(country) {
-  if (!country || country === 'Other') return 'Other';
-  // Dedupe step: some rows store the same country twice as a comma-joined
-  // string (e.g. "United States of America,United States of America").
-  // Split on comma, take the first non-empty trimmed token, then run the
-  // existing alias/color logic on that single token. Handles any number of
-  // duplications cleanly.
-  const tokens = String(country).split(',').map(t => t.trim()).filter(Boolean);
-  country = tokens[0] || 'Other';
-  if (!country || country === 'Other') return 'Other';
-  if (COUNTRY_ALIASES[country]) return COUNTRY_ALIASES[country];
-  for (const [alias, canonical] of Object.entries(COUNTRY_ALIASES)) {
-    if (country.toLowerCase().includes(alias.toLowerCase())) return canonical;
-  }
-  if (COUNTRY_COLORS[country] !== undefined) return country;
-  for (const key of Object.keys(COUNTRY_COLORS)) {
-    if (key === 'Other') continue;
-    if (country.toLowerCase().includes(key.toLowerCase())) return key;
-  }
-  return 'Other';
-}
-
-const ORG_PALETTE = [
-  '#00c8d4','#f0a500','#a78bfa','#34d399','#fb923c',
-  '#f472b6','#38bdf8','#fbbf24','#e879f9','#818cf8','#4b5568'
-];
-
-const YEAR_BUCKET_COLORS = {
-  '2012–2017': '#818cf8',
-  '2018–2020': '#38bdf8',
-  '2021–2022': '#34d399',
-  '2023':      '#f0a500',
-  '2024':      '#fb923c',
-  '2025+':     '#ff5f5f',
-};
-
-const LANDMARKS = [
-  { name:'GPT-3',        label:'GPT-3\n2020' },
-  { name:'AlphaFold 2',  label:'AlphaFold 2\n2020' },
-  { name:'PaLM',         label:'PaLM\n2022' },
-  { name:'GPT-4',        label:'GPT-4\n2023' },
-  { name:'Gemini Ultra', label:'Gemini Ultra\n2023' },
-  { name:'Claude 3 Opus',label:'Claude 3\n2024' },
-];
-
-// ── Confidence palette — mirrors the CSS custom properties so SVG fills,
-//    tooltip dots, and DOM badges all reference the SAME hex values. ──
-const CONF_COLORS = {
-  'Confident':   '#34d399',
-  'Likely':      '#f0a500',
-  'Speculative': '#ff5f5f',
-  'Unknown':     '#8892a4',
-};
-function normalizeConfidence(level) {
-  return CONF_COLORS[level] ? level : 'Unknown';
-}
-function confColor(level) {
-  return CONF_COLORS[normalizeConfidence(level)];
-}
-function confClass(level) {
-  // Maps confidence label → CSS class suffix used by .conf-confident etc.
-  return 'conf-' + normalizeConfidence(level).toLowerCase();
-}
-function confTTDot(level) {
-  // Inline tooltip dot fragment — used in tt rows so the color reads at a glance.
-  return `<span class="conf-tt-dot ${confClass(level)}"></span>`;
-}
-
-// ═══════════════════════════════════════════════
-//  APP STATE
-// ═══════════════════════════════════════════════
-const AppState = {
-  dateRange: [new Date('2012-01-01'), new Date('2026-12-31')],
-  activeTab: 'overview',
-  filters: {
-    domain: [],
-    frontierOnly: false,
-    hwTypes: new Set(['GPU','TPU','Other']),
-    selectedOrg: null,
-    showTrend: true,
-    // Rising Cost chart mode: 'all' (max regardless of confidence — default,
-    // preserves prior visual) or 'confident' (only confidence==='Confident').
-    // Stakeholder-defense toggle, not a behavior change.
-    costConfidenceMode: 'all',
-  },
-  data: { models: [], hardware: [] },
-  orgColors: {},
-};
-
-// ═══════════════════════════════════════════════
-//  DATA UTILITIES
-// ═══════════════════════════════════════════════
-function parseDate(s) {
-  if (!s || s.trim() === '') return null;
-  s = s.trim();
-  if (/^\d{4}$/.test(s)) return new Date(parseInt(s), 0, 1);
-  if (/^\d{4}-\d{2}$/.test(s)) { const [y,m]=s.split('-'); return new Date(+y,+m-1,1); }
-  const d = new Date(s);
-  return isNaN(d) ? null : d;
-}
-
-function parseNum(v) {
-  if (v === null || v === undefined || v === '') return null;
-  const n = parseFloat(String(v).replace(/,/g,''));
-  return isFinite(n) ? n : null;
-}
-
-function formatFLOP(v) {
-  if (!v || v <= 0) return '—';
-  const e = Math.floor(Math.log10(v));
-  const m = v / Math.pow(10, e);
-  return `${m.toFixed(1)}×10^${e}`;
-}
-
-function formatShort(v) {
-  if (!v) return '—';
-  if (v >= 1e15) return (v/1e15).toFixed(1)+'P';
-  if (v >= 1e12) return (v/1e12).toFixed(1)+'T';
-  if (v >= 1e9)  return (v/1e9).toFixed(1)+'G';
-  if (v >= 1e6)  return (v/1e6).toFixed(1)+'M';
-  return v.toFixed(0);
-}
-
-function formatCost(v) {
-  if (!v) return '—';
-  if (v >= 1e9) return '$'+(v/1e9).toFixed(1)+'B';
-  if (v >= 1e6) return '$'+(v/1e6).toFixed(1)+'M';
-  if (v >= 1e3) return '$'+(v/1e3).toFixed(0)+'K';
-  return '$'+v.toFixed(0);
-}
-
-function getPrimaryDomain(domainStr) {
-  if (!domainStr) return 'Other';
-  // Some rows list domains in arbitrary order, e.g. "Unknown,Language" or
-  // "Multimodal,Language,Vision" vs "Language,Vision,Multimodal". Walk the
-  // tokens in order and return the first one that maps to a known domain
-  // color key, so an unrecognized leading token doesn't bury the model in
-  // 'Other' when a valid domain follows.
-  const tokens = String(domainStr).split(',').map(t => t.trim()).filter(Boolean);
-  for (const tok of tokens) {
-    if (DOMAIN_COLORS[tok]) return tok;
-  }
-  return 'Other';
-}
-
-function isFrontier(row) {
-  const v = String(row['Frontier model'] || '').trim().toUpperCase();
-  return v === 'TRUE';
-}
-
-function isOpenWeights(row) {
-  // Returns one of three category strings: 'open', 'partial', or 'closed'.
-  // The CSV's "Open model weights?" column contains mixed values
-  // (Yes/No/yes/no/Partially/blank/null). Lowercasing with String() guards
-  // against null/undefined and gives case-insensitive matching. Anything
-  // that isn't explicitly Yes or Partially falls into 'closed' — same
-  // conservative default as the original boolean form.
-  const v = String(row['Open model weights?'] || '').trim().toLowerCase();
-  if (v === 'yes') return 'open';
-  if (v === 'partially' || v === 'partial') return 'partial';
-  return 'closed';
-}
-
-function applyDateFilter(arr, dateKey) {
-  const [lo, hi] = AppState.dateRange;
-  return arr.filter(d => d[dateKey] && d[dateKey] >= lo && d[dateKey] <= hi);
-}
-
-function buildOrgColors(models) {
-  const counts = {};
-  models.forEach(m => { const o = m.org; counts[o] = (counts[o]||0)+1; });
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-  const map = {};
-  sorted.forEach((org, i) => {
-    map[org] = i < ORG_PALETTE.length-1 ? ORG_PALETTE[i] : ORG_PALETTE[ORG_PALETTE.length-1];
-  });
-  return map;
-}
-
-function getYearBucket(date) {
-  if (!date) return '2025+';
-  const y = date.getFullYear();
-  if (y <= 2017) return '2012–2017';
-  if (y <= 2020) return '2018–2020';
-  if (y <= 2022) return '2021–2022';
-  if (y === 2023) return '2023';
-  if (y === 2024) return '2024';
-  return '2025+';
-}
-
-// ═══════════════════════════════════════════════
-//  SVG UTILITIES
-// ═══════════════════════════════════════════════
-function el(tag, attrs={}, ns=NS) {
-  const e = document.createElementNS(ns, tag);
-  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
-  return e;
-}
-
-function makeSVG(container, pad={}) {
-  const ml = pad.l||50, mr = pad.r||20, mt = pad.t||20, mb = pad.b||40;
-  const W = container.clientWidth || container.offsetWidth || 600;
-  const H = container.clientHeight || container.offsetHeight || 300;
-  container.innerHTML = '';
-  const svg = el('svg',{width:W,height:H,viewBox:`0 0 ${W} ${H}`});
-  const g = el('g',{transform:`translate(${ml},${mt})`});
-  svg.appendChild(g);
-  container.appendChild(svg);
-  return { svg, g, W, H, iW: W-ml-mr, iH: H-mt-mb, ml, mt, mr, mb };
-}
-
-function linScale(d0,d1,r0,r1) {
-  if (d0===d1) return ()=>r0;
-  return v => r0 + (v-d0)/(d1-d0)*(r1-r0);
-}
-
-function logScale(d0,d1,r0,r1) {
-  if (d0<=0||d1<=0) return ()=>r0;
-  const l0=Math.log10(d0), l1=Math.log10(d1);
-  return v => { if(!v||v<=0) return r1; return r0+(Math.log10(v)-l0)/(l1-l0)*(r1-r0); };
-}
-
-function timeScale(d0,d1,r0,r1) {
-  const t0=d0.getTime(), t1=d1.getTime();
-  if(t0===t1) return ()=>r0;
-  return d => r0+(d.getTime()-t0)/(t1-t0)*(r1-r0);
-}
-
-function drawGrid(g, xTicks, yTicks, xFn, yFn, iH, iW) {
-  xTicks.forEach(t => {
-    const x = xFn(t);
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)',
-      'stroke-width':'0.5','shape-rendering':'crispEdges'}));
-  });
-  yTicks.forEach(t => {
-    const y = yFn(t);
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)',
-      'stroke-width':'0.5','shape-rendering':'crispEdges'}));
-  });
-}
-
-function drawXAxisDates(g, ticks, xFn, iH, fmt) {
-  if (!ticks.length) return;
-  g.appendChild(el('line',{x1:0,y1:iH,x2:xFn(ticks[ticks.length-1])+20,y2:iH,
-    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  ticks.forEach(t => {
-    const x = xFn(t);
-    const tx = el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent = fmt ? fmt(t) : t.getFullYear();
-    g.appendChild(tx);
-  });
-}
-
-// ── PLAIN-ENGLISH AXIS FORMATTERS ─────────────────
-function flopLabel(e) {
-  const m={
-    6:'1 MegaFLOP',7:'10 MegaFLOP',8:'100 MegaFLOP',
-    9:'1 GigaFLOP',10:'10 GigaFLOP',11:'100 GigaFLOP',
-    12:'1 TeraFLOP',13:'10 TeraFLOP',14:'100 TeraFLOP',
-    15:'1 PetaFLOP',16:'10 PetaFLOP',17:'100 PetaFLOP',
-    18:'1 ExaFLOP',19:'10 ExaFLOP',20:'100 ExaFLOP',
-    21:'1 ZettaFLOP',22:'10 ZettaFLOP',23:'100 ZettaFLOP',
-    24:'1 YottaFLOP',25:'10 YottaFLOP',26:'100 YottaFLOP'
-  };
-  return m[e]||'';
-}
-function fp16Label(e) {
-  const m={
-    12:'1 TFLOP/s',13:'10 TFLOP/s',14:'100 TFLOP/s',
-    15:'1 PFLOP/s',16:'10 PFLOP/s',17:'100 PFLOP/s',
-    18:'1 EFLOP/s',19:'10 EFLOP/s',20:'100 EFLOP/s'
-  };
-  return m[e]||'';
-}
-function costLabel(e) {
-  const m={3:'$1K',4:'$10K',5:'$100K',6:'$1M',7:'$10M',8:'$100M',9:'$1B',10:'$10B',11:'$100B'};
-  if(m[e]) return m[e];
-  if(e>=9) return '$'+Math.pow(10,e-9).toFixed(0)+'B';
-  if(e>=6) return '$'+Math.pow(10,e-6).toFixed(0)+'M';
-  if(e>=3) return '$'+Math.pow(10,e-3).toFixed(0)+'K';
-  return '$'+Math.pow(10,e).toFixed(0);
-}
-function fmtDate(d) {
-  if(!d) return '—';
-  return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
-}
-function fmtFLOPTooltip(v) {
-  if(!v||v<=0) return '—';
-  if(v>=1e24) return (v/1e24).toFixed(1)+' YottaFLOP';
-  if(v>=1e21) return (v/1e21).toFixed(1)+' ZettaFLOP';
-  if(v>=1e18) return (v/1e18).toFixed(1)+' ExaFLOP';
-  if(v>=1e15) return (v/1e15).toFixed(1)+' PetaFLOP';
-  if(v>=1e12) return (v/1e12).toFixed(1)+' TeraFLOP';
-  if(v>=1e9)  return (v/1e9).toFixed(1)+' GigaFLOP';
-  return formatFLOP(v);
-}
-function fmtFP16Tooltip(v) {
-  if(!v||v<=0) return '—';
-  if(v>=1e18) return (v/1e18).toFixed(1)+' EFLOP/s';
-  if(v>=1e15) return (v/1e15).toFixed(0)+' PFLOP/s';
-  if(v>=1e12) return (v/1e12).toFixed(0)+' TFLOP/s';
-  return formatShort(v)+' FLOP/s';
-}
-function formatDollars(v) {
-  if(!v) return null;
-  if(v>=1e9) return '$'+(v/1e9).toFixed(0)+' billion';
-  if(v>=1e6) return '$'+Math.round(v/1e6)+' million';
-  if(v>=1e3) return '$'+Math.round(v/1000)+'K';
-  return '$'+Math.round(v);
-}
-
-function drawYAxisLog(g, domain, yFn, label, tickFmt, step) {
-  const st = step || 2;
-  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:yFn(domain[0]),
-    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  const lo = Math.ceil(Math.log10(domain[0]));
-  const hi = Math.floor(Math.log10(domain[1]));
-  for(let e=lo; e<=hi; e+=st) {
-    const v = Math.pow(10,e);
-    const y = yFn(v);
-    const lbl = tickFmt ? tickFmt(e) : `10^${e}`;
-    if(!lbl) continue;
-    const tx = el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
-    tx.textContent = lbl;
-    g.appendChild(tx);
-    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  }
-  if(label) {
-    const lb = el('text',{x:-42,y:yFn(domain[1]),'text-anchor':'start',
-      class:'axis-label',transform:`rotate(-90,-42,${yFn(domain[1])})`});
-    lb.textContent = label;
-    g.appendChild(lb);
-  }
-}
-
-function drawYAxisLin(g, ticks, yFn, fmt) {
-  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:yFn(ticks[0]),
-    stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  ticks.forEach(t => {
-    const y = yFn(t);
-    const tx = el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
-    tx.textContent = fmt ? fmt(t) : t;
-    g.appendChild(tx);
-    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  });
-}
-
-function animateLine(path) {
-  try {
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = len;
-    path.style.strokeDashoffset = len;
-    path.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)';
-    requestAnimationFrame(() => { path.style.strokeDashoffset = '0'; });
-  } catch(e) {}
-}
-
-// ═══════════════════════════════════════════════
-//  TOOLTIP
-// ═══════════════════════════════════════════════
-const TT = document.getElementById('tooltip');
-
-function showTT(ev, html) {
-  TT.innerHTML = html;
-  TT.classList.add('visible');
-  moveTT(ev);
-}
-
-function moveTT(ev) {
-  const vw = window.innerWidth, vh = window.innerHeight;
-  let x = ev.clientX+14, y = ev.clientY-10;
-  const tw = TT.offsetWidth||240, th = TT.offsetHeight||120;
-  if (x+tw>vw-10) x = ev.clientX-tw-14;
-  if (y+th>vh-10) y = vh-th-10;
-  TT.style.left = x+'px';
-  TT.style.top  = y+'px';
-}
-
-function hideTT() { TT.classList.remove('visible'); }
-
-function ttRow(k,v) { return `<div class="tt-row"><span class="tt-key">${k}</span><span class="tt-val">${v}</span></div>`; }
-
-// ═══════════════════════════════════════════════
-//  TAB 1 — OVERVIEW
-// ═══════════════════════════════════════════════
-function renderOverview() {
-  const { models, hardware } = AppState.data;
-
-  // CapEx Hero copy is hardcoded in markup (research-backed framing).
-  // Previously, this function recomputed headline/subhead figures from the
-  // CSV — but the loaded data does not contain $1B-class training runs and
-  // 2020 cost coverage is sparse, so the dynamic version produced
-  // unsupported claims. Hero now reflects Cottier et al. 2024 + Epoch AI
-  // and is intentionally not derived from the dataset. See the "How is
-  // this calculated?" methodology modal for full sourcing.
-
-  const fm = applyDateFilter(models, 'date');
-  const fh = applyDateFilter(hardware, 'releaseDate');
-
-  // KPI cards
-  const allDates = [...fm.map(m=>m.date), ...fh.map(h=>h.releaseDate)].filter(Boolean);
-  const minY = allDates.length ? Math.min(...allDates.map(d=>d.getFullYear())) : 2012;
-  const maxY = allDates.length ? Math.max(...allDates.map(d=>d.getFullYear())) : 2025;
-  const frontierCount = fm.filter(isFrontierModel).length;
-
-  document.getElementById('kpi-grid').innerHTML = `
-    <div class="kpi-card"><span class="kpi-label">Total Models</span>
-      <span class="kpi-value">${fm.length}</span>
-      <span class="kpi-sub">in selected window</span></div>
-    <div class="kpi-card"><span class="kpi-label">Frontier Models</span>
-      <span class="kpi-value">${frontierCount}</span>
-      <span class="kpi-sub">TRUE in dataset</span></div>
-    <div class="kpi-card cyan"><span class="kpi-label">Hardware Chips</span>
-      <span class="kpi-value">${fh.length}</span>
-      <span class="kpi-sub">accelerators tracked</span></div>
-    <div class="kpi-card cyan"><span class="kpi-label">Year Range</span>
-      <span class="kpi-value" style="font-size:1.4rem">${minY}–${maxY}</span>
-      <span class="kpi-sub">publication dates</span></div>`;
-
-  // Recent table
-  const recent = [...fm].filter(m=>m.date).sort((a,b)=>b.date-a.date).slice(0,5);
-  const tbody = document.querySelector('#recent-table tbody');
-  if (!recent.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:0.72rem;padding:18px 12px">No models in selected date range</td></tr>`;
-  } else {
-    tbody.innerHTML = recent.map(m=>{
-      const conf = normalizeConfidence(m.confidence);
-      return `<tr>
-        <td>${m.name}</td>
-        <td><span class="badge org">${m.org}</span></td>
-        <td style="font-family:var(--font-mono);font-size:0.7rem">${m.date ? fmtDate(m.date) : '—'}</td>
-        <td>${m.domain}</td>
-        <td style="font-family:var(--font-mono);font-size:0.68rem">${m.flop?fmtFLOPTooltip(m.flop):'—'}</td>
-        <td><span class="badge ${confClass(conf)}">${conf}</span></td>
-        <td>${m.frontier ? '<span class="badge frontier">Yes</span>' : '<span class="badge closed">No</span>'}</td>
-      </tr>`;
-    }).join('');
-  }
-}
-
-function isFrontierModel(m) { return m.frontier; }
-
-// ═══════════════════════════════════════════════
-//  DATE SCRUBBER INIT
-// ═══════════════════════════════════════════════
-function initScrubber() {
-  const { models, hardware } = AppState.data;
-  const allDates = [...models.map(m=>m.date),...hardware.map(h=>h.releaseDate)].filter(Boolean);
-  const minY = Math.max(2012, Math.min(...allDates.map(d=>d.getFullYear())));
-  const maxY = Math.max(...allDates.map(d=>d.getFullYear()));
-  const rMin = document.getElementById('range-min');
-  const rMax = document.getElementById('range-max');
-  rMin.min = 2012; rMin.max = maxY+1; rMin.value = 2012;
-  rMax.min = 2012; rMax.max = maxY+1; rMax.value = maxY+1;
-
-  // Ticks
-  const ticks = document.getElementById('scrubber-ticks');
-  ticks.innerHTML = '';
-  for(let y=minY; y<=maxY; y+=3) {
-    const s = document.createElement('span');
-    s.className='scrubber-tick'; s.textContent=y;
-    ticks.appendChild(s);
-  }
-
-  function update() {
-    let lo=parseInt(rMin.value), hi=parseInt(rMax.value);
-    if(lo>=hi) { if(this===rMin) lo=hi-1; else hi=lo+1; }
-    rMin.value=lo; rMax.value=hi;
-    AppState.dateRange=[new Date(lo,0,1),new Date(hi,11,31)];
-    document.getElementById('scrubber-display').textContent=`${lo} – ${hi===maxY+1?maxY:hi}`;
-    const pct0=100*(lo-minY)/(maxY+1-minY);
-    const pct1=100*(hi-minY)/(maxY+1-minY);
-    document.getElementById('range-fill').style.left=pct0+'%';
-    document.getElementById('range-fill').style.right=(100-pct1)+'%';
-    renderCurrentTab();
-    // Keep the About-this-data banner counts/date in lockstep with the scrubber
-    // so the banner and Overview KPIs never disagree.
-    updateAboutBannerMeta();
-  }
-  rMin.addEventListener('input', update);
-  rMax.addEventListener('input', update);
-}
-
-// ═══════════════════════════════════════════════
-//  TAB 2 — COMPUTE SCATTER
-// ═══════════════════════════════════════════════
-//  VIOLIN CHART — Compute Distribution by Domain
-// ═══════════════════════════════════════════════
-function renderComputeViolin() {
-  const container = document.getElementById('compute-violin');
-  if (!container) return;
-
-  const models = applyDateFilter(AppState.data.models, 'date').filter(m => m.flop > 0 && m.domain);
-  if (models.length < 5) {
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">Not enough compute data</div>';
-    return;
-  }
-
-  // Group log10(flop) values by domain
-  const domainMap = {};
-  models.forEach(m => {
-    const d = m.domain || 'Other';
-    if (!domainMap[d]) domainMap[d] = [];
-    domainMap[d].push(Math.log10(m.flop));
-  });
-
-  // Helpers
-  function gauss(u) { return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI); }
-  function silverman(vals) {
-    const n = vals.length;
-    const mean = vals.reduce((s, v) => s + v, 0) / n;
-    const std = Math.sqrt(vals.reduce((s, v) => s + (v - mean) ** 2, 0) / Math.max(n - 1, 1));
-    return Math.max(1.06 * std * Math.pow(n, -0.2), 0.15);
-  }
-  function quantile(sorted, q) {
-    const pos = q * (sorted.length - 1);
-    const lo = Math.floor(pos), hi = Math.ceil(pos);
-    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
-  }
-
-  // Only keep domains with enough data; sort by median descending
-  const domains = Object.entries(domainMap)
-    .filter(([, v]) => v.length >= 4)
-    .map(([domain, vals]) => {
-      const sorted = [...vals].sort((a, b) => a - b);
-      return { domain, vals, sorted, med: quantile(sorted, 0.5) };
-    })
-    .sort((a, b) => b.med - a.med);
-
-  if (!domains.length) return;
-
-  const PAD = { l: 118, r: 24, t: 18, b: 44 };
-  const { g, iW, iH } = makeSVG(container, PAD);
-
-  const allVals = domains.flatMap(d => d.vals);
-  const xMin = Math.floor(Math.min(...allVals));
-  const xMax = Math.ceil(Math.max(...allVals));
-  const xFn = linScale(xMin, xMax, 0, iW);
-
-  const rowH = iH / domains.length;
-  const maxHalfW = rowH * 0.44;
-  const KDE_N = 90;
-
-  // X axis gridlines + ticks every 2 orders of magnitude
-  for (let e = xMin; e <= xMax; e++) {
-    const px = xFn(e);
-    g.appendChild(el('line', { x1: px, y1: 0, x2: px, y2: iH,
-      stroke: 'rgba(255,255,255,0.04)', 'stroke-width': '0.5' }));
-    if ((e - xMin) % 2 === 0) {
-      const tx = el('text', { x: px, y: iH + 14, 'text-anchor': 'middle', class: 'axis-tick' });
-      tx.textContent = `10^${e}`;
-      g.appendChild(tx);
-    }
-  }
-  g.appendChild(el('line', { x1: 0, y1: iH, x2: iW, y2: iH,
-    stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
-
-  // X axis label
-  const xl = el('text', { x: iW / 2, y: iH + 34, 'text-anchor': 'middle', class: 'axis-label' });
-  xl.textContent = 'Training Compute (FLOP, log scale)';
-  g.appendChild(xl);
-
-  // Draw each violin
-  domains.forEach(({ domain, vals, sorted }, i) => {
-    const cy = (i + 0.5) * rowH;
-    const color = DOMAIN_COLORS[domain] || DOMAIN_COLORS['Other'];
-    const bw = silverman(vals);
-    const q1 = quantile(sorted, 0.25), med = quantile(sorted, 0.5), q3 = quantile(sorted, 0.75);
-
-    // KDE over eval grid
-    const evalXs = Array.from({ length: KDE_N }, (_, k) => xMin + (xMax - xMin) * k / (KDE_N - 1));
-    const dens = evalXs.map(x => vals.reduce((s, v) => s + gauss((x - v) / bw), 0) / (vals.length * bw));
-    const maxD = Math.max(...dens, 1e-9);
-
-    // Violin path — top half (left→right), bottom half (right→left)
-    const pts = evalXs.map((x, k) => [xFn(x), dens[k] / maxD * maxHalfW]);
-    const pathD =
-      pts.map((p, k) => `${k === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${(cy - p[1]).toFixed(1)}`).join(' ') + ' ' +
-      [...pts].reverse().map((p, k) => `${k === 0 ? 'L' : 'L'}${p[0].toFixed(1)},${(cy + p[1]).toFixed(1)}`).join(' ') + ' Z';
-
-    g.appendChild(el('path', { d: pathD,
-      fill: color + '33', stroke: color, 'stroke-width': '1.5', 'stroke-linejoin': 'round' }));
-
-    // IQR box
-    const boxH = Math.max(rowH * 0.14, 4);
-    const boxX = xFn(q1), boxW = Math.max(xFn(q3) - xFn(q1), 3);
-    g.appendChild(el('rect', { x: boxX, y: cy - boxH / 2, width: boxW, height: boxH,
-      fill: color + 'aa', stroke: color, 'stroke-width': '1', rx: '1' }));
-
-    // Median indicator (white tick)
-    const mx = xFn(med);
-    g.appendChild(el('line', { x1: mx, y1: cy - boxH / 2 - 1, x2: mx, y2: cy + boxH / 2 + 1,
-      stroke: '#fff', 'stroke-width': '2', 'stroke-linecap': 'round' }));
-
-    // Domain label (Y axis)
-    const lbl = el('text', { x: -10, y: cy - 4, 'text-anchor': 'end', class: 'axis-tick' });
-    lbl.style.fill = color;
-    lbl.style.fontWeight = '600';
-    lbl.textContent = domain;
-    g.appendChild(lbl);
-
-    // n= sub-label
-    const nlbl = el('text', { x: -10, y: cy + 9, 'text-anchor': 'end', class: 'axis-tick' });
-    nlbl.style.fontSize = '8px';
-    nlbl.style.fill = 'rgba(255,255,255,0.4)';
-    nlbl.textContent = `n=${vals.length}`;
-    g.appendChild(nlbl);
-
-    // Invisible hover row for tooltip
-    const overlay = el('rect', { x: 0, y: cy - rowH / 2, width: iW, height: rowH, fill: 'transparent', cursor: 'crosshair' });
-    overlay.addEventListener('mouseenter', ev => showTT(ev,
-      `<div class="tt-title">${domain}</div>
-       ${ttRow('Models with compute data', vals.length)}
-       ${ttRow('Median', `10^${med.toFixed(1)} FLOP`)}
-       ${ttRow('IQR (Q1–Q3)', `10^${q1.toFixed(1)} – 10^${q3.toFixed(1)}`)}
-       ${ttRow('Range', `10^${sorted[0].toFixed(1)} – 10^${sorted[sorted.length - 1].toFixed(1)} FLOP`)}`));
-    overlay.addEventListener('mousemove', moveTT);
-    overlay.addEventListener('mouseleave', hideTT);
-    g.appendChild(overlay);
-  });
-}
-
-// ═══════════════════════════════════════════════
-function renderComputeRace() {
-  renderComputeScatter();
-  renderDomainBar();
-  renderDomainFilters();
-  renderComputeViolin();
-  renderCostChart();
-}
-
-function renderCostChart() {
-  const container = document.getElementById('cost-chart');
-  if(!container) return;
-  let allModels = AppState.data.models.filter(m=>m.cost>0&&m.date);
-  if(!allModels.length) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No cost data available</div>'; return; }
-
-  // ── Confidence-mode filter — stakeholder-defense toggle ──
-  // Default 'all' preserves the original max-cost-per-year visual.
-  // 'confident' restricts the per-year max to disclosed/strongly-supported
-  // estimates only; the line gets shorter and may show year-gaps where
-  // a year had only Speculative/Likely data.
-  const costMode = AppState.filters.costConfidenceMode || 'all';
-  if(costMode === 'confident') {
-    allModels = allModels.filter(m => normalizeConfidence(m.confidence) === 'Confident');
-  }
-  if(!allModels.length) {
-    const msg = costMode === 'confident'
-      ? 'No Confident-rated cost estimates in selected range'
-      : 'No cost data available';
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">${msg}</div>`;
-    // Hide projection legend callout — no anchor exists in this case.
-    const callout = document.getElementById('cost-projection-callout');
-    if(callout) callout.hidden = true;
-    return;
-  }
-
-  // Max cost model per year (within the active confidence-mode subset)
-  const yearMap = {};
-  allModels.forEach(m=>{
-    const y=m.date.getFullYear();
-    if(!yearMap[y]||m.cost>yearMap[y].cost) yearMap[y]=m;
-  });
-  const series=Object.entries(yearMap).map(([y,m])=>({year:+y,cost:m.cost,model:m})).sort((a,b)=>a.year-b.year);
-  if(series.length<2) {
-    const msg = costMode === 'confident'
-      ? 'Insufficient Confident-rated cost data — try "All confidences"'
-      : 'Insufficient cost data';
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">${msg}</div>`;
-    const callout = document.getElementById('cost-projection-callout');
-    if(callout) callout.hidden = true;
-    return;
-  }
-
-  // ── Cottier et al. 2024 projection: 2.4× / yr (90% CI 2.0×–2.9×) ──
-  // Anchored on the most recent year with data; projected through 2027.
-  const PROJ_END = 2027;
-  const RATE_LO = 2.0, RATE_MID = 2.4, RATE_HI = 2.9;
-  const anchor = series[series.length-1];
-  const projHorizon = Math.max(PROJ_END - anchor.year, 0);
-  const projHi = anchor.cost * Math.pow(RATE_HI, projHorizon);
-
-  const {g,iW,iH}=makeSVG(container,{l:80,r:24,t:28,b:36});
-
-  // X axis extended to include projection horizon (e.g. 2026, 2027)
-  const xStart = series[0].year - 0.5;
-  const xEnd   = Math.max(anchor.year, PROJ_END) + 0.5;
-  const xFn    = linScale(xStart, xEnd, 0, iW);
-
-  // Y range — must accommodate projection upper bound and the $1B reference
-  const costs = series.map(p=>p.cost);
-  const minC  = Math.min(...costs);
-  const maxC  = Math.max(...costs);
-  const yMin  = minC * 0.2;
-  const yMax  = Math.max(maxC * 5, projHi * 1.5, 5e9);
-  const yFn   = logScale(yMin, yMax, iH, 0);
-
-  // X grid + ticks (data years AND projection years)
-  const yearsToShow = new Set(series.map(p=>p.year));
-  for(let y = anchor.year + 1; y <= PROJ_END; y++) yearsToShow.add(y);
-  const yearsSorted = Array.from(yearsToShow).sort((a,b)=>a-b);
-  yearsSorted.forEach(y=>{
-    const x=xFn(y);
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.03)','stroke-width':'0.5'}));
-    const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=y;
-    if(y > anchor.year) {
-      // Future-year ticks: dim amber, italicized to telegraph "projection"
-      tx.style.fill = 'rgba(240,165,0,0.6)';
-      tx.style.fontStyle = 'italic';
-    }
-    g.appendChild(tx);
-  });
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-
-  // Y axis with dollar labels
-  drawYAxisLog(g,[yMin,yMax],yFn,null,costLabel,2);
-
-  // ── PROJECTION WEDGE ─────────────────────────────────
-  // Translucent amber fill bounded by 2.0× (lower) and 2.9× (upper) growth.
-  // Wedge widens toward 2027 → eye reads "this is uncertain, not measured".
-  if(projHorizon > 0) {
-    const projYears = [];
-    for(let y = anchor.year; y <= PROJ_END; y++) projYears.push(y);
-
-    const upperPts = projYears.map(y => {
-      const c = anchor.cost * Math.pow(RATE_HI, y - anchor.year);
-      return [xFn(y), yFn(c)];
-    });
-    const lowerPts = projYears.map(y => {
-      const c = anchor.cost * Math.pow(RATE_LO, y - anchor.year);
-      return [xFn(y), yFn(c)];
-    });
-
-    // Polygon path — upper edge forward, lower edge reversed, closed
-    const wedgeD =
-      upperPts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ') +
-      ' ' +
-      [...lowerPts].reverse().map(p=>`L${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ') +
-      ' Z';
-
-    g.appendChild(el('path',{
-      d: wedgeD,
-      fill: 'rgba(240,165,0,0.13)',
-      stroke: 'rgba(240,165,0,0.55)',
-      'stroke-width': '1',
-      'stroke-dasharray': '5 4',
-      'stroke-linejoin': 'round'
-    }));
-
-    // Center projection — dashed thin line along the 2.4× / yr trajectory
-    const midD = projYears.map((y,i)=>{
-      const c = anchor.cost * Math.pow(RATE_MID, y - anchor.year);
-      return `${i?'L':'M'}${xFn(y).toFixed(1)},${yFn(c).toFixed(1)}`;
-    }).join(' ');
-    g.appendChild(el('path',{
-      d: midD,
-      stroke: 'rgba(240,165,0,0.7)',
-      'stroke-width': '1.2',
-      'stroke-dasharray': '4 4',
-      fill: 'none'
-    }));
-  }
-
-  // ── $1B reference line — label parked on the LEFT so the right side
-  //    is free for the projection-crossing annotation (which lives at the
-  //    same y level on the opposite end of the line).
-  const oneBY = yFn(1e9);
-  if(isFinite(oneBY) && oneBY >= 0 && oneBY <= iH) {
-    g.appendChild(el('line',{x1:0,y1:oneBY,x2:iW,y2:oneBY,
-      stroke:'rgba(240,165,0,0.4)','stroke-width':'1','stroke-dasharray':'6 4'}));
-    const rt=el('text',{x:4,y:oneBY-4,'text-anchor':'start',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.78)'});
-    rt.textContent='$1B threshold (projected ~2027)';
-    g.appendChild(rt);
-  }
-
-  // ── Crossing-point callout — numbered marker only.
-  // The upper-right corner of the chart is too crowded (anchor dot + its labels
-  // + Llama landmark + $1B line) for the full-length annotation to fit without
-  // collisions. We render a small numbered badge in-chart and move the textual
-  // annotation into the legend strip below, where there is clear horizontal
-  // space. The legend-side callout uses the SAME numeric badge for binding.
-  let crossInfo = null;
-  if(anchor.cost < 1e9 && projHorizon > 0) {
-    const tCross = Math.log(1e9 / anchor.cost) / Math.log(RATE_MID);
-    if(tCross > 0 && tCross <= projHorizon + 0.4) {
-      const crossYear = anchor.year + tCross;
-      const cx = xFn(crossYear);
-      const cy = yFn(1e9);
-      // Halo + numbered badge
-      g.appendChild(el('circle',{cx,cy,r:8,
-        fill:'rgba(240,165,0,0.18)',stroke:'#f0a500','stroke-width':'1.5'}));
-      const badge = el('text',{x:cx,y:cy+3,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:9px;font-weight:700;fill:#f0a500'});
-      badge.textContent = '1';
-      g.appendChild(badge);
-      crossInfo = { crossYear };
-    }
-  }
-  // Update the legend callout (DOM element below the chart) — renders only when
-  // a valid crossing exists for the current data anchor.
-  const legendCallout = document.getElementById('cost-projection-callout');
-  if(legendCallout) {
-    legendCallout.hidden = !crossInfo;
-  }
-
-  // ── Historical solid amber line (max-cost per year) ──
-  // Segmented so that year-gaps (e.g. when "Confident only" mode skips a
-  // year because only Speculative data existed) actually break the line
-  // visually instead of interpolating through the gap.
-  if(series.length>1) {
-    const segments = [];
-    let current = [series[0]];
-    for(let i=1; i<series.length; i++) {
-      if(series[i].year - series[i-1].year > 1) {
-        if(current.length) segments.push(current);
-        current = [];
-      }
-      current.push(series[i]);
-    }
-    if(current.length) segments.push(current);
-
-    segments.forEach(seg=>{
-      if(seg.length < 2) return; // single-point segments render as just the dot
-      const ld = seg.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.cost).toFixed(1)}`).join(' ');
-      const lp = el('path',{d:ld,stroke:'#f0a500','stroke-width':'2',fill:'none'});
-      g.appendChild(lp);
-      animateLine(lp);
-    });
-  }
-
-  // Landmark annotation years — with anti-collision spacing.
-  // For the anchor (last data point) we flip labels BELOW the dot, since the
-  // projection wedge extends UP and would collide with above-dot labels.
-  const landmarkYears=new Set([2020,2022,2023,2024,2025]);
-  let lastNameLabelY = Infinity;
-  series.forEach((p, idx)=>{
-    const x=xFn(p.year), y=yFn(p.cost);
-    if(!isFinite(x)||!isFinite(y)) return;
-    const isLandmark=landmarkYears.has(p.year)||p.year>=2024;
-    const isAnchor = (idx === series.length - 1) && projHorizon > 0;
-    const r=isLandmark?7:4;
-    // Fill encodes the underlying model's confidence. Confident=green,
-    // Likely=amber (matches the original visual default), Speculative=red,
-    // Unknown=grey. Stroke stays neutral so the dot reads against the bg.
-    const conf = normalizeConfidence(p.model.confidence);
-    const fill = confColor(conf);
-    const c=el('circle',{cx:x,cy:y,r,fill,stroke:'var(--bg)','stroke-width':'1.5'});
-    c.addEventListener('mouseenter',ev=>{
-      c.setAttribute('r',r+2);
-      showTT(ev,`<div class="tt-title">${p.model.name}</div>
-        ${ttRow('Year',p.year)}
-        ${ttRow('Est. Cost',formatCost(p.cost))}
-        ${ttRow('Confidence', confTTDot(conf) + conf)}`);
-    });
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',r); hideTT(); });
-    g.appendChild(c);
-    if(isLandmark) {
-      const trimmedName = p.model.name.replace(/\s*\(.*?\)\s*/g,'').trim().slice(0,16);
-      if(isAnchor) {
-        // Stack BOTH labels below the dot to clear the projection wedge.
-        const name=el('text',{x,y:y+16,'text-anchor':'middle',
-          style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.95);font-weight:500'});
-        name.textContent=trimmedName;
-        g.appendChild(name);
-        const cost=el('text',{x,y:y+28,'text-anchor':'middle',
-          style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
-        cost.textContent=formatCost(p.cost);
-        g.appendChild(cost);
-      } else {
-        // Default: name above, cost below; nudge name up if it crowds neighbor.
-        let nameLabelY = y - 14;
-        if(lastNameLabelY - nameLabelY < 16) nameLabelY = lastNameLabelY - 16;
-        lastNameLabelY = nameLabelY;
-        const name=el('text',{x,y:nameLabelY,'text-anchor':'middle',
-          style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
-        name.textContent=trimmedName;
-        g.appendChild(name);
-        const cost=el('text',{x,y:y+20,'text-anchor':'middle',
-          style:'font-family:DM Mono,monospace;font-size:8px;fill:#00c8d4'});
-        cost.textContent=formatCost(p.cost);
-        g.appendChild(cost);
-      }
-    }
-  });
-}
-
-function renderDomainFilters() {
-  // Only show domains that actually have models with compute data
-  const domainsWithData = new Set(
-    AppState.data.models.filter(m=>m.flop>0&&m.date).map(m=>m.domain)
-  );
-  const domains = Object.keys(DOMAIN_COLORS).filter(d=>domainsWithData.has(d));
-
-  const container = document.getElementById('domain-filters');
-  container.innerHTML = '';
-  // Default to all available domains if none set
-  if (!AppState.filters.domain.length) AppState.filters.domain = [...domains];
-  domains.forEach(d => {
-    const btn = document.createElement('button');
-    btn.className = 'domain-chip' + (AppState.filters.domain.includes(d)?' active':'');
-    btn.textContent = d;
-    btn.style.color = DOMAIN_COLORS[d];
-    btn.style.borderColor = DOMAIN_COLORS[d]+'66';
-    btn.addEventListener('click', () => {
-      const idx = AppState.filters.domain.indexOf(d);
-      if(idx>=0) AppState.filters.domain.splice(idx,1);
-      else AppState.filters.domain.push(d);
-      btn.classList.toggle('active');
-      renderComputeScatter();
-    });
-    container.appendChild(btn);
-  });
-}
-
-function renderComputeScatter() {
-  const container = document.getElementById('compute-scatter');
-  const allModels = applyDateFilter(AppState.data.models,'date');
-  let data = allModels.filter(m => m.flop > 0 && m.date);
-  if (AppState.filters.domain.length > 0) data = data.filter(m=>AppState.filters.domain.includes(m.domain));
-
-  if (!data.length) { container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data in selected range</div>'; return; }
-
-  const { g, iW, iH } = makeSVG(container, {l:96,r:20,t:20,b:36});
-
-  // Sort chronologically before computing scales
-  data.sort((a,b) => a.date - b.date);
-
-  const flops = data.map(m=>m.flop).filter(f => f > 0);
-  const dateMin = data[0].date, dateMax = data[data.length-1].date;
-  const xFn = timeScale(dateMin, dateMax, 0, iW);
-  const minF=Math.min(...flops), maxF=Math.max(...flops);
-  const yFn = logScale(minF*0.3,maxF*3,iH,0);
-
-  // Year ticks (now guaranteed minY <= maxY)
-  const minY=dateMin.getFullYear(), maxY=dateMax.getFullYear();
-  const yearTicks=[];
-  for(let y=minY; y<=maxY; y+=2) yearTicks.push(new Date(y,0,1));
-  drawGrid(g, yearTicks, [], xFn, yFn, iH, iW);
-  drawXAxisDates(g, yearTicks, xFn, iH);
-  drawYAxisLog(g, [minF*0.3,maxF*3], yFn, 'Training Compute', flopLabel, 3);
-
-  // Trend line (exponential fit)
-  if (AppState.filters.showTrend) {
-    const pts = data.filter(m=>m.flop>0&&m.date).map(m=>({
-      t:(m.date.getTime()-new Date('2012-01-01').getTime())/(1000*86400*365),
-      l:Math.log10(m.flop)
-    }));
-    if(pts.length>2) {
-      const n=pts.length;
-      const mx=pts.reduce((s,p)=>s+p.t,0)/n;
-      const my=pts.reduce((s,p)=>s+p.l,0)/n;
-      const num=pts.reduce((s,p)=>s+(p.t-mx)*(p.l-my),0);
-      const den=pts.reduce((s,p)=>s+(p.t-mx)*(p.t-mx),0);
-      if(den>0) {
-        const slope=num/den, intercept=my-slope*mx;
-        const dateTimes=data.map(m=>m.date.getTime());
-        const tMin=(Math.min(...dateTimes)-new Date('2012-01-01').getTime())/(1000*86400*365);
-        const tMax=(Math.max(...dateTimes)-new Date('2012-01-01').getTime())/(1000*86400*365);
-        const x1=xFn(new Date(Math.min(...dateTimes))), x2=xFn(new Date(Math.max(...dateTimes)));
-        const y1=yFn(Math.pow(10,slope*tMin+intercept)), y2=yFn(Math.pow(10,slope*tMax+intercept));
-        const trendPath=el('path',{d:`M${x1},${y1} L${x2},${y2}`,
-          stroke:'rgba(240,165,0,0.5)','stroke-width':'1.5',
-          fill:'none','stroke-dasharray':'6 4'});
-        g.appendChild(trendPath);
-      }
-    }
-  }
-
-  // Points — primary fill is org color; a thin secondary ring encodes
-  // confidence in the underlying compute estimate (Confident → no ring,
-  // Likely/Speculative/Unknown → colored ring, Unknown is dashed).
-  const orgMap = AppState.orgColors;
-  data.forEach((m, i) => {
-    const x = xFn(m.date), y = yFn(m.flop);
-    if(!isFinite(x)||!isFinite(y)) return;
-    const baseR = m.frontier ? 5 : 3.5;
-    const conf = normalizeConfidence(m.confidence);
-    const fadeDelay = Math.min(i*8,600);
-
-    // ── Confidence halo (drawn BEFORE the dot so the dot sits on top).
-    //    Skipped for Confident — keeps clean dots clean.
-    if(conf !== 'Confident') {
-      const ringR = baseR + 2.2;
-      const ringStroke = confColor(conf);
-      const ring = el('circle', {
-        cx:x, cy:y, r: ringR,
-        fill: 'none',
-        stroke: ringStroke,
-        'stroke-width': '1.4',
-        opacity: '0',
-        'pointer-events': 'none',
-        style: `transition:opacity 0.4s ${fadeDelay}ms`,
-      });
-      if(conf === 'Unknown') ring.setAttribute('stroke-dasharray','2 2');
-      g.appendChild(ring);
-      requestAnimationFrame(()=>{ ring.setAttribute('opacity','0.75'); });
-    }
-
-    const c = el('circle',{
-      cx:x, cy:y, r: baseR,
-      fill: m.frontier ? (orgMap[m.org]||'#4b5568') : 'none',
-      stroke: orgMap[m.org]||'#4b5568',
-      'stroke-width': m.frontier?0:1.5,
-      opacity: '0',
-      style:`transition:opacity 0.4s ${fadeDelay}ms,r 0.15s`,
-      class:'chart-point'
-    });
-    c.addEventListener('mouseenter', ev => {
-      c.setAttribute('r', m.frontier?7:5);
-      showTT(ev, `<div class="tt-title">${m.name}</div>
-        ${ttRow('Org',m.org)}
-        ${ttRow('Date',fmtDate(m.date))}
-        ${ttRow('Compute',fmtFLOPTooltip(m.flop))}
-        ${ttRow('Domain',m.domain)}
-        ${ttRow('Confidence', confTTDot(conf) + conf)}`);
-    });
-    c.addEventListener('mousemove', moveTT);
-    c.addEventListener('mouseleave', ev => { c.setAttribute('r',baseR); hideTT(); });
-    g.appendChild(c);
-    requestAnimationFrame(()=>{ c.setAttribute('opacity','0.85'); });
-  });
-
-  // Legend (top 10 orgs)
-  const orgCounts={};
-  data.forEach(m=>{ orgCounts[m.org]=(orgCounts[m.org]||0)+1; });
-  const top10=Object.entries(orgCounts).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>e[0]);
-  const leg = document.getElementById('compute-legend');
-  leg.innerHTML = top10.map(o=>`<div class="legend-item"><div class="legend-swatch" style="background:${orgMap[o]||'#4b5568'}"></div>${o}</div>`).join('');
-  leg.innerHTML += '<div class="legend-item" style="margin-left:16px"><div style="width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted2);margin-right:5px;flex-shrink:0"></div>Non-frontier</div>';
-  leg.innerHTML += '<div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:var(--muted2);margin-right:5px;flex-shrink:0"></div>Frontier</div>';
-  // Confidence-ring legend item — explains the secondary visual encoding
-  leg.innerHTML += '<div class="legend-item" style="margin-left:16px;color:var(--muted2);font-style:italic"><span class="scatter-ring-sample"></span>Ringed dots = estimated compute (Likely / Speculative / Unknown)</div>';
-}
-
-function renderDomainBar() {
-  const container = document.getElementById('domain-bar');
-  const models = applyDateFilter(AppState.data.models,'date').filter(m=>m.date);
-
-  const yearMap={};
-  models.forEach(m=>{
-    const y=m.date.getFullYear();
-    if(!yearMap[y]) yearMap[y]={};
-    const d=m.domain;
-    yearMap[y][d]=(yearMap[y][d]||0)+1;
-  });
-
-  const years=Object.keys(yearMap).map(Number).sort();
-  if(!years.length) return;
-  const domains=Object.keys(DOMAIN_COLORS);
-
-  const { g, iW, iH } = makeSVG(container,{l:44,r:16,t:16,b:36});
-
-  const maxVal=Math.max(...years.map(y=>Object.values(yearMap[y]).reduce((s,v)=>s+v,0)));
-  const xFn=linScale(0,years.length,0,iW);
-  const yFn=linScale(0,maxVal*1.1,iH,0);
-  const barW=Math.max(4,(iW/years.length)*0.7);
-
-  // Y ticks
-  const yTicks=[0,Math.round(maxVal/4),Math.round(maxVal/2),Math.round(maxVal*3/4),maxVal];
-  drawYAxisLin(g, yTicks.reverse(), yFn, v=>v);
-  yTicks.slice(0,-1).forEach(t=>{
-    const y=yFn(t);
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-  });
-
-  // Bars
-  years.forEach((yr,i)=>{
-    const xCenter=xFn(i+0.5);
-    const x=xCenter-barW/2;
-    let yBase=iH;
-    domains.forEach(d=>{
-      const count=yearMap[yr][d]||0;
-      if(!count) return;
-      const barH=(count/maxVal/1.1)*iH;
-      if(barH<1) return;
-      const rect=el('rect',{
-        x:x,y:yBase-barH,width:barW,height:barH,
-        fill:DOMAIN_COLORS[d],opacity:'0.8',rx:'1'
-      });
-      rect.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${yr} — ${d}</div>${ttRow('Count',count)}`));
-      rect.addEventListener('mousemove',moveTT);
-      rect.addEventListener('mouseleave',hideTT);
-      g.appendChild(rect);
-      yBase-=barH;
-    });
-    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=yr;
-    g.appendChild(tx);
-  });
-
-  // 2019 marker
-  const idx2019=years.indexOf(2019);
-  if(idx2019>=0) {
-    const ax=xFn(idx2019);
-    g.appendChild(el('line',{x1:ax,y1:0,x2:ax,y2:iH,
-      stroke:'rgba(240,165,0,0.35)','stroke-width':'1','stroke-dasharray':'4 3'}));
-    const at=el('text',{x:ax+4,y:14,'text-anchor':'start',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.7)'});
-    at.textContent='ChatGPT era begins';
-    g.appendChild(at);
-  }
-
-  // Legend
-  const leg=document.getElementById('domain-legend');
-  leg.innerHTML=domains.map(d=>`<div class="legend-item"><div class="legend-swatch" style="background:${DOMAIN_COLORS[d]}"></div>${d}</div>`).join('');
-}
-
-// ═══════════════════════════════════════════════
-//  TAB 3 — HARDWARE
-// ═══════════════════════════════════════════════
-let hwFilter = 'all';
-
-function renderHardwareEvolution() {
-  renderHWLine();
-  renderHWPriceBar();
-}
-
-function getFilteredHW() {
-  const hw = applyDateFilter(AppState.data.hardware,'releaseDate');
-  if(hwFilter === 'all') return hw;
-  return hw.filter(h=>h.type===hwFilter);
-}
-
-function renderHWLine() {
-  const container = document.getElementById('hw-line');
-  const allHW = getFilteredHW().filter(h=>h.releaseDate&&h.fp16>0);
-  if(!allHW.length) { container.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data</div>'; return; }
-
-  const nvData=allHW.filter(h=>h.mfr==='NVIDIA');
-  const gData =allHW.filter(h=>h.mfr==='Google');
-  const otData=allHW.filter(h=>h.mfr!=='NVIDIA'&&h.mfr!=='Google');
-
-  function rollingMilestones(pts) {
-    if(!pts.length) return [];
-    const sorted=[...pts].sort((a,b)=>a.releaseDate-b.releaseDate);
-    let maxVal=0, result=[];
-    sorted.forEach(p=>{ if(p.fp16>maxVal){ maxVal=p.fp16; result.push({date:p.releaseDate,val:maxVal,chip:p}); } });
-    return result;
-  }
-
-  const nvSeries=rollingMilestones(nvData);
-  const gSeries =rollingMilestones(gData);
-  const otSeries=rollingMilestones(otData);
-
-  const allPts=[...nvSeries,...gSeries,...otSeries];
-  if(!allPts.length) return;
-
-  const allDates=[...allHW.map(h=>h.releaseDate)];
-  const minDate=new Date(Math.min(...allDates));
-  const maxDate=new Date(Math.max(...allDates));
-  const allVals=allPts.map(p=>p.val).filter(v=>v>0);
-  const minVal=Math.min(...allVals), maxVal=Math.max(...allVals);
-
-  const {g,iW,iH}=makeSVG(container,{l:75,r:160,t:20,b:36});
-  const xFn=timeScale(minDate,maxDate,0,iW);
-  const yFn=logScale(minVal*0.3,maxVal*3,iH,0);
-
-  const minY=minDate.getFullYear(), maxY=maxDate.getFullYear();
-  const yearTicks=[];
-  for(let y=minY;y<=maxY;y+=2) yearTicks.push(new Date(y,0,1));
-  drawGrid(g,yearTicks,[],xFn,yFn,iH,iW);
-  drawXAxisDates(g,yearTicks,xFn,iH);
-  drawYAxisLog(g,[minVal*0.3,maxVal*3],yFn,null,fp16Label,1);
-
-  function drawRollingLine(series,color,opacity,label,labelOffsetY) {
-    if(!series.length) return;
-    // Build step path: horizontal then vertical at each new record
-    let d=`M${xFn(series[0].date).toFixed(1)},${yFn(series[0].val).toFixed(1)}`;
-    for(let i=1;i<series.length;i++){
-      d+=` L${xFn(series[i].date).toFixed(1)},${yFn(series[i-1].val).toFixed(1)}`;
-      d+=` L${xFn(series[i].date).toFixed(1)},${yFn(series[i].val).toFixed(1)}`;
-    }
-    // Extend horizontal to maxDate
-    d+=` L${xFn(maxDate).toFixed(1)},${yFn(series[series.length-1].val).toFixed(1)}`;
-    const path=el('path',{d,stroke:color,'stroke-width':'2.5',fill:'none',opacity:String(opacity)});
-    g.appendChild(path);
-    animateLine(path);
-    // Milestone dots with tooltip
-    series.forEach(p=>{
-      const x=xFn(p.date),y=yFn(p.val);
-      if(!isFinite(x)||!isFinite(y)) return;
-      const c=el('circle',{cx:x,cy:y,r:4,fill:color,opacity:String(opacity)});
-      c.addEventListener('mouseenter',ev=>{
-        c.setAttribute('r',6);
-        showTT(ev,`<div class="tt-title">${p.chip.name}</div>
-          ${ttRow('Maker',p.chip.mfr)}
-          ${ttRow('Released',fmtDate(p.chip.releaseDate))}
-          ${ttRow('FP16 Speed',fmtFP16Tooltip(p.chip.fp16))}
-          ${ttRow('Process',p.chip.process?p.chip.process+'nm':'—')}`);
-      });
-      c.addEventListener('mousemove',moveTT);
-      c.addEventListener('mouseleave',()=>{ c.setAttribute('r',4); hideTT(); });
-      g.appendChild(c);
-    });
-    // Inline label at right end
-    const last=series[series.length-1];
-    const lx=xFn(maxDate)+8;
-    const ly=yFn(last.val)+(labelOffsetY||0);
-    const lb=el('text',{x:lx,y:ly+4,'text-anchor':'start',fill:color,opacity:String(opacity),
-      style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
-    lb.textContent=label;
-    g.appendChild(lb);
-  }
-
-  drawRollingLine(otSeries,'#8892a4',0.5,'Others',0);
-  drawRollingLine(gSeries,'#00c8d4',1,'Google TPU',-14);
-  drawRollingLine(nvSeries,'#f0a500',1,'NVIDIA',-28);
-}
-
-function renderHWPriceBar() {
-  const container = document.getElementById('hw-price-bar');
-  if (!container) return;
-  const data = getFilteredHW().filter(h => h.price > 0 && h.releaseDate);
-  if (!data.length) {
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No price data available</div>';
-    return;
-  }
-
-  // Highest-priced chip per manufacturer per year
-  const mfrMap = {};
-  data.forEach(h => {
-    const yr = h.releaseDate.getFullYear();
-    const mfr = h.mfr || 'Other';
-    if (!mfrMap[mfr]) mfrMap[mfr] = {};
-    if (!mfrMap[mfr][yr] || h.price > mfrMap[mfr][yr].price) {
-      mfrMap[mfr][yr] = { price: h.price, name: h.name, year: yr };
-    }
-  });
-
-  // Top 6 manufacturers by peak price
-  const mfrs = Object.entries(mfrMap)
-    .sort((a, b) => Math.max(...Object.values(b[1]).map(v => v.price)) - Math.max(...Object.values(a[1]).map(v => v.price)))
-    .slice(0, 6);
-  if (!mfrs.length) return;
-
-  const allPts = mfrs.flatMap(([mfr, ym]) => Object.values(ym).map(v => ({ ...v, mfr })));
-  const allYears = allPts.map(p => p.year);
-  const yearMin = Math.min(...allYears), yearMax = Math.max(...allYears);
-  const allPrices = allPts.map(p => p.price);
-  const minPrice = Math.min(...allPrices);
-  const maxPrice = Math.max(...allPrices);
-  // Hug the data: y-axis spans only the actual price range with a small visual buffer.
-  // This makes the slope of the line steeper and the growth more obvious.
-  const pMin = minPrice * 0.7;
-  const pMax = maxPrice * 1.6;
-
-  const { g, iW, iH } = makeSVG(container, { l: 78, r: 72, t: 28, b: 48 });
-  // No left/right padding — first dot sits flush against the y-axis, last dot against the right edge
-  const xFn = linScale(yearMin, yearMax, 0, iW);
-  const yFn = logScale(pMin, pMax, iH, 0);
-
-  // Axes
-  g.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: iH, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
-  g.appendChild(el('line', { x1: 0, y1: iH, x2: iW, y2: iH, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
-
-  // Y axis: log ticks at every $X, $3X, $5X, $X*10 within the actual data range so the
-  // axis shows ~5–7 well-spaced labels regardless of how tight the data range is.
-  const fmtPrice = v => v >= 1000 ? `$${(v / 1000) % 1 === 0 ? v / 1000 : (v / 1000).toFixed(1)}K` : `$${v}`;
-  const priceRefs = [];
-  const expLo = Math.floor(Math.log10(pMin));
-  const expHi = Math.ceil(Math.log10(pMax));
-  for (let exp = expLo; exp <= expHi; exp++) {
-    [1, 2, 3, 5].forEach(m => {
-      const v = m * Math.pow(10, exp);
-      if (v >= pMin && v <= pMax) priceRefs.push({ v, major: m === 1 });
-    });
-  }
-  priceRefs.forEach(({ v, major }) => {
-    const py = yFn(v);
-    if (!isFinite(py) || py < -2 || py > iH + 2) return;
-    g.appendChild(el('line', { x1: 0, y1: py, x2: iW, y2: py,
-      stroke: major ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.04)', 'stroke-width': '0.5' }));
-    const tx = el('text', { x: -6, y: py + 3, 'text-anchor': 'end', class: 'axis-tick' });
-    tx.style.opacity = major ? '1' : '0.55';
-    tx.textContent = fmtPrice(v);
-    g.appendChild(tx);
-    g.appendChild(el('line', { x1: -3, y1: py, x2: 0, y2: py, stroke: 'rgba(255,255,255,0.15)', 'stroke-width': '0.5' }));
-  });
-
-  // X axis: year tick per year with light gridline
-  for (let yr = yearMin; yr <= yearMax; yr++) {
-    const x = xFn(yr);
-    g.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: iH, stroke: 'rgba(255,255,255,0.03)', 'stroke-width': '0.5' }));
-    const tx = el('text', { x, y: iH + 15, 'text-anchor': 'middle', class: 'axis-tick' });
-    tx.textContent = yr;
-    g.appendChild(tx);
-  }
-
-  // Y axis label
-  const ylbl = el('text', { x: -(iH / 2), y: -62, 'text-anchor': 'middle', class: 'axis-label', transform: 'rotate(-90)' });
-  ylbl.textContent = 'Launch Price (USD, log scale)';
-  g.appendChild(ylbl);
-
-  // Clean chip name: strip redundant manufacturer + product-line prefixes so labels stay short
-  function cleanChip(name) {
-    let n = name
-      .replace(/^(nvidia|google|amd|intel|amazon\s*aws|amazon|huawei|cambricon|apple|meta|moore\s*threads|graphcore)\s+/i, '')
-      .replace(/^(radeon\s+instinct|radeon|geforce|quadro|titan|instinct)\s+/i, '')
-      .trim();
-    return n.length > 14 ? n.slice(0, 13) + '…' : n;
-  }
-
-  // Estimate SVG text pixel width (monospace ~5.5px per char at 8px font)
-  function estW(str) { return str.length * 5.5 + 6; }
-
-  // Collision resolver — dir='up' pushes upper labels up (used for labels above dots);
-  // dir='down' pushes lower labels down (used for labels placed below their dots).
-  function resolveY(labels, minGap, bounds, dir = 'up') {
-    labels.sort((a, b) => a.y - b.y);
-    for (let pass = 0; pass < 30; pass++) {
-      let moved = false;
-      for (let i = 1; i < labels.length; i++) {
-        const gap = labels[i].y - labels[i - 1].y;
-        if (gap < minGap) {
-          if (dir === 'up') labels[i - 1].y -= (minGap - gap);
-          else              labels[i].y     += (minGap - gap);
-          moved = true;
-        }
-      }
-      if (!moved) break;
-    }
-    labels.forEach(lb => { lb.y = Math.max(bounds[0], Math.min(bounds[1], lb.y)); });
-  }
-
-  // Draw manufacturers — non-NVIDIA first so NVIDIA renders on top
-  const sorted = [...mfrs].sort(([a]) => a === 'NVIDIA' ? 1 : -1);
-
-  // Pass 1: areas + lines (background layers only)
-  const aboveLabels    = [];  // NVIDIA chip names — placed above their dot
-  const belowLabels    = [];  // non-NVIDIA chip names — placed below their dot to avoid clashes
-  const endLabelSpecs  = [];  // manufacturer end-of-line names
-  const dotSpecs       = [];  // all dots, drawn last so always on top
-
-  sorted.forEach(([mfr, ym]) => {
-    const color = HW_COLORS[mfr] || HW_COLORS['Other'];
-    const isNV = mfr === 'NVIDIA';
-    const pts = Object.values(ym).sort((a, b) => a.year - b.year);
-
-    // NVIDIA subtle area fill
-    if (isNV && pts.length >= 2) {
-      const areaD = `M${xFn(pts[0].year).toFixed(1)},${iH} ` +
-        pts.map(p => `L${xFn(p.year).toFixed(1)},${yFn(p.price).toFixed(1)}`).join(' ') +
-        ` L${xFn(pts[pts.length-1].year).toFixed(1)},${iH} Z`;
-      g.appendChild(el('path', { d: areaD, fill: color + '12', stroke: 'none' }));
-    }
-
-    // Trend line
-    if (pts.length >= 2) {
-      const lineD = pts.map((p, i) => `${i===0?'M':'L'}${xFn(p.year).toFixed(1)},${yFn(p.price).toFixed(1)}`).join(' ');
-      g.appendChild(el('path', { d: lineD,
-        stroke: color, 'stroke-width': isNV ? '2.5' : '1.8', fill: 'none',
-        'stroke-linejoin': 'round', 'stroke-linecap': 'round',
-        opacity: isNV ? '0.9' : '0.65',
-        'stroke-dasharray': isNV ? 'none' : '5 3'
-      }));
-    }
-
-    pts.forEach(p => {
-      const x = xFn(p.year), y = yFn(p.price);
-      if (!isFinite(x) || !isFinite(y)) return;
-      // Collect dots — drawn in Pass 2, before labels, so labels render on top
-      dotSpecs.push({ x, y, r: isNV ? 5.5 : 4, color, name: p.name, year: p.year, mfr, price: p.price });
-      // Label every dot. NVIDIA labels go above the dot (where the eye expects them);
-      // every other manufacturer's labels go below so they can't collide with NVIDIA's.
-      const text = cleanChip(p.name);
-      if (isNV) aboveLabels.push({ dotX: x, dotY: y, y: y - 20, text, color, isNV: true });
-      else      belowLabels.push({ dotX: x, dotY: y, y: y + 18, text, color, isNV: false });
-    });
-
-    // Queue end-of-line manufacturer label
-    const last = pts[pts.length - 1];
-    if (last) {
-      const lx = xFn(last.year), ly = yFn(last.price);
-      if (isFinite(lx) && isFinite(ly))
-        endLabelSpecs.push({ x: lx, dotY: ly, y: ly, text: mfr, color, isNV });
-    }
-
-  });
-
-  // Pass 2: draw all dots before labels so label text renders on top of dots
-  dotSpecs.forEach(ds => {
-    const dot = el('circle', { cx: ds.x, cy: ds.y, r: ds.r,
-      fill: ds.color, stroke: 'var(--bg)', 'stroke-width': '1.5' });
-    dot.addEventListener('mouseenter', ev => showTT(ev,
-      `<div class="tt-title">${ds.name}</div>
-       ${ttRow('Year', ds.year)}${ttRow('Manufacturer', ds.mfr)}${ttRow('Launch price', '$' + ds.price.toLocaleString())}`));
-    dot.addEventListener('mousemove', moveTT);
-    dot.addEventListener('mouseleave', hideTT);
-    g.appendChild(dot);
-  });
-
-  // Pass 3: resolve + draw chip labels. Above-labels resolve upward, below-labels downward.
-  // Labels are pointer-events:none so dot tooltips stay interactive.
-  resolveY(aboveLabels, 14, [10, iH - 4], 'up');
-  resolveY(belowLabels, 14, [10, iH - 4], 'down');
-
-  // Push labels past any *other* dots they would cover. The label bg occupies
-  // [bgX, bgX+w+4] horizontally and [y-9, y+2] vertically; if any non-self dot
-  // sits inside that rect, slide the label further from its dot until clear.
-  function clearDotOverlap(lb, naturalOffset) {
-    const w = estW(lb.text);
-    const halfBg = w / 2 + 4;
-    const dirSign = naturalOffset < 0 ? -1 : 1;
-    for (let i = 0; i < 12; i++) {
-      let hit = false;
-      for (const d of dotSpecs) {
-        if (d.x === lb.dotX && d.y === lb.dotY) continue; // skip own dot
-        if (Math.abs(d.x - lb.dotX) > halfBg + d.r + 2) continue;
-        const top = lb.y - 10, bot = lb.y + 3;
-        if (d.y + d.r >= top && d.y - d.r <= bot) {
-          // Move label by enough to clear the offending dot
-          lb.y = dirSign > 0 ? d.y + d.r + 12 : d.y - d.r - 12;
-          hit = true;
-          break;
-        }
-      }
-      if (!hit) break;
-    }
-    // Re-clamp to plot bounds
-    lb.y = Math.max(10, Math.min(iH - 4, lb.y));
-  }
-  aboveLabels.forEach(lb => clearDotOverlap(lb, -20));
-  belowLabels.forEach(lb => clearDotOverlap(lb,  18));
-  function drawChipLabel(lb, naturalOffset) {
-    const w = estW(lb.text);
-    // Anchor based on horizontal position so labels don't collide with the y-axis (left)
-    // or run off the right edge of the plot.
-    let anchor = 'middle';
-    let tx = lb.dotX;
-    if (lb.dotX - w / 2 < 2) { anchor = 'start'; tx = lb.dotX - 2; }
-    else if (lb.dotX + w / 2 > iW - 2) { anchor = 'end'; tx = lb.dotX + 2; }
-    const bgX = anchor === 'start' ? tx - 2
-              : anchor === 'end'   ? tx - w - 2
-              :                      tx - w / 2 - 2;
-    // Leader line when label was pushed away from its natural offset (above or below the dot)
-    const naturalY = lb.dotY + naturalOffset;
-    if (Math.abs(lb.y - naturalY) > 2) {
-      const ly1 = naturalOffset < 0 ? lb.dotY - 8 : lb.dotY + 8;
-      const ly2 = naturalOffset < 0 ? lb.y + 2     : lb.y - 2;
-      const leader = el('line', { x1: lb.dotX, y1: ly1, x2: lb.dotX, y2: ly2,
-        stroke: lb.color, 'stroke-width': '0.7', opacity: '0.45', 'stroke-dasharray': '2 3' });
-      leader.style.pointerEvents = 'none';
-      g.appendChild(leader);
-    }
-    const bg = el('rect', { x: bgX, y: lb.y - 9, width: w + 4, height: 11,
-      fill: 'var(--bg)', opacity: '0.9', rx: '2' });
-    bg.style.pointerEvents = 'none';
-    g.appendChild(bg);
-    const txt = el('text', { x: tx, y: lb.y, 'text-anchor': anchor, class: 'axis-tick' });
-    txt.style.fill = lb.color;
-    txt.style.fontSize = lb.isNV ? '8px' : '7.5px';
-    txt.style.fontWeight = lb.isNV ? '600' : '500';
-    txt.style.pointerEvents = 'none';
-    txt.textContent = lb.text;
-    g.appendChild(txt);
-  }
-  aboveLabels.forEach(lb => drawChipLabel(lb, -20));
-  belowLabels.forEach(lb => drawChipLabel(lb,  18));
-
-  // Pass 4: resolve + draw end-of-line manufacturer labels — offset further from the dot
-  resolveY(endLabelSpecs, 14, [8, iH - 4]);
-  endLabelSpecs.forEach(lb => {
-    const lx = lb.x + 14;
-    const w = estW(lb.text);
-    // Leader line from dot to label when vertical push displaced it
-    if (Math.abs(lb.y - lb.dotY) > 2) {
-      const leader = el('line', { x1: lb.x + 6, y1: lb.dotY, x2: lx - 2, y2: lb.y,
-        stroke: lb.color, 'stroke-width': '0.7', opacity: '0.4' });
-      leader.style.pointerEvents = 'none';
-      g.appendChild(leader);
-    }
-    const bg = el('rect', { x: lx - 3, y: lb.y - 9, width: w + 4, height: 12,
-      fill: 'var(--bg)', opacity: '0.9', rx: '2' });
-    bg.style.pointerEvents = 'none';
-    g.appendChild(bg);
-    const txt = el('text', { x: lx, y: lb.y, 'text-anchor': 'start', class: 'axis-tick' });
-    txt.style.fill = lb.color;
-    txt.style.fontSize = '8.5px';
-    txt.style.fontWeight = lb.isNV ? '700' : '500';
-    txt.style.pointerEvents = 'none';
-    txt.textContent = lb.text;
-    g.appendChild(txt);
-  });
-
-
-  // Legend
-  const leg = document.getElementById('hw-price-legend');
-  if (leg) {
-    leg.innerHTML = mfrs.map(([mfr]) => {
-      const color = HW_COLORS[mfr] || HW_COLORS['Other'];
-      return `<div class="legend-item"><div class="legend-swatch" style="background:${color}"></div>${mfr}</div>`;
-    }).join('');
-  }
-}
-
-function renderTDPPerf() {
-  const container=document.getElementById('hw-tdp-perf');
-  const cutoff=new Date('2015-01-01');
-  const data=getFilteredHW()
-    .filter(h=>h.tdp>0&&h.fp16>0&&h.releaseDate&&h.releaseDate>=cutoff&&h.tdp<=1500);
-  if(!data.length) { container.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:0.7rem">No data</div>'; return; }
-
-  const {g,iW,iH}=makeSVG(container,{l:90,r:16,t:16,b:44});
-  const maxTDP=Math.min(1500,Math.max(...data.map(h=>h.tdp))*1.05);
-  const xFn=linScale(0,maxTDP,0,iW);
-  const fpVals=data.map(h=>h.fp16);
-  const yFn=logScale(Math.min(...fpVals)*0.3,Math.max(...fpVals)*3,iH,0);
-
-  // X grid + ticks
-  [0,300,600,900,1200,1500].forEach(v=>{
-    if(v>maxTDP+100) return;
-    const x=xFn(v);
-    if(!isFinite(x)||x<0||x>iW+1) return;
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-    const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=v+'W';
-    g.appendChild(tx);
-  });
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  const axTx=el('text',{x:iW/2,y:iH+30,'text-anchor':'middle',class:'axis-label'});
-  axTx.textContent='Power Draw (Watts)';
-  g.appendChild(axTx);
-
-  drawYAxisLog(g,[Math.min(...fpVals)*0.3,Math.max(...fpVals)*3],yFn,'FP16 Speed',fp16Label,2);
-
-  data.forEach(h=>{
-    const x=xFn(h.tdp),y=yFn(h.fp16);
-    if(!isFinite(x)||!isFinite(y)||x<0||x>iW) return;
-    let fill,opacity;
-    if(h.mfr==='NVIDIA'){ fill='#f0a500'; opacity='0.85'; }
-    else if(h.mfr==='Google'){ fill='#00c8d4'; opacity='0.85'; }
-    else { fill='#8892a4'; opacity='0.4'; }
-    const c=el('circle',{cx:x,cy:y,r:5,fill,opacity});
-    c.addEventListener('mouseenter',ev=>{
-      c.setAttribute('r',7);
-      showTT(ev,`<div class="tt-title">${h.name}</div>
-        ${ttRow('Maker',h.mfr)}
-        ${ttRow('Power Draw',h.tdp+'W')}
-        ${ttRow('FP16 Speed',fmtFP16Tooltip(h.fp16))}
-        ${ttRow('Released',h.releaseDate?fmtDate(h.releaseDate):'—')}`);
-    });
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',5); hideTT(); });
-    g.appendChild(c);
-  });
-}
-
-function renderProcessBar() {
-  const container=document.getElementById('hw-process');
-  const data=getFilteredHW().filter(h=>h.process>0&&h.releaseDate).sort((a,b)=>a.releaseDate-b.releaseDate);
-  if(!data.length) return;
-
-  const {g,iW,iH}=makeSVG(container,{l:44,r:16,t:16,b:36});
-  const maxNm=Math.max(...data.map(h=>h.process));
-  const minNm=Math.min(...data.map(h=>h.process));
-  const dates=data.map(h=>h.releaseDate);
-  const xFn=timeScale(new Date(Math.min(...dates)),new Date(Math.max(...dates)),0,iW);
-  const yFn=linScale(0,maxNm*1.1,iH,0);
-
-  const yTicks=[0,5,7,10,14,20,28].filter(v=>v<=maxNm);
-  drawYAxisLin(g,yTicks.reverse(),yFn,v=>v+'nm');
-  yTicks.forEach(t=>{
-    g.appendChild(el('line',{x1:0,y1:yFn(t),x2:iW,y2:yFn(t),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-  });
-
-  const minY2=new Date(Math.min(...dates)).getFullYear();
-  const maxY2=new Date(Math.max(...dates)).getFullYear();
-  const ytks2=[];
-  for(let y=minY2;y<=maxY2;y+=3) ytks2.push(new Date(y,0,1));
-  drawXAxisDates(g,ytks2,xFn,iH);
-
-  // Reference lines at key process nodes
-  [[28,'28nm'],[7,'7nm'],[4,'4nm']].forEach(([nm,label])=>{
-    if(nm>maxNm) return;
-    const y=yFn(nm);
-    if(!isFinite(y)||y<0||y>iH) return;
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,
-      stroke:'rgba(255,255,255,0.15)','stroke-width':'0.75','stroke-dasharray':'5 3'}));
-    const lt=el('text',{x:iW-4,y:y-3,'text-anchor':'end',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(255,255,255,0.4)'});
-    lt.textContent=label;
-    g.appendChild(lt);
-  });
-
-  data.forEach(h=>{
-    const x=xFn(h.releaseDate),y=yFn(h.process);
-    if(!isFinite(x)||!isFinite(y)) return;
-    let fill='#8892a4';
-    if(h.mfr==='NVIDIA') fill='#f0a500';
-    else if(h.mfr==='Google') fill='#00c8d4';
-    else fill=HW_COLORS[h.mfr]||HW_COLORS['Other'];
-    const c=el('circle',{cx:x,cy:y,r:4,fill,opacity:'0.8'});
-    c.addEventListener('mouseenter',ev=>{
-      showTT(ev,`<div class="tt-title">${h.name}</div>
-        ${ttRow('Process',h.process+'nm')}
-        ${ttRow('Year',h.releaseDate.getFullYear())}
-        ${ttRow('Maker',h.mfr)}`);
-    });
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',hideTT);
-    g.appendChild(c);
-  });
-
-  // Connecting line
-  if(data.length>1) {
-    const d=data.map((p,i)=>`${i?'L':'M'}${xFn(p.releaseDate).toFixed(1)},${yFn(p.process).toFixed(1)}`).join(' ');
-    const path=el('path',{d,stroke:'rgba(255,255,255,0.2)','stroke-width':'1',fill:'none','stroke-dasharray':'3 3'});
-    g.insertBefore(path,g.firstChild);
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  TAB 4 — ORG LANDSCAPE
-// ═══════════════════════════════════════════════
-function renderOrgLandscape() {
-  renderTreemap();
-  renderOrgBar();
-  renderDonut();
-  renderNarrowingField();
-}
-
-function renderNarrowingField() {
-  const container=document.getElementById('narrowing-field');
-  if(!container) return;
-  const models=AppState.data.models.filter(m=>m.frontier&&m.date);
-  if(!models.length) return;
-
-  // Count unique orgs per year — hard-capped to 2012–2025
-  const yearOrgs={};
-  models.forEach(m=>{
-    const y=m.date.getFullYear();
-    if(y<2012||y>2025) return;
-    if(!yearOrgs[y]) yearOrgs[y]=new Set();
-    yearOrgs[y].add(m.org);
-  });
-
-  const years=Object.keys(yearOrgs).map(Number).sort();
-  const series=years.map(y=>({year:y,count:yearOrgs[y].size,orgs:[...yearOrgs[y]]}));
-  if(series.length<2) return;
-
-  const {g,iW,iH}=makeSVG(container,{l:75,r:20,t:24,b:36});
-  const xFn=linScale(2012,2025,0,iW);
-  const maxCount=Math.max(...series.map(p=>p.count));
-  const yFn=linScale(0,Math.ceil(maxCount*1.3),iH,0);
-
-  // Grid + X ticks every 2 years
-  for(let y=2012;y<=2025;y++) {
-    const x=xFn(y);
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-    if((y-2012)%2===0) {
-      const tx=el('text',{x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-      tx.textContent=y;
-      g.appendChild(tx);
-    }
-  }
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-
-  // Y axis
-  const yTicks=[0,5,10,15,20,25].filter(v=>v<=maxCount*1.3);
-  drawYAxisLin(g,yTicks.slice().reverse(),yFn,v=>v);
-  yTicks.forEach(v=>{
-    g.appendChild(el('line',{x1:0,y1:yFn(v),x2:iW,y2:yFn(v),stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-  });
-
-  // Area fill
-  const areaD=`M${xFn(series[0].year)},${iH} `+
-    series.map(p=>`L${xFn(p.year).toFixed(1)},${yFn(p.count).toFixed(1)}`).join(' ')+
-    ` L${xFn(series[series.length-1].year)},${iH} Z`;
-  g.appendChild(el('path',{d:areaD,fill:'rgba(240,165,0,0.07)',stroke:'none'}));
-
-  // Jagged raw line
-  const lineD=series.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.count).toFixed(1)}`).join(' ');
-  const lp=el('path',{d:lineD,stroke:'#f0a500','stroke-width':'2.5',fill:'none'});
-  g.appendChild(lp);
-  animateLine(lp);
-
-  // 5-year rolling average trend line (lighter amber at 50% opacity)
-  if(series.length>=3) {
-    const smoothed=series.map((p,i)=>{
-      const win=series.slice(Math.max(0,i-2),Math.min(series.length,i+3));
-      const avg=win.reduce((s,w)=>s+w.count,0)/win.length;
-      return {year:p.year,avg};
-    });
-    const trendD=smoothed.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFn(p.avg).toFixed(1)}`).join(' ');
-    g.appendChild(el('path',{d:trendD,stroke:'rgba(240,165,0,0.5)','stroke-width':'2.5',fill:'none'}));
-  }
-
-  // GPT-3 era annotation
-  const x20=xFn(2020);
-  g.appendChild(el('line',{x1:x20,y1:0,x2:x20,y2:iH,
-    stroke:'rgba(240,165,0,0.35)','stroke-width':'1','stroke-dasharray':'4 3'}));
-  const at=el('text',{x:x20+4,y:14,'text-anchor':'start',
-    style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.7)'});
-  at.textContent='GPT-3 era';
-  g.appendChild(at);
-
-  // Dots
-  series.forEach(p=>{
-    const x=xFn(p.year),y=yFn(p.count);
-    if(!isFinite(x)||!isFinite(y)) return;
-    const c=el('circle',{cx:x,cy:y,r:4,fill:'#f0a500'});
-    c.addEventListener('mouseenter',ev=>{
-      c.setAttribute('r',6);
-      showTT(ev,`<div class="tt-title">${p.year}</div>${ttRow('Orgs in frontier',p.count)}${ttRow('Top orgs',p.orgs.slice(0,5).join(', '))}`);
-    });
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',()=>{ c.setAttribute('r',4); hideTT(); });
-    g.appendChild(c);
-  });
-
-  // Peak + latest annotations
-  const peak=series.reduce((a,b)=>b.count>a.count?b:a);
-  const curr=series[series.length-1];
-
-  // Dynamic insight text — uses the SAME peak/curr values as the chart
-  // annotations below, so the number above the chart and the "Peak: N orgs"
-  // label rendered onto the chart can never drift apart.
-  const insightEl=document.getElementById('narrowing-insight');
-  if(insightEl) {
-    insightEl.textContent=`${peak.count} organizations published frontier models at peak (${peak.year}). By ${curr.year}, ${curr.count} remain active — among labs with sufficient compute to reach the frontier.`;
-  }
-
-  const px=xFn(peak.year),py=yFn(peak.count);
-  if(isFinite(px)&&isFinite(py)) {
-    const pt=el('text',{x:px,y:py-10,'text-anchor':'middle',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
-    pt.textContent=`Peak: ${peak.count} orgs`;
-    g.appendChild(pt);
-  }
-  if(curr.year!==peak.year) {
-    const cx2=xFn(curr.year),cy2=yFn(curr.count);
-    if(isFinite(cx2)&&isFinite(cy2)) {
-      const ct=el('text',{x:cx2-6,y:cy2-10,'text-anchor':'end',
-        style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.9)'});
-      ct.textContent=`${curr.count} orgs (${curr.year})`;
-      g.appendChild(ct);
-    }
-  }
-}
-
-function tmCellHTML(label, count, w, h) {
-  if (w < 14 || h < 10) return '';
-  const fs = Math.min(Math.max(Math.min(w / 5.5, h / 3.2), 6), 11);
-  const maxChars = Math.max(Math.floor(w / (fs * 0.58)), 2);
-  const text = label.length <= maxChars ? label : label.slice(0, maxChars - 1) + '…';
-  const showCount = h >= fs * 2.8;
-  return `<div class="tm-name" style="font-size:${fs.toFixed(1)}px">${text}</div>`
-    + (showCount ? `<div class="tm-count" style="font-size:${(fs * 0.85).toFixed(1)}px">${count}</div>` : '');
-}
-
-function renderTreemap() {
-  const container = document.getElementById('treemap-container');
-  const models = applyDateFilter(AppState.data.models, 'date');
-
-  // Group models: normalizedCountry → { org → count }
-  const countryMap = {};
-  models.forEach(m => {
-    const c = normalizeCountry(m.country);
-    if (!countryMap[c]) countryMap[c] = {};
-    countryMap[c][m.org] = (countryMap[c][m.org] || 0) + 1;
-  });
-
-  const countryItems = Object.entries(countryMap)
-    .map(([country, orgs]) => ({
-      country,
-      orgs,
-      total: Object.values(orgs).reduce((s, n) => s + n, 0),
-      value: Object.values(orgs).reduce((s, n) => s + n, 0),
-    }))
-    .sort((a, b) => b.total - a.total);
-
-  const W = container.offsetWidth || 600;
-  const H = container.offsetHeight || 340;
-  const GAP = 3;
-  const HEADER_H = 18;
-  const ORG_ALPHAS = ['ee', 'cc', 'aa', '88', '77', '66', '55', '44'];
-
-  container.querySelectorAll('.tm-country-group,.tm-cell').forEach(el => el.remove());
-
-  const countryRects = squarify(countryItems, { x: 0, y: 0, w: W, h: H });
-
-  countryRects.forEach(cr => {
-    const baseColor = COUNTRY_COLORS[cr.country] || COUNTRY_COLORS['Other'];
-    const gw = Math.max(cr.w - GAP * 2, 0);
-    const gh = Math.max(cr.h - GAP * 2, 0);
-    const showHeader = gh > HEADER_H + 8;
-    const innerH = showHeader ? gh - HEADER_H : gh;
-
-    // Country group container
-    const group = document.createElement('div');
-    group.className = 'tm-country-group';
-    group.style.left   = (cr.x + GAP) + 'px';
-    group.style.top    = (cr.y + GAP) + 'px';
-    group.style.width  = gw + 'px';
-    group.style.height = gh + 'px';
-    group.style.border = `2px solid ${baseColor}`;
-
-    // Country header strip
-    if (showHeader) {
-      const hdr = document.createElement('div');
-      hdr.className = 'tm-country-header';
-      hdr.style.background = baseColor;
-      hdr.style.height = HEADER_H + 'px';
-      if (gw > 28) {
-        const hfs = Math.min(Math.max(Math.floor(gw / 16), 6), 9);
-        const maxHdrChars = Math.max(Math.floor((gw - 28) / (hfs * 0.58)), 2);
-        const hdrLabel = cr.country.length <= maxHdrChars ? cr.country : cr.country.slice(0, maxHdrChars - 1) + '…';
-        hdr.innerHTML = `<span class="tm-country-name" style="font-size:${hfs}px">${hdrLabel}</span><span class="tm-country-total" style="font-size:${hfs}px">${cr.total}</span>`;
-      }
-      group.appendChild(hdr);
-    }
-
-    // Inner area for org sub-tiles
-    const inner = document.createElement('div');
-    inner.className = 'tm-inner';
-    inner.style.height = innerH + 'px';
-    group.appendChild(inner);
-
-    // Layout org sub-tiles within inner area
-    const orgItems = Object.entries(cr.orgs)
-      .map(([org, count]) => ({ org, count, value: count }))
-      .sort((a, b) => b.count - a.count);
-
-    if (orgItems.length && gw > 2 && innerH > 2) {
-      const orgRects = squarify(orgItems, { x: 0, y: 0, w: gw, h: innerH });
-      orgRects.forEach((or, idx) => {
-        const alpha = ORG_ALPHAS[Math.min(idx, ORG_ALPHAS.length - 1)];
-        const cell = document.createElement('div');
-        cell.className = 'tm-cell';
-        cell.style.left   = or.x + 'px';
-        cell.style.top    = or.y + 'px';
-        cell.style.width  = Math.max(or.w - 1, 0) + 'px';
-        cell.style.height = Math.max(or.h - 1, 0) + 'px';
-        cell.style.background = baseColor + alpha;
-
-        if (AppState.filters.selectedOrg && AppState.filters.selectedOrg !== or.org) {
-          cell.classList.add('dimmed');
-        }
-        cell.innerHTML = tmCellHTML(or.org, or.count, or.w, or.h);
-        cell.addEventListener('click', e => {
-          e.stopPropagation();
-          AppState.filters.selectedOrg = AppState.filters.selectedOrg === or.org ? null : or.org;
-          renderTreemap();
-          renderOrgBar();
-        });
-        cell.addEventListener('mouseenter', ev => {
-          showTT(ev, `<div class="tt-title">${or.org}</div>
-            ${ttRow('Models', or.count)}
-            ${ttRow('Country', cr.country)}`);
-        });
-        cell.addEventListener('mousemove', moveTT);
-        cell.addEventListener('mouseleave', hideTT);
-        inner.appendChild(cell);
-      });
-    }
-
-    container.appendChild(group);
-  });
-
-  renderTreemapLegend(countryItems);
-}
-
-function renderTreemapLegend(countryItems) {
-  const legend = document.getElementById('treemap-legend');
-  if (!legend) return;
-  legend.innerHTML = countryItems.map(c => {
-    const color = COUNTRY_COLORS[c.country] || COUNTRY_COLORS['Other'];
-    return `<div class="tl-item">
-      <div class="tl-swatch" style="background:${color}"></div>
-      <span class="tl-label">${c.country} (${c.total})</span>
-    </div>`;
-  }).join('');
-}
-
-function getCountryColor(country) {
-  return COUNTRY_COLORS[normalizeCountry(country)] || COUNTRY_COLORS['Other'];
-}
-
-function squarify(items,rect) {
-  if(!items.length) return [];
-  if(items.length===1) return [{...items[0],...rect}];
-  const sorted=[...items].sort((a,b)=>b.value-a.value);
-  return layoutSquarify(sorted,rect,sorted.reduce((s,d)=>s+d.value,0));
-}
-
-function layoutSquarify(items,rect,total) {
-  if(!items.length) return [];
-  if(items.length===1) return [{...items[0],x:rect.x,y:rect.y,w:rect.w,h:rect.h}];
-  const {x,y,w,h}=rect;
-  const isWide=w>=h;
-  let row=[],rowSum=0,bestWorst=Infinity,result=[];
-  let cutIdx=0;
-  for(let i=0;i<items.length;i++) {
-    row.push(items[i]); rowSum+=items[i].value;
-    const wAR=worstAR(row,rowSum,rect,total);
-    if(wAR>bestWorst) { row.pop(); rowSum-=items[i].value; cutIdx=i; break; }
-    bestWorst=wAR; cutIdx=i+1;
-  }
-  const rowFrac=rowSum/total;
-  let off=isWide?y:x;
-  if(isWide) {
-    const rw=w*rowFrac;
-    row.forEach(item=>{
-      const ih=h*(item.value/rowSum);
-      result.push({...item,x,y:off,w:rw,h:ih});
-      off+=ih;
-    });
-    const rest=items.slice(cutIdx);
-    if(rest.length) result.push(...layoutSquarify(rest,{x:x+rw,y,w:w-rw,h},total-rowSum));
-  } else {
-    const rh=h*rowFrac;
-    row.forEach(item=>{
-      const iw=w*(item.value/rowSum);
-      result.push({...item,x:off,y,w:iw,h:rh});
-      off+=iw;
-    });
-    const rest=items.slice(cutIdx);
-    if(rest.length) result.push(...layoutSquarify(rest,{x,y:y+rh,w,h:h-rh},total-rowSum));
-  }
-  return result;
-}
-
-function worstAR(row,rowSum,rect,total) {
-  const {w,h}=rect;
-  const isWide=w>=h;
-  const rowFrac=rowSum/total;
-  const rs=isWide?w*rowFrac:h*rowFrac;
-  const rl=isWide?h:w;
-  let max=0;
-  row.forEach(item=>{
-    const il=rl*(item.value/rowSum);
-    const ar=il>0?Math.max(rs/il,il/rs):Infinity;
-    if(ar>max) max=ar;
-  });
-  return max;
-}
-
-function renderOrgBar() {
-  const container=document.getElementById('org-bar');
-  let models=applyDateFilter(AppState.data.models,'date');
-  if(AppState.filters.selectedOrg) models=models.filter(m=>m.org===AppState.filters.selectedOrg);
-
-  const orgMax={};
-  models.forEach(m=>{ if(m.flop>0) orgMax[m.org]=Math.max(orgMax[m.org]||0,m.flop); });
-  const sorted=Object.entries(orgMax).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  if(!sorted.length) return;
-
-  const {g,iW,iH}=makeSVG(container,{l:150,r:24,t:12,b:24});
-  const maxVal=sorted[0][1];
-  const barH=Math.max(6,iH/sorted.length-4);
-  const xFn=logScale(sorted[sorted.length-1][1]*0.3,maxVal*2,0,iW);
-
-  // X log ticks
-  for(let e=Math.ceil(Math.log10(sorted[sorted.length-1][1]*0.3));e<=Math.floor(Math.log10(maxVal*2));e+=2) {
-    const x=xFn(Math.pow(10,e));
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-    const tx=el('text',{x:x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=flopLabel(e);
-    g.appendChild(tx);
-  }
-
-  // Build org→country mapping so bar colors match the treemap country colors
-  const orgCountry={};
-  models.forEach(m=>{
-    if(!orgCountry[m.org]) orgCountry[m.org]={};
-    const c=normalizeCountry(m.country);
-    orgCountry[m.org][c]=(orgCountry[m.org][c]||0)+1;
-  });
-  const orgToCountryColor={};
-  Object.entries(orgCountry).forEach(([org,cMap])=>{
-    const top=Object.entries(cMap).sort((a,b)=>b[1]-a[1])[0];
-    orgToCountryColor[org]=COUNTRY_COLORS[top[0]]||COUNTRY_COLORS['Other'];
-  });
-
-  sorted.forEach(([org,val],i)=>{
-    const y=i*(iH/sorted.length);
-    const bw=xFn(val);
-    const color=orgToCountryColor[org]||COUNTRY_COLORS['Other']||'#4b5568';
-    const rect=el('rect',{x:0,y:y+(iH/sorted.length-barH)/2,width:Math.max(bw,2),height:barH,
-      fill:color,opacity:'0.8',rx:'2'});
-    rect.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${org}</div>${ttRow('Max FLOP',formatFLOP(val))}`));
-    rect.addEventListener('mousemove',moveTT);
-    rect.addEventListener('mouseleave',hideTT);
-    g.appendChild(rect);
-    const tx=el('text',{x:-6,y:y+(iH/sorted.length)/2+4,'text-anchor':'end',class:'axis-tick',
-      style:'font-size:10px'});
-    tx.textContent=org.slice(0,22);
-    g.appendChild(tx);
-  });
-}
-
-function renderDonut() {
-  const svg=document.getElementById('donut-svg');
-  const leg=document.getElementById('donut-legend');
-  const models=applyDateFilter(AppState.data.models,'date');
-  // openWeights is a 3-state category string ('open' | 'partial' | 'closed').
-  // Bucket counts by exact match so each segment reflects only its own state.
-  const open=models.filter(m=>m.openWeights==='open').length;
-  const partial=models.filter(m=>m.openWeights==='partial').length;
-  const closed=models.filter(m=>m.openWeights==='closed').length;
-  const total=models.length||1;
-
-  // Cyan = open, amber = partial, red = closed. Amber matches the existing
-  // "midway" semantic used by .insight-callout accents.
-  const cats=[
-    {label:'Open',   val:open,    color:'#00c8d4'},
-    {label:'Partial',val:partial, color:'#f0a500'},
-    {label:'Closed', val:closed,  color:'#ff5f5f'},
-  ];
-  svg.innerHTML='';
-  const cx=90,cy=90,R=72,r=42;
-  let angle=-Math.PI/2;
-  cats.forEach(cat=>{
-    const a=2*Math.PI*cat.val/total;
-    if(a<0.001) return;
-    const x1=cx+R*Math.cos(angle), y1=cy+R*Math.sin(angle);
-    const x2=cx+R*Math.cos(angle+a), y2=cy+R*Math.sin(angle+a);
-    const ix1=cx+r*Math.cos(angle), iy1=cy+r*Math.sin(angle);
-    const ix2=cx+r*Math.cos(angle+a), iy2=cy+r*Math.sin(angle+a);
-    const large=a>Math.PI?1:0;
-    const path=el('path',{
-      d:`M${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} L${ix2},${iy2} A${r},${r} 0 ${large} 0 ${ix1},${iy1} Z`,
-      fill:cat.color,opacity:'0.85'
-    });
-    path.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">${cat.label}</div>${ttRow('Count',cat.val)}${ttRow('Share',(100*cat.val/total).toFixed(1)+'%')}`));
-    path.addEventListener('mousemove',moveTT);
-    path.addEventListener('mouseleave',hideTT);
-    svg.appendChild(path);
-    angle+=a;
-  });
-  // Center text
-  const ct=el('text',{x:cx,y:cy+5,'text-anchor':'middle',fill:'var(--text)',
-    style:'font-family:DM Mono,monospace;font-size:14px;font-weight:500'});
-  ct.textContent=total;
-  svg.appendChild(ct);
-  const cl=el('text',{x:cx,y:cy+18,'text-anchor':'middle',fill:'var(--muted)',
-    style:'font-family:DM Mono,monospace;font-size:9px'});
-  cl.textContent='models';
-  svg.appendChild(cl);
-
-  leg.innerHTML=cats.map(c=>`<div class="donut-item">
-    <div class="donut-swatch" style="background:${c.color}"></div>
-    <span class="donut-label">${c.label}</span>
-    <span class="donut-pct">${(100*c.val/total).toFixed(0)}%</span>
-  </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════
-//  TAB 5 — CROSS-DATASET
-// ═══════════════════════════════════════════════
-function renderCrossDataset() {
-  renderGapBarChart();
-  renderArmsRace();
-}
-
-function getBestHWAtDate(hwData, targetDate) {
-  const avail=hwData.filter(h=>h.releaseDate&&h.releaseDate<=targetDate&&h.fp16>0);
-  if(!avail.length) return null;
-  return avail.reduce((best,h)=>h.fp16>best.fp16?h:best);
-}
-
-function renderGapBarChart() {
-  const container=document.getElementById('cross-scatter');
-  const models=AppState.data.models.filter(m=>m.flop>0&&m.date);
-  const hw=AppState.data.hardware.filter(h=>h.fp16>0&&h.releaseDate);
-  if(!models.length||!hw.length) return;
-
-  const startYear=2016, endYear=2025;
-  const ratioByYear={}, modelMaxByYear={}, hwMaxByYear={};
-
-  for(let y=startYear;y<=endYear;y++) {
-    const mVals=models.filter(m=>m.date.getFullYear()<=y).map(m=>m.flop);
-    const hVals=hw.filter(h=>h.releaseDate.getFullYear()<=y).map(h=>h.fp16);
-    if(mVals.length&&hVals.length) {
-      modelMaxByYear[y]=Math.max(...mVals);
-      hwMaxByYear[y]=Math.max(...hVals);
-      ratioByYear[y]=modelMaxByYear[y]/hwMaxByYear[y];
-    }
-  }
-
-  const years=Object.keys(ratioByYear).map(Number).sort();
-  if(!years.length) return;
-
-  const ratios=years.map(y=>ratioByYear[y]);
-  const maxRatio=Math.max(...ratios);
-  const minRatio=Math.min(...ratios);
-
-  const {g,iW,iH}=makeSVG(container,{l:90,r:110,t:48,b:40});
-  const xFn=linScale(0,years.length,0,iW);
-
-  // Power scale (cube root) — middle ground between log (too flat) and linear (too crushed).
-  // Tallest bar still dominates, but smallest bar stays visible.
-  const POW=1/3;
-  // Extra headroom on a cube-root scale so the tallest bar's value label clears the top
-  const yHi=Math.pow(Math.pow(maxRatio,POW)*1.15,1/POW);
-  const powFn=v=>Math.pow(Math.max(0,v),POW);
-  const yMaxP=powFn(yHi);
-  const yFn=v=>iH-(powFn(v)/yMaxP)*iH;
-
-  // × label formatter (handles small + large values)
-  const fmtRatio=(v)=>{
-    if(v===0) return '0×';
-    if(v>=1e9) return (v/1e9).toLocaleString(undefined,{maximumFractionDigits:1})+'B×';
-    if(v>=1e6) return (v/1e6).toLocaleString(undefined,{maximumFractionDigits:1})+'M×';
-    if(v>=1e3) return (v/1e3).toLocaleString(undefined,{maximumFractionDigits:1})+'K×';
-    if(v>=10)  return Math.round(v).toLocaleString()+'×';
-    return v.toLocaleString(undefined,{maximumFractionDigits:1})+'×';
-  };
-
-  // Y axis ticks — pick round powers-of-10 within the data range, plus 0 baseline
-  const tickVals=[0];
-  const loE=Math.max(0,Math.floor(Math.log10(Math.max(1,minRatio))));
-  const hiE=Math.ceil(Math.log10(maxRatio));
-  for(let e=loE;e<=hiE;e++) {
-    const v=Math.pow(10,e);
-    if(v<=yHi) tickVals.push(v);
-  }
-  tickVals.push(yHi);
-  // De-dupe & sort
-  const seen=new Set();
-  const ticks=tickVals.filter(v=>{const k=v.toFixed(2);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>a-b);
-
-  ticks.forEach(v=>{
-    const y=yFn(v);
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(255,255,255,0.06)','stroke-width':'0.5'}));
-    const tx=el('text',{x:-6,y:y+3,'text-anchor':'end',class:'axis-tick'});
-    tx.textContent=fmtRatio(v);
-    g.appendChild(tx);
-    g.appendChild(el('line',{x1:-3,y1:y,x2:0,y2:y,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  });
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.25)','stroke-width':'0.5'}));
-
-  // Y axis title
-  const yTitle=el('text',{x:-72,y:iH/2,'text-anchor':'middle',class:'axis-label',
-    transform:`rotate(-90,-72,${iH/2})`});
-  yTitle.textContent='Chips needed to match demand';
-  g.appendChild(yTitle);
-
-  // Bars
-  const barW=(iW/years.length)*0.6;
-  const tallestYear=years.reduce((a,b)=>ratioByYear[a]>ratioByYear[b]?a:b);
-
-  years.forEach((y,i)=>{
-    const ratio=ratioByYear[y];
-    if(!ratio) return;
-    const xCenter=xFn(i+0.5);
-    const barTop=yFn(ratio);
-    const barH=Math.max(1,iH-barTop);
-    const isTallest=(y===tallestYear);
-    const rect=el('rect',{x:xCenter-barW/2,y:barTop,width:barW,height:barH,
-      fill:'#f0a500',opacity:isTallest?'1':'0.85',rx:'2'});
-    rect.addEventListener('mouseenter',ev=>showTT(ev,
-      `<div class="tt-title">${y}</div>
-      ${ttRow('Gap ratio',Math.round(ratio).toLocaleString()+'×')}
-      ${ttRow('Model compute',fmtFLOPTooltip(modelMaxByYear[y]))}
-      ${ttRow('Best chip',fmtFP16Tooltip(hwMaxByYear[y]))}`));
-    rect.addEventListener('mousemove',moveTT);
-    rect.addEventListener('mouseleave',hideTT);
-    g.appendChild(rect);
-
-    const tx=el('text',{x:xCenter,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=y;
-    g.appendChild(tx);
-
-    // Value label above every bar — keeps early years readable on linear scale
-    const vlbl=el('text',{x:xCenter,y:Math.max(barTop-5,10),'text-anchor':'middle',
-      style:`font-family:DM Mono,monospace;font-size:9px;fill:${isTallest?'#f0a500':'rgba(255,255,255,0.55)'};font-weight:${isTallest?'600':'400'}`});
-    vlbl.textContent=fmtRatio(ratio);
-    g.appendChild(vlbl);
-
-    // Headline annotation on tallest bar
-    if(isTallest) {
-      const at=el('text',{x:xCenter,y:Math.max(barTop-20,-2),'text-anchor':'end',
-        style:'font-family:DM Mono,monospace;font-size:10px;fill:rgba(240,165,0,0.95);font-weight:600'});
-      at.textContent=`Today: frontier models need ${fmtRatio(ratio)} more compute than the best single chip`;
-      g.appendChild(at);
-    }
-  });
-
-  // Clear legend (not needed for bar chart)
-  const leg=document.getElementById('cross-legend');
-  if(leg) leg.innerHTML='';
-}
-
-function renderArmsRace() {
-  const container=document.getElementById('arms-race');
-  const allModels=AppState.data.models.filter(m=>m.flop>0&&m.date);
-  const allHW=AppState.data.hardware.filter(h=>h.fp16>0&&h.releaseDate);
-  if(!allModels.length||!allHW.length) return;
-
-  const allDates=[...allModels.map(m=>m.date),...allHW.map(h=>h.releaseDate)];
-  const minY=2012;
-  const maxY=Math.max(...allDates.map(d=>d.getFullYear()));
-
-  // Build rolling max per year from 2012
-  const modelYears={},hwYears={};
-  for(let y=minY;y<=maxY;y++) {
-    const mCut=new Date(y,11,31);
-    const mVals=allModels.filter(m=>m.date<=mCut).map(m=>m.flop);
-    const hVals=allHW.filter(h=>h.releaseDate<=mCut).map(h=>h.fp16);
-    modelYears[y]=mVals.length?Math.max(...mVals):null;
-    hwYears[y]=hVals.length?Math.max(...hVals):null;
-  }
-
-  const mSeries=Object.entries(modelYears).filter(([,v])=>v).map(([y,v])=>({year:+y,val:v}));
-  const hSeries=Object.entries(hwYears).filter(([,v])=>v).map(([y,v])=>({year:+y,val:v}));
-  if(!mSeries.length||!hSeries.length) return;
-
-  const {g,iW,iH}=makeSVG(container,{l:75,r:160,t:20,b:40});
-
-  const xFn=linScale(minY,maxY,0,iW);
-  const allMVals=mSeries.map(p=>p.val), allHVals=hSeries.map(p=>p.val);
-  const mMinF=Math.min(...allMVals), mMaxF=Math.max(...allMVals);
-  const hMinF=Math.min(...allHVals), hMaxF=Math.max(...allHVals);
-  const yFnM=logScale(mMinF*0.5,mMaxF*2,iH,0);
-  const yFnH=logScale(hMinF*0.5,hMaxF*2,iH,0);
-
-  // Grid
-  for(let y=minY;y<=maxY;y+=2) {
-    const x=xFn(y);
-    g.appendChild(el('line',{x1:x,y1:0,x2:x,y2:iH,stroke:'rgba(255,255,255,0.04)','stroke-width':'0.5'}));
-  }
-
-  // X axis
-  for(let y=minY;y<=maxY;y+=2) {
-    const x=xFn(y);
-    const tx=el('text',{x:x,y:iH+14,'text-anchor':'middle',class:'axis-tick'});
-    tx.textContent=y;
-    g.appendChild(tx);
-  }
-  g.appendChild(el('line',{x1:0,y1:iH,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-
-  // Left Y axis (model FLOP) — amber, plain-English labels, step=2
-  g.appendChild(el('line',{x1:0,y1:0,x2:0,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  const mLoE=Math.ceil(Math.log10(mMinF*0.5)), mHiE=Math.floor(Math.log10(mMaxF*2));
-  for(let e=mLoE;e<=mHiE;e+=2) {
-    const y=yFnM(Math.pow(10,e));
-    if(!isFinite(y)||y<0||y>iH) continue;
-    const lbl=flopLabel(e);
-    if(!lbl) continue;
-    g.appendChild(el('line',{x1:0,y1:y,x2:iW,y2:y,stroke:'rgba(240,165,0,0.06)','stroke-width':'0.5'}));
-    const tx=el('text',{x:-6,y:y+3,'text-anchor':'end',fill:'rgba(240,165,0,0.7)',
-      style:'font-family:DM Mono,monospace;font-size:9px'});
-    tx.textContent=lbl;
-    g.appendChild(tx);
-  }
-
-  // Right Y axis (hw FP16) — cyan, plain-English labels, step=2
-  g.appendChild(el('line',{x1:iW,y1:0,x2:iW,y2:iH,stroke:'rgba(255,255,255,0.15)','stroke-width':'0.5'}));
-  const hLoE=Math.ceil(Math.log10(hMinF*0.5)), hHiE=Math.floor(Math.log10(hMaxF*2));
-  for(let e=hLoE;e<=hHiE;e+=2) {
-    const y=yFnH(Math.pow(10,e));
-    if(!isFinite(y)||y<0||y>iH) continue;
-    const lbl=fp16Label(e);
-    if(!lbl) continue;
-    const tx=el('text',{x:iW+6,y:y+3,'text-anchor':'start',fill:'rgba(0,200,212,0.7)',
-      style:'font-family:DM Mono,monospace;font-size:9px'});
-    tx.textContent=lbl;
-    g.appendChild(tx);
-  }
-
-  // Model line (amber)
-  const mD=mSeries.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFnM(p.val).toFixed(1)}`).join(' ');
-  const mPath=el('path',{d:mD,stroke:'#f0a500','stroke-width':'2',fill:'none'});
-  g.appendChild(mPath);
-  animateLine(mPath);
-  mSeries.forEach(p=>{
-    const c=el('circle',{cx:xFn(p.year),cy:yFnM(p.val),r:4,fill:'#f0a500'});
-    c.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">Max Model FLOP</div>${ttRow('Year',p.year)}${ttRow('Compute',fmtFLOPTooltip(p.val))}`));
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',hideTT);
-    g.appendChild(c);
-  });
-
-  // HW line (cyan)
-  const hD=hSeries.map((p,i)=>`${i?'L':'M'}${xFn(p.year).toFixed(1)},${yFnH(p.val).toFixed(1)}`).join(' ');
-  const hPath=el('path',{d:hD,stroke:'#00c8d4','stroke-width':'2',fill:'none'});
-  g.appendChild(hPath);
-  animateLine(hPath);
-  hSeries.forEach(p=>{
-    const c=el('circle',{cx:xFn(p.year),cy:yFnH(p.val),r:4,fill:'#00c8d4'});
-    c.addEventListener('mouseenter',ev=>showTT(ev,`<div class="tt-title">Max HW FP16</div>${ttRow('Year',p.year)}${ttRow('Speed',fmtFP16Tooltip(p.val))}`));
-    c.addEventListener('mousemove',moveTT);
-    c.addEventListener('mouseleave',hideTT);
-    g.appendChild(c);
-  });
-
-  // Inline end-of-line labels in right margin
-  const mLast=mSeries[mSeries.length-1];
-  const hLast=hSeries[hSeries.length-1];
-  const mEndY=yFnM(mLast.val);
-  const hEndY=yFnH(hLast.val);
-  const mLbl=el('text',{x:iW+10,y:mEndY+4,'text-anchor':'start',fill:'rgba(240,165,0,0.9)',
-    style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
-  mLbl.textContent='Model demand';
-  g.appendChild(mLbl);
-  const hLbl=el('text',{x:iW+10,y:hEndY+4,'text-anchor':'start',fill:'rgba(0,200,212,0.9)',
-    style:'font-family:DM Mono,monospace;font-size:10px;font-weight:500'});
-  hLbl.textContent='Best chip';
-  g.appendChild(hLbl);
-  const hLbl2=el('text',{x:iW+10,y:hEndY+16,'text-anchor':'start',fill:'rgba(0,200,212,0.55)',
-    style:'font-family:DM Mono,monospace;font-size:8px'});
-  hLbl2.textContent='100 TFLOP/s';
-  g.appendChild(hLbl2);
-
-  // Landmark annotations — place in upper-left (or lower-right) quadrant of the point.
-  // The rolling-max curve is monotonically non-decreasing, so up-and-left of any point
-  // is guaranteed to be above the amber line, and down-and-right is guaranteed below it.
-  LANDMARKS.forEach(lm=>{
-    const m=AppState.data.models.find(md=>md.name.toLowerCase().includes(lm.name.toLowerCase())&&md.date&&md.date.getFullYear()>=minY);
-    if(!m||!m.flop) return;
-    const yr=m.date.getFullYear();
-    const x=xFn(yr);
-    const y=yFnM(m.flop);
-    if(!isFinite(x)||!isFinite(y)||y<0||y>iH) return;
-    const lines=lm.label.split('\n');
-    const lineH=11, padX=4, padY=3;
-    const charW=4.6;
-    const boxW=Math.max(...lines.map(s=>s.length))*charW + padX*2;
-    const boxH=lines.length*lineH + padY*2 - 2;
-    const dx=14, dy=14;
-    // Prefer upper-left (box sits above-and-left of point). Fall back to lower-right if no room.
-    let upperLeft = (x - dx - boxW) >= 2 && (y - dy - boxH) >= 2;
-    let boxX, boxY, leaderX2, leaderY2;
-    if(upperLeft) {
-      boxX = x - dx - boxW;
-      boxY = y - dy - boxH;
-      leaderX2 = boxX + boxW;     // top-right corner of box
-      leaderY2 = boxY + boxH;
-    } else {
-      // lower-right
-      boxX = Math.min(x + dx, iW - 2 - boxW);
-      boxY = Math.min(y + dy, iH - 2 - boxH);
-      leaderX2 = boxX;            // top-left corner of box
-      leaderY2 = boxY;
-    }
-    // Diagonal dashed leader from point to nearest box corner
-    g.appendChild(el('line',{x1:x,y1:y,x2:leaderX2,y2:leaderY2,
-      stroke:'rgba(240,165,0,0.45)','stroke-width':'1','stroke-dasharray':'3 2'}));
-    // Background panel for readability
-    g.appendChild(el('rect',{x:boxX,y:boxY,width:boxW,height:boxH,rx:2,ry:2,
-      fill:'rgba(12,18,28,0.88)',stroke:'rgba(240,165,0,0.35)','stroke-width':'0.5'}));
-    lines.forEach((line,li)=>{
-      const tx=el('text',{x:boxX+boxW/2,y:boxY+padY+lineH-3+li*lineH,'text-anchor':'middle',
-        style:'font-family:DM Mono,monospace;font-size:8px;fill:rgba(240,165,0,0.95)'});
-      tx.textContent=line;
-      g.appendChild(tx);
-    });
-  });
-
-  // Gap bracket callout at rightmost year with data on both lines
-  const lastYearBoth=Math.min(mSeries[mSeries.length-1].year,hSeries[hSeries.length-1].year);
-  const mAtLast=mSeries.slice().reverse().find(p=>p.year<=lastYearBoth);
-  const hAtLast=hSeries.slice().reverse().find(p=>p.year<=lastYearBoth);
-  if(mAtLast&&hAtLast&&hAtLast.val>0&&mAtLast.val>0) {
-    const gx=xFn(lastYearBoth);
-    const gy1=yFnM(mAtLast.val);
-    const gy2=yFnH(hAtLast.val);
-    const topY=Math.min(gy1,gy2), botY=Math.max(gy1,gy2);
-    // Dashed white vertical bracket
-    g.appendChild(el('line',{x1:gx,y1:topY,x2:gx,y2:botY,
-      stroke:'rgba(255,255,255,0.4)','stroke-width':'1.5','stroke-dasharray':'4 3'}));
-    // Bracket end caps
-    g.appendChild(el('line',{x1:gx-4,y1:topY,x2:gx+4,y2:topY,stroke:'rgba(255,255,255,0.4)','stroke-width':'1'}));
-    g.appendChild(el('line',{x1:gx-4,y1:botY,x2:gx+4,y2:botY,stroke:'rgba(255,255,255,0.4)','stroke-width':'1'}));
-    // Single gap ratio label positioned at vertical midpoint, right of bracket
-    const ratio=mAtLast.val/hAtLast.val;
-    const ratioFmt=ratio>=1e9?Math.round(ratio/1e9).toLocaleString()+'B':
-                   ratio>=1e6?Math.round(ratio/1e6).toLocaleString()+'M':
-                   ratio>=1e3?Math.round(ratio/1e3).toLocaleString()+'K':Math.round(ratio).toLocaleString();
-    const midY=(topY+botY)/2;
-    const gt1=el('text',{x:iW+10,y:midY+4,'text-anchor':'start',
-      style:'font-family:DM Mono,monospace;font-size:9px;fill:rgba(240,165,0,0.75)'});
-    gt1.textContent=`~${ratioFmt}× gap`;
-    g.appendChild(gt1);
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  TAB NAVIGATION
-// ═══════════════════════════════════════════════
-function renderCurrentTab() {
-  switch(AppState.activeTab) {
-    case 'overview':  renderOverview(); break;
-    case 'compute':   renderComputeRace(); break;
-    case 'hardware':  renderHardwareEvolution(); break;
-    case 'orgs':      renderOrgLandscape(); break;
-    case 'cross':     renderCrossDataset(); break;
-  }
-}
-
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabId));
-  document.querySelectorAll('.tab-panel').forEach(p=>{
-    if(p.id===`tab-${tabId}`) {
-      p.style.display='block';
-      requestAnimationFrame(()=>{
-        p.classList.add('active');
-        p.style.opacity='1';
-        p.style.transform='translateY(0)';
-      });
-    } else {
-      p.classList.remove('active');
-      p.style.display='none';
-    }
-  });
-  AppState.activeTab=tabId;
-  renderCurrentTab();
-}
-
-// ═══════════════════════════════════════════════
-//  CONTROLS WIRING
-// ═══════════════════════════════════════════════
-function wireControls() {
-  // Tab buttons
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
-  });
-
-  // Theme toggle
-  document.getElementById('theme-btn').addEventListener('click',()=>{
-    const t=document.documentElement.getAttribute('data-theme');
-    document.documentElement.setAttribute('data-theme',t==='dark'?'light':'dark');
-  });
-
-  // Trend toggle
-  document.getElementById('trend-toggle').addEventListener('click',function(){
-    AppState.filters.showTrend=!AppState.filters.showTrend;
-    this.classList.toggle('active',AppState.filters.showTrend);
-    this.textContent=AppState.filters.showTrend?'Hide':'Show';
-    renderComputeScatter();
-  });
-
-  // Hardware type filter buttons
-  document.querySelectorAll('.hw-filter-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const t=btn.dataset.hw;
-      hwFilter = (hwFilter===t&&t!=='all') ? 'all' : t;
-      document.querySelectorAll('.hw-filter-btn').forEach(b=>{
-        b.classList.toggle('active', b.dataset.hw===hwFilter || (hwFilter==='all'&&b.dataset.hw==='all'));
-      });
-      renderHardwareEvolution();
-    });
-  });
-
-  // ⓘ info icon tooltips
-  document.querySelectorAll('.info-icon').forEach(icon=>{
-    icon.addEventListener('mouseenter',ev=>{
-      showTT(ev,`<div style="font-family:var(--font-body);font-size:0.73rem;line-height:1.65;color:var(--text)">${icon.dataset.tip}</div>`);
-    });
-    icon.addEventListener('mousemove',moveTT);
-    icon.addEventListener('mouseleave',hideTT);
-  });
-
-  // Treemap reset
-  document.getElementById('treemap-reset').addEventListener('click',()=>{
-    AppState.filters.selectedOrg=null;
-    renderTreemap(); renderOrgBar();
-  });
-
-  // Rising Cost — confidence-mode toggle. Default is 'all' so first-load
-  // visual is unchanged; switching to 'confident' redraws the line with
-  // only Confident-rated per-year maxes (and re-anchors the projection
-  // wedge accordingly via renderCostChart's anchor=series[last]).
-  document.querySelectorAll('#cost-confidence-controls [data-cost-mode]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const mode = btn.dataset.costMode;
-      if(AppState.filters.costConfidenceMode === mode) return;
-      AppState.filters.costConfidenceMode = mode;
-      document.querySelectorAll('#cost-confidence-controls [data-cost-mode]').forEach(b => {
-        b.classList.toggle('active', b.dataset.costMode === mode);
-      });
-      renderCostChart();
-    });
-  });
-
-  // Methodology modal — open from hero, close via × / backdrop / Escape, focus-trapped
-  wireMethodologyModal();
-}
-
-// ── METHODOLOGY MODAL ────────────────────────────────
-function wireMethodologyModal() {
-  const trigger = document.getElementById('capex-method-btn');
-  const overlay = document.getElementById('methodology-overlay');
-  const modal   = document.getElementById('methodology-modal');
-  const closeBtn= document.getElementById('methodology-close');
-  if(!trigger||!overlay||!modal||!closeBtn) return;
-
-  let lastFocus = null;
-
-  function focusableEls() {
-    return Array.from(modal.querySelectorAll(
-      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )).filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
-  }
-
-  function onKeydown(ev) {
-    if(ev.key === 'Escape') { ev.preventDefault(); closeModal(); return; }
-    if(ev.key !== 'Tab') return;
-    const items = focusableEls();
-    if(!items.length) { ev.preventDefault(); modal.focus(); return; }
-    // If focus has escaped the modal, pull it back in
-    if(!modal.contains(document.activeElement)) {
-      ev.preventDefault();
-      items[0].focus();
-      return;
-    }
-    const first = items[0], last = items[items.length-1];
-    if(ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
-    else if(!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
-  }
-
-  function openModal() {
-    lastFocus = document.activeElement;
-    overlay.hidden = false;
-    // next frame so transition runs
-    requestAnimationFrame(()=>overlay.classList.add('open'));
-    document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', onKeydown);
-    // Focus first interactive element (close button) for keyboard users
-    setTimeout(()=>{ closeBtn.focus(); }, 30);
-  }
-
-  function closeModal() {
-    overlay.classList.remove('open');
-    document.removeEventListener('keydown', onKeydown);
-    document.body.style.overflow = '';
-    // Wait for fade-out before hiding
-    setTimeout(()=>{ overlay.hidden = true; }, 200);
-    if(lastFocus && typeof lastFocus.focus === 'function') {
-      try { lastFocus.focus(); } catch(_){}
-    }
-  }
-
-  trigger.addEventListener('click', openModal);
-  closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', ev => { if(ev.target === overlay) closeModal(); });
-}
-
-// ═══════════════════════════════════════════════
-//  DATA LOADING
-// ═══════════════════════════════════════════════
-async function loadCSV(path) {
-  const res=await fetch(path);
-  if(!res.ok) throw new Error(`Failed: ${path}`);
-  const text=await res.text();
-  return new Promise((resolve,reject)=>{
-    Papa.parse(text,{
-      header:true,
-      skipEmptyLines:true,
-      complete:r=>resolve(r.data),
-      error:reject
-    });
-  });
-}
-
-function processModels(rows) {
-  return rows.map(r=>{
-    // ── Data provenance fields (Epoch AI Notable AI Models schema) ──
-    // Confidence: blank/missing → 'Unknown' so downstream prompts can rely on a value.
-    const confRaw = (r['Confidence']||'').trim();
-    const confidence = confRaw || 'Unknown';
-    // Training compute estimation method: e.g. "Operation counting", "Benchmarks",
-    // "Comparison with other models". Pass through trimmed (null when blank).
-    const cemRaw = (r['Training compute estimation method']||'').trim();
-    const computeEstimationMethod = cemRaw || null;
-    // Estimated over 1e25 FLOP: Epoch's own flag for very-large-compute training runs.
-    // Stored as raw trimmed string ("True" / "False" / null).
-    const overRaw = (r['Estimated over 1e25 FLOP']||'').trim();
-    const estimatedOver1e25 = overRaw || null;
-    return {
-      name:         r['Model']||'',
-      date:         parseDate(r['Publication date']),
-      org:          r['Organization']||'Unknown',
-      flop:         parseNum(r['Training compute (FLOP)']),
-      domain:       getPrimaryDomain(r['Domain']),
-      params:       parseNum(r['Parameters']),
-      accessibility:r['Model accessibility']||'',
-      cost:         parseNum(r['Training compute cost (2023 USD)']),
-      country:      r['Country (of organization)']||'Other',
-      // openWeights is now a 3-state category string ('open' | 'partial' |
-      // 'closed') so renderDonut can split into three segments. Truthiness
-      // checks elsewhere should not rely on it being a boolean.
-      openWeights:  isOpenWeights(r),
-      frontier:     isFrontier(r),
-      // ── New provenance/methodology fields ───────────────────────
-      confidence,
-      computeEstimationMethod,
-      estimatedOver1e25,
-    };
-  }).filter(r=>r.name);
-}
-
-function processHardware(rows) {
-  return rows.map(r=>({
-    name:       r['Hardware name']||'',
-    mfr:        r['Manufacturer']||'Other',
-    type:       r['Type']||'Other',
-    releaseDate:parseDate(r['Release date']),
-    price:      parseNum(r['Release price (USD)']),
-    fp16:       parseNum(r['Tensor-FP16/BF16 performance (FLOP/s)']) || parseNum(r['FP16 (half precision) performance (FLOP/s)']),
-    mem:        parseNum(r['Memory (bytes)']),
-    memBW:      parseNum(r['Memory bandwidth (byte/s)']),
-    tdp:        parseNum(r['TDP (W)']),
-    effic:      parseNum(r['Energy efficiency']),
-    process:    parseNum(r['Process size (nm)']),
-  })).filter(r=>r.name);
-}
-
-// ═══════════════════════════════════════════════
-//  ABOUT-THIS-DATA BANNER + FOOTER
-// ═══════════════════════════════════════════════
-// updateAboutBannerMeta — recomputes the banner's live counts and
-// "last updated" date against the CURRENTLY-FILTERED date range
-// (AppState.dateRange via applyDateFilter). This is the single source
-// of truth used both at init time and on every scrubber drag, so the
-// banner numbers always match what the Overview KPI cards display.
-//
-// Empty-set safe: if the user drags the scrubber to a window with no
-// data the banner shows "0 models · 0 chips" and "—" for the date.
-function updateAboutBannerMeta() {
-  const { models, hardware } = AppState.data;
-
-  // Same filter the Overview KPIs use — keys are 'date' for models
-  // and 'releaseDate' for hardware. Identical inputs ⇒ identical counts.
-  const fm = applyDateFilter(models,  'date');
-  const fh = applyDateFilter(hardware,'releaseDate');
-
-  // Latest publication / release date across the FILTERED sets.
-  const allDates = [
-    ...fm.map(m=>m.date),
-    ...fh.map(h=>h.releaseDate),
-  ].filter(d => d instanceof Date && !isNaN(d));
-
-  let updatedLabel = '—';
-  if (allDates.length) {
-    // Math.max([])===-Infinity, so we guard above. Convert ms→Date→label.
-    const maxMs = Math.max(...allDates.map(d=>d.getTime()));
-    updatedLabel = new Date(maxMs).toLocaleDateString('en-US', { month:'short', year:'numeric' });
-  }
-
-  // ── Per-field spans inside the collapsed banner row ──
-  const elModel = document.getElementById('dbt-model-count');
-  const elHw    = document.getElementById('dbt-hw-count');
-  const elDate  = document.getElementById('dbt-updated');
-  if (elModel) elModel.textContent = fm.length;
-  if (elHw)    elHw.textContent    = fh.length;
-  if (elDate)  elDate.textContent  = updatedLabel;
-
-  // ── Footer "Last updated" mirrors the same filtered date ──
-  const elFooter = document.getElementById('df-updated-date');
-  if (elFooter) elFooter.textContent = updatedLabel;
-}
-
-// updateMethodologyConfidenceBreakdown — populates the dynamic
-// "Of the N frontier models, X have Confident estimates, ..." line at
-// the end of the methodology modal's "What the data shows" section.
-// Counts are derived from AppState.data.models (already pre-filtered to
-// frontier per the source CSV), so the message stays consistent with
-// the rest of the dashboard.
-function updateMethodologyConfidenceBreakdown() {
-  const target = document.getElementById('method-conf-breakdown');
-  if(!target) return;
-  const models = AppState.data.models || [];
-  const counts = { Confident:0, Likely:0, Speculative:0, Unknown:0 };
-  models.forEach(m => { counts[normalizeConfidence(m.confidence)]++; });
-  const total = models.length;
-  if(!total) { target.textContent = ''; return; }
-
-  const fmt = (level, n) =>
-    `<strong>${n}</strong> <span class="conf-tt-dot ${confClass(level)}"></span>${level}`;
-
-  target.innerHTML =
-    `Of the <strong>${total}</strong> frontier models in the dataset, ` +
-    `${fmt('Confident',   counts.Confident)} estimates, ` +
-    `${fmt('Likely',      counts.Likely)}, ` +
-    `${fmt('Speculative', counts.Speculative)}, ` +
-    `and ${fmt('Unknown', counts.Unknown)}.`;
-}
-
-// initAboutBanner — one-time setup: wires the click-to-expand toggle.
-// Count/date population is delegated to updateAboutBannerMeta().
-function initAboutBanner() {
-  const toggle = document.getElementById('about-toggle');
-  const panel  = document.getElementById('about-panel');
-  if (toggle && panel && !toggle.dataset.wired) {
-    toggle.dataset.wired = '1';
-    toggle.addEventListener('click', () => {
-      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!isOpen));
-      if (isOpen) panel.setAttribute('hidden','');
-      else panel.removeAttribute('hidden');
-    });
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════
-async function init() {
-  try {
-    const [modelRows, hwRows] = await Promise.all([
-      loadCSV('./data/frontier_ai_models.csv'),
-      loadCSV('./data/ml_hardware.csv'),
-    ]);
-
-    const models = processModels(modelRows);
-    const hardware = processHardware(hwRows);
-
-    AppState.data.models = models;
-    AppState.data.hardware = hardware;
-    AppState.orgColors = buildOrgColors(models);
-
-    wireControls();
-    initScrubber();
-    initAboutBanner();
-    // Single source of truth for banner counts: same code path used on every
-    // scrubber drag, ensuring the initial values match the Overview KPIs.
-    updateAboutBannerMeta();
-    // Populate the methodology modal's dynamic confidence breakdown.
-    // Data is static after load, so one call here is sufficient.
-    updateMethodologyConfidenceBreakdown();
-
-    // Domain filter auto-populated by renderDomainFilters to only domains with data
-    AppState.filters.domain = [];
-
-    // Initial render
-    renderOverview();
-
-    // Hide loading
-    const loading = document.getElementById('loading');
-    loading.classList.add('hidden');
-    setTimeout(()=>{ loading.style.display='none'; }, 500);
-
-  } catch(err) {
-    document.getElementById('loading').innerHTML=`
-      <div style="color:var(--danger);font-family:var(--font-mono);font-size:0.8rem;text-align:center;padding:40px">
-        <div style="font-size:2rem;margin-bottom:12px">✕</div>
-        <div>Failed to load data</div>
-        <div style="color:var(--muted);margin-top:8px;font-size:0.7rem">${err.message}</div>
-        <div style="color:var(--muted);margin-top:4px;font-size:0.65rem">Ensure CSVs are in ./data/ and served via HTTP</div>
-      </div>`;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', init);
-</script>
+<script src="app.js"></script>
 </body>
 </html>
