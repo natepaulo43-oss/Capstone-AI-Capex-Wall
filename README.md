@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 # AI Observatory
 
 A static research dashboard for training compute, estimated final-run training cost, accelerator specifications, reported hardware quantities, and publication activity in the supplied Epoch AI snapshots. It is a visualization and analysis layer, not an original source or a measure of national compute capacity.
 
-The five tabs retain the existing SVG dashboard design. The active application is `index.html` plus `app.js`; styles remain inline in `index.html`. `style.css` is an unused legacy stylesheet. There is no build step, server-side application, or H100 cost simulator.
+The five tabs retain the existing SVG dashboard design. The active application is `index.html` plus `app.js`; styles remain inline in `index.html`. There is no build step, server-side application, or H100 cost simulator.
 
 Charts fit their cards and render without drawing/fade animations or chart scrollbars. Use `+` to inspect dense data at 2× or 4× magnification, then drag to pan (touch dragging is supported while zoomed). `−` zooms out; Reset or Escape restores the full view. Focus a zoomed chart and use arrow keys to pan with the keyboard. Changing filters, tabs, or viewport size resets the view. These controls change only the view, not the underlying data or calculations.
 
@@ -81,28 +80,3 @@ Active model fields: `Model`, `Publication date`, `Organization`, `Training comp
 Active hardware fields: `Hardware name`, `Manufacturer`, `Type`, `Release date`, `Release price (USD)`, `Tensor-FP16/BF16 performance (FLOP/s)`, `Memory (bytes)`, `Memory bandwidth (byte/s)`, `TDP (W)`, `Energy efficiency`, `Process size (nm)`. Name/manufacturer/type are text, release date is a parsed date, and the rest are nullable numbers. Only tensor FP16/BF16 is used for throughput; ordinary FP16 is not a fallback. The profiling script lists every source column, including unused fields.
 
 Coverage is selective and uneven; the latest years are partial, publication dates differ from training dates, and model variants can share a training run. Hardware quantity units and training stages vary, source notes can be ambiguous, and numeric presence does not establish independent reliability. Peak throughput is not achieved performance. Price observations are sparse, nominal, and configuration-dependent. Organization counts, weight access, and compute are not direct evidence of affordability, capability, market share, national capacity, or effects of export controls. Use original source notes and independent corroboration for strong research claims. See [DASHBOARD_AUDIT_FIXES.md](DASHBOARD_AUDIT_FIXES.md) for the complete repair record and formulas.
-=======
-# AI Observatory — The AI Capex Wall
-
-An interactive tracker of frontier AI training compute, cost, and hardware from 2012 to 2025, built on the Epoch AI Notable Models and ML Hardware datasets.
-
-**Live: https://capstone-ai-capex-wall.vercel.app/**
-
-## Why I built it
-
-"AI is expensive" is a headline; it's not a number a stakeholder can act on. This tool turns published training-compute figures (FLOP) into an actual dollar estimate — GPU cost, power cost, datacenter overhead, hardware utilization — with every assumption exposed as a slider, so an executive can see exactly which lever moves the number, instead of taking a compute-cost claim on faith.
-
-## Tech Stack
-
-Vanilla JS, D3.js for visualization, PapaParse for CSV loading — no framework, no build step, deployed as a static site on Vercel.
-
-## Key technical decisions
-
-- **"Stakeholder-proof math"**: the cost model converts training compute (FLOP) into dollars using a documented, source-cited chain — H100 reference hardware specs, 30% model FLOP utilization (a defensible real-world midpoint, not peak theoretical), and a 5-year amortization schedule — every constant in the model is commented with its source.
-- **Reactive sliders, not fixed assumptions**: cost-per-GPU, power cost per kWh, and PUE (datacenter overhead) are all live sliders, because the honest answer to "what does this cost" depends on assumptions a reader should be able to interrogate, not a single baked-in number.
-- **Real published datasets, not synthetic data**: built on Epoch AI's Notable Models and ML Hardware datasets — the same figures researchers cite — rather than invented numbers.
-
-## Live
-
-**https://capstone-ai-capex-wall.vercel.app/**
->>>>>>> 42ead0c2b6a35678ccb30132d7cc3988deceeae8
